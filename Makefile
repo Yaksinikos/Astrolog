@@ -44,7 +44,7 @@ clean:
 # "make rcqt" regenerates rcqt.inc from astrolog.rc (needs python3).
 QTNAME = astrolog-qt
 QTDIR = obj-qt
-QTPKG = Qt6Widgets
+QTPKG = Qt6Widgets Qt6PrintSupport
 QTOBJS = $(addprefix $(QTDIR)/,$(OBJS) wdriver.o wdialog.o wqt.o)
 QTCPPFLAGS = -O -DQT -std=c++17 -fPIC -Wno-write-strings -Wno-narrowing\
  -Wno-comment $(shell pkg-config --cflags $(QTPKG))

@@ -1,0 +1,14 @@
+[Desktop Entry]
+# Desktop entry for the Qt version of Astrolog (make qt), for KDE Plasma and
+# other Linux desktops. To install for the current user, copy this file to
+# ~/.local/share/applications/ and change Exec (and Icon) to full paths if
+# astrolog-qt isn't on the PATH, e.g. Icon=/path/to/astrolog/astrlog1.ico
+Type=Application
+Name=Astrolog
+GenericName=Astrology Program
+Comment=Astrology charts, calculations, and graphics
+Exec=astrolog-qt
+Icon=astrolog
+Terminal=false
+Categories=Science;Astronomy;Education;
+StartupWMClass=astrolog-qt

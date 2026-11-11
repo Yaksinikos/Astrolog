@@ -1450,6 +1450,11 @@ enum _terminationcode {
   if (wi.fHourglass) hcurPrev = SetCursor(LoadCursor(NULL, IDC_WAIT))
 #define HourglassOff if (hcurPrev != NULL) SetCursor(hcurPrev)
 #endif
+#ifdef QT
+#define FScreenFont() (fQtScreenChart)  // Drawing a Qt window chart?
+#else
+#define FScreenFont() (!gi.fFile)       // Drawing a Windows window chart?
+#endif
 
 // Should an object in the outer wheel be restricted?
 #define FProper2(i) (!(us.nRel <= rcTransit ? ignore2[i] : ignore[i]))

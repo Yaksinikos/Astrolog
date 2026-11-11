@@ -1311,6 +1311,12 @@ void DrawSz(CONST char *sz, int x, int y, int dt)
         TextOutA(wi.hdc, x-nScale2/2, y-nScale2*3/2, (LPCSTR)&ch, 1);
     } else
 #endif
+#ifdef QT
+    if (FScreenFont() && nFont > 0)
+      QtDrawFontChar(dch > 1 ? (int)wch : (int)(uchar)ch,
+        x-nScale2/2, y-nScale2*3/2, nFont, xFont*nScale2, fFalse);
+    else
+#endif
 #ifdef META
     if (gs.ft == ftWmf && nFont > 0) {
       gi.nFontDes = nFont;
@@ -1394,8 +1400,8 @@ void DrawSign(int i, int x, int y)
   fDoThin = gs.fThick && nFont == 0 && ch <= 0 && gi.nScale <= gi.nScaleT;
   if (fDoThin)
     DrawThick(fFalse);
-#ifdef WINANY
-  if (!gi.fFile && ch > 0) {
+#if defined(WINANY) || defined(QT)
+  if (FScreenFont() && ch > 0) {
     if (DrawGlyph(ch, x, y, nFont, nScale))
       return;
   }
@@ -1471,8 +1477,8 @@ void DrawHouse(int i, int x, int y)
   fDoThin = gs.fThick && nFont == 0 && ch <= 0 && gi.nScale <= gi.nScaleT;
   if (fDoThin)
     DrawThick(fFalse);
-#ifdef WINANY
-  if (!gi.fFile && ch > 0) {
+#if defined(WINANY) || defined(QT)
+  if (FScreenFont() && ch > 0) {
     if (nFont == fiArial)
       ch = (i <= 9 ? '0' + i : -i);
     if (DrawGlyph(ch, x, y, nFont, nScale))
@@ -1648,8 +1654,8 @@ void DrawObject(int obj, int x, int y)
   fDoThin = gs.fThick && nFont == 0 && ch <= 0 && gi.nScale <= gi.nScaleT;
   if (fDoThin)
     DrawThick(fFalse);
-#ifdef WINANY
-  if (!gi.fFile && ch > 0) {
+#if defined(WINANY) || defined(QT)
+  if (FScreenFont() && ch > 0) {
     if (DrawGlyph(ch, x, y, nFont, nScale))
       return;
   }
@@ -1853,8 +1859,8 @@ void DrawAspect(int asp, int x, int y)
   fDoThin = gs.fThick && nFont == 0 && ch <= 0 && gi.nScale <= gi.nScaleT;
   if (fDoThin)
     DrawThick(fFalse);
-#ifdef WINANY
-  if (!gi.fFile && ch > 0) {
+#if defined(WINANY) || defined(QT)
+  if (FScreenFont() && ch > 0) {
     if (DrawGlyph(ch, x, y, nFont, nScale))
       return;
   }
@@ -1921,8 +1927,8 @@ void DrawNakshatra(int i, int x, int y)
   fDoThin = gs.fThick && nFont == 0 && ch <= 0 && gi.nScale <= gi.nScaleT;
   if (fDoThin)
     DrawThick(fFalse);
-#ifdef WINANY
-  if (!gi.fFile && ch != -1) {
+#if defined(WINANY) || defined(QT)
+  if (FScreenFont() && ch != -1) {
     if (DrawGlyph(ch, x, y, nFont, nScale))
       return;
   }

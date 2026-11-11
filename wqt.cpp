@@ -53,6 +53,8 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPrintDialog>
+#include <QPrinter>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QScreen>
@@ -985,6 +987,12 @@ flag API FRedraw(void)
   }
 
   Action();    // Actually go and create the chart here.
+  if (fQtScreenChart) {
+    // FActionX() returned early (e.g. out of memory) while drawing.
+    fQtScreenChart = fFalse;
+    gs.ft = ftNone;
+    gi.fFile = fFalse;
+  }
 
   // Create the chart again if also autosaving chart to file.
 
@@ -1164,17 +1172,6 @@ flag FFilePaste(void)
     FLoadBmp(szFileTemp, &gi.bmpBack, fTrue);
   }
   unlink(szFileTemp);
-  return fTrue;
-}
-
-
-// Implements the File / Print menu command. Not yet available in Qt.
-
-flag API DlgPrint()
-{
-  PrintWarning("Printing is not yet available in the Qt version.\n"
-    "Use File / Export to save the chart as a bitmap, PostScript, or SVG "
-    "file, and print that file instead.");
   return fTrue;
 }
 
@@ -2722,6 +2719,257 @@ BOOL ReleaseMutex(HANDLE h)
 
 BOOL CloseHandle(HANDLE h)
 {
+  return fTrue;
+}
+
+
+/*
+******************************************************************************
+** TrueType Fonts in Charts.
+******************************************************************************
+*/
+
+// Astrolog's astrology fonts come with the program in its font directory,
+// and are loaded for the program only, like the Windows version does with
+// FEnsureFontInstalled(). The text fonts (Arial, Courier New, etc.) are
+// taken from the system, with Qt substituting a similar one if needed.
+
+int fQtScreenChart = fFalse;
+
+static CONST char *rgszFontFileQt[cFont] = {"", "", "Astro.ttf",
+  "EnigmaAstrology.ttf", "HamburgSymbols.ttf", "Astronomicon.ttf",
+  "StarFontSans.ttf", "StarFontSerif.ttf", "HanksNakshatra.ttf",
+  "", "", "", "", ""};
+static int rgnFontLoaded[cFont];        // 0 = not tried, 1 = ok, -1 = no.
+static QString rgqsFontFamily[cFont];
+
+
+// Make sure the given font is available, loading it from the program's
+// font files if need be. Return whether it can be drawn with.
+
+static flag FEnsureFontQt(int fi)
+{
+  QString qsFile;
+  QStringList list;
+  int id;
+
+  if (fi <= 0 || fi >= cFont)
+    return fFalse;
+  if (rgnFontLoaded[fi] != 0)
+    return rgnFontLoaded[fi] > 0;
+  rgnFontLoaded[fi] = -1;
+  rgqsFontFamily[fi] = QString::fromLatin1(rgszFontName[fi]);
+
+  // Text fonts always work, since Qt substitutes a similar font if needed.
+  if (fi >= fiArial) {
+    rgnFontLoaded[fi] = 1;
+    return fTrue;
+  }
+
+  // Symbol fonts need the actual font: Use it if installed on the system,
+  // else load it from the program's files.
+  if (QFontDatabase::families().contains(rgqsFontFamily[fi])) {
+    rgnFontLoaded[fi] = 1;
+    return fTrue;
+  }
+  if (!*rgszFontFileQt[fi])
+    return fFalse;
+  qsFile = QsFindProgramFile(rgszFontFileQt[fi]);
+  if (qsFile.isEmpty()) {
+    qsFile = QString("font/") + QString::fromLatin1(rgszFontFileQt[fi]);
+    qsFile = QsFindProgramFile(qsFile.toLatin1().constData());
+  }
+  if (qsFile.isEmpty())
+    return fFalse;
+  id = QFontDatabase::addApplicationFont(qsFile);
+  if (id < 0)
+    return fFalse;
+  list = QFontDatabase::applicationFontFamilies(id);
+  if (!list.isEmpty())
+    rgqsFontFamily[fi] = list[0];
+  rgnFontLoaded[fi] = 1;
+  return fTrue;
+}
+
+
+// Return the Unicode character for an 8 bit character code in the Windows
+// ANSI character set, which is what Astrolog's astrology fonts use.
+
+static int WchFromChAnsi(int ch)
+{
+  static CONST ushort rgwch[32] = {
+    0x20AC, 0x81, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
+    0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x8D, 0x017D, 0x8F,
+    0x90, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
+    0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x9D, 0x017E, 0x0178};
+
+  return ch >= 0x80 && ch < 0xA0 ? rgwch[ch - 0x80] : ch;
+}
+
+
+// Draw a string in a TrueType font into the window chart bitmap, either
+// centered at or with its upper left corner at the given point. The height
+// is the character cell height, like the Windows CreateFont() takes.
+
+static flag FDrawFontSz(const QString &qs, int x, int y, int fi, int nHeight,
+  flag fCenter)
+{
+  QFont font;
+  int nPixel, cx, cy;
+
+  if (!fQtScreenChart || gi.bmp.rgb == NULL || nHeight <= 0 ||
+    !FEnsureFontQt(fi))
+    return fFalse;
+  QImage img(gi.bmp.rgb, gi.bmp.x, gi.bmp.y, gi.bmp.clRow << 2,
+    QImage::Format_BGR888);
+  font = QFont(rgqsFontFamily[fi]);
+  font.setStyleStrategy(QFont::PreferAntialias);
+  font.setWeight(!gs.fThick ? QFont::Normal : QFont::ExtraBold);
+  if (fi >= fiArial && fi != fiArial)
+    font.setStyleHint(QFont::TypeWriter);
+
+  // Qt sizes fonts by their em height, so scale that until the full height
+  // of the font (ascent plus descent) matches the requested cell height.
+  font.setPixelSize(nHeight);
+  {
+    QFontMetrics fm(font);
+    nPixel = fm.height() > 0 ? nHeight * nHeight / fm.height() : nHeight;
+  }
+  font.setPixelSize(nPixel > 0 ? nPixel : 1);
+  QFontMetrics fm(font);
+  QPainter p(&img);
+  p.setFont(font);
+  p.setPen(QcFromKv(gi.kvCur));
+  if (fCenter) {
+    cx = fm.horizontalAdvance(qs);
+    cy = fm.height();
+    x -= cx >> 1;
+    y -= cy >> 1;
+  }
+  p.drawText(x, y + fm.ascent(), qs);
+  return fTrue;
+}
+
+
+// Draw an astrology character from a special font in the chart. Used to draw
+// sign, planet, aspect, and Nakshatra glyphs from these fonts within charts.
+// This is the Qt version of the routine in xgeneral.cpp.
+
+flag DrawGlyph(int ch, int x, int y, int fi, int nScale)
+{
+  QString qs;
+
+  if (fi == fiArial && ch < 0)
+    qs = QString::number(-ch);    // A multi-character number.
+  else if (fi >= fiArial)
+    qs = QString(QChar((char16_t)ch));
+  else if (fi == fiWingding || fi == fiNakshatr)
+    qs = QString(QChar((char16_t)(uchar)ch));  // Symbol character set.
+  else
+    qs = QString(QChar((char16_t)WchFromChAnsi((uchar)ch)));
+  return FDrawFontSz(qs, x, y, fi, 12*gi.nScale*nScale/100, fTrue);
+}
+
+
+// Draw one character of chart text in a TrueType font, for DrawSz().
+
+void QtDrawFontChar(int wch, int x, int y, int fi, int nHeight, int fCenter)
+{
+  if (fi == fiLucida)
+    nHeight = nHeight*90/100;
+  FDrawFontSz(QString(QChar((char16_t)wch)), x, y, fi, nHeight, fCenter);
+}
+
+
+/*
+******************************************************************************
+** Printing.
+******************************************************************************
+*/
+
+// Implements the File / Print menu command: Bring up the print dialog, and
+// print the current chart, scaled to fit the page. Like the Windows version,
+// if smart saving (-YOO) is on, graphics charts print on a white background.
+// Text charts are printed as text, using a fixed width font.
+
+flag API DlgPrint()
+{
+  QPrinter printer(QPrinter::HighResolution);
+  QPrintDialog dlg(&printer, g_win);
+  QPainter p;
+  QRect rcPage;
+  QImage img;
+  QFile file;
+  QStringList listLine;
+  QFont font;
+  flag fInverse = gs.fInverse, fAnsiColor, fAnsiChar, fHTML;
+  int y, i, cy;
+
+  wi.fNoUpdate = fFalse;
+  printer.setDocName(QString(szAppName));
+  if (dlg.exec() != QDialog::Accepted)
+    return fTrue;
+
+  if (us.fGraphics) {
+    // Draw the chart as displayed, on a white background if so set.
+    if (us.fSmartSave && !gs.fInverse) {
+      gs.fInverse = fTrue;
+      FRedraw();
+    }
+    img = g_imgChart;
+    if (gs.fInverse != fInverse) {
+      gs.fInverse = fInverse;
+      FRedraw();
+    }
+    if (img.isNull())
+      return fFalse;
+    if (!p.begin(&printer))
+      return fFalse;
+    rcPage = p.viewport();
+    QSize size = img.size().scaled(rcPage.size(), Qt::KeepAspectRatio);
+    p.setRenderHint(QPainter::SmoothPixmapTransform);
+    p.drawImage(QRect(rcPage.x() + (rcPage.width() - size.width())/2,
+      rcPage.y(), size.width(), size.height()), img);
+    p.end();
+    return fTrue;
+  }
+
+  // For text charts, create the chart as plain text in a temporary file,
+  // like Export Chart Text Output does, then print the lines of that file.
+  fAnsiColor = us.fAnsiColor; fAnsiChar = us.fAnsiChar; fHTML = us.fTextHTML;
+  us.fAnsiColor = us.fAnsiChar = us.fTextHTML = fFalse;
+  FCloneSz(szFileTemp, &is.szFileScreen);
+  FRedraw();
+  us.fAnsiColor = fAnsiColor; us.fAnsiChar = fAnsiChar; us.fTextHTML = fHTML;
+  file.setFileName(QString::fromLocal8Bit(szFileTemp));
+  if (!file.open(QIODevice::ReadOnly))
+    return fFalse;
+  while (!file.atEnd()) {
+    QByteArray ba = file.readLine();
+    while (ba.endsWith('\n') || ba.endsWith('\r'))
+      ba.chop(1);
+    listLine << QsFromSz(ba.constData(), (int)ba.size());
+  }
+  file.close();
+  unlink(szFileTemp);
+  if (!p.begin(&printer))
+    return fFalse;
+  font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+  font.setPointSize(9);
+  p.setFont(font);
+  QFontMetrics fm(p.font());
+  rcPage = p.viewport();
+  cy = fm.lineSpacing();
+  y = 0;
+  for (i = 0; i < listLine.size(); i++) {
+    if (y + cy > rcPage.height()) {
+      printer.newPage();
+      y = 0;
+    }
+    p.drawText(0, y + fm.ascent(), listLine[i]);
+    y += cy;
+  }
+  p.end();
   return fTrue;
 }
 

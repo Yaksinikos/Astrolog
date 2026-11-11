@@ -341,7 +341,7 @@ void DrawSidebar()
       gs.nScaleText = nSav;
       AdjustTextScale();
     }
-#ifdef WINANY
+#if defined(WINANY) || defined(QT)
     else if (gs.nDecaType == 6) {
       // If decoration value 6, draw heart characters in each corner. <3
       nSav = gi.nScale;
@@ -2599,7 +2599,7 @@ void DrawChartX()
   if (fDrawBorder)
     DrawEdgeAll();
   if (gs.fAntialias
-#ifdef WINUI
+#ifdef WIN
     && wi.nAntialias < 2
 #endif
     )
