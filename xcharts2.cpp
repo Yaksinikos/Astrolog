@@ -1384,7 +1384,7 @@ void XChartTransit(flag fTrans, flag fProg)
   }
 
   // Determine scrolling position if too many aspects to fit on bitmap.
-#ifdef WIN
+#ifdef WINUI
   cRow = (cRow - (gs.yWin / (yRow + 1))) * wi.yScroll / nScrollDiv;
 #else
   cRow = 0;

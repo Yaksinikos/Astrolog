@@ -1131,7 +1131,7 @@ void PrintSz(CONST char *sz)
   wchar wch;
   int ch, dch;
   flag fWantIBM = fFalse;
-#ifndef WIN
+#ifndef WINUI
   int fT;
 #endif
 
@@ -1155,7 +1155,7 @@ void PrintSz(CONST char *sz)
       is.cchRow++;
       is.cchCol = 0;
     }
-#ifdef WIN
+#ifdef WINUI
     if (is.S == stdout) {
       // Windows text mode screen text should be output in IBM character set.
       if (us.nCharset >= ccUTF8) {
@@ -1239,7 +1239,7 @@ void PrintSz(CONST char *sz)
       else
         fprintf(is.S, "%s", szInput);
     }
-#ifndef WIN
+#ifndef WINUI
     if (ch == '\n' && is.S == stdout &&
       us.nScrollRow > 0 && is.cchRow >= us.nScrollRow) {
 
@@ -1265,7 +1265,7 @@ void PrintSz(CONST char *sz)
         inv(us.fAnsiColor); inv(us.fAnsiChar);
       }
     }
-#else
+#elif defined(WIN)
     if (ch == '\n' && is.S == stdout && wi.hdcPrint != hdcNil &&
       is.cchRow >= us.nScrollRow) {
 
@@ -1381,7 +1381,7 @@ void PrintSzFormat(CONST char *sz, flag fPopup)
 #endif
   }
   *pch2 = chNull;
-#ifdef WIN
+#ifdef WINUI
   if (fPopup)
     PrintNotice(szFormat);
   else
@@ -1395,7 +1395,7 @@ void PrintSzFormat(CONST char *sz, flag fPopup)
 
 void PrintProgress(CONST char *sz)
 {
-#ifndef WIN
+#ifndef WINUI
   // Progress messages are ignored in the Windows version.
   AnsiColor(kYellowA);
   fprintf(stderr, "%s\n", sz);
@@ -1409,7 +1409,7 @@ void PrintProgress(CONST char *sz)
 
 void PrintNotice(CONST char *sz)
 {
-#ifndef WIN
+#ifndef WINUI
   AnsiColor(kYellowA);
   fprintf(stderr, "%s\n", sz);
   AnsiColor(kDefault);
@@ -1429,7 +1429,7 @@ void PrintNotice(CONST char *sz)
 
 void PrintWarning(CONST char *sz)
 {
-#ifndef WIN
+#ifndef WINUI
   AnsiColor(kRedA);
   fprintf(stderr, "%s\n", sz);
   AnsiColor(kDefault);
@@ -1455,7 +1455,7 @@ void PrintWarning(CONST char *sz)
 
 void PrintError(CONST char *sz)
 {
-#ifndef WIN
+#ifndef WINUI
   AnsiColor(kRedA);
   fprintf(stderr, "%s: %s\n", szAppName, sz);
   AnsiColor(kDefault);
@@ -1598,7 +1598,7 @@ void AnsiColor(KI k)
   char sz[cchSzDef];
   int cchSav;
 
-#ifdef WIN
+#ifdef WINUI
   if (is.S == stdout) {
     if (k == kDefault || !us.fAnsiColor)
       k = kLtGrayA;
@@ -1674,7 +1674,7 @@ char ChDeg()
     chDeg = (us.nCharset == ccIBM ? chDegI : chDegL);
   else
 #endif
-#ifdef WIN
+#ifdef WINUI
     if (!us.fGraphics && gs.nFontTxt > 0)
       chDeg = chDegL;
   else

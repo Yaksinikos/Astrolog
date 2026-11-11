@@ -448,7 +448,7 @@ void CastRelation(void)
 
   for (i = 1; i <= cChart; i++) {
     ciCore = *rgpci[i];
-#ifdef WIN
+#ifdef WINUI
     if (i == 1 && us.nRel == rcMidpoint)
       ciCore = ciMain = ciSave;
 #endif
@@ -569,7 +569,7 @@ void CastRelation(void)
     }
     ciMain = ciCore;
     CastChart(0);
-#ifndef WIN
+#ifndef WINUI
     us.nRel = rcNone;  // Turn off so don't move to midpoint again.
 #endif
 

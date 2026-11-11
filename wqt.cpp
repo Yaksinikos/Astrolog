@@ -1,0 +1,2017 @@
+/*
+** Astrolog (Version 8.00) File: wqt.cpp
+**
+** IMPORTANT NOTICE: Astrolog and all chart display routines and anything
+** not enumerated elsewhere in this program are Copyright (C) 1991-2026 by
+** Walter D. Pullen (Astara@msn.com, http://www.astrolog.org/astrolog.htm).
+** Permission is granted to freely use, modify, and distribute these
+** routines provided these credits and notices remain unmodified with any
+** altered or distributed versions of the program.
+**
+** This file contains the Qt 6 version's main program, window, and message
+** handling, and implements the subset of the Win32 API declared in wqt.h, so
+** that Astrolog's Windows menu and dialog code in wdriver.cpp and wdialog.cpp
+** can be reused as is. It is only compiled when QT is defined (make qt).
+**
+** Charts are drawn by the core program into its 24 bit memory bitmap gi.bmp
+** (the same path used for writing bitmap files), which is displayed in the
+** window. No Xlib or GDI calls are made, so this runs natively on Wayland as
+** well as X11.
+*/
+
+// Qt headers must come before astrolog.h, since astrolog.h defines short
+// macros (e.g. loop, inv, neg, P, S, min, max) that would clash with them.
+#include <QApplication>
+#include <QClipboard>
+#include <QCloseEvent>
+#include <QCursor>
+#include <QDesktopServices>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QFontDatabase>
+#include <QFontMetrics>
+#include <QGridLayout>
+#include <QImage>
+#include <QInputDialog>
+#include <QKeyEvent>
+#include <QMainWindow>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QScreen>
+#include <QScrollBar>
+#include <QTimer>
+#include <QUrl>
+#include <QWheelEvent>
+#include <QWidget>
+#include <map>
+#include <string>
+#include <unistd.h>
+
+#include "astrolog.h"
+#undef min
+#undef max
+
+
+#ifdef QT
+/*
+******************************************************************************
+** Internal State.
+******************************************************************************
+*/
+
+// The objects behind the opaque Win32 style handles declared in wqt.h.
+
+struct QtWnd {
+  QWidget *widget;
+};
+
+struct QtMenu {
+  int id;      // Menu resource id (or 0 for the main menu bar).
+  int iSub;    // Submenu index, or -1 for the menu itself.
+};
+
+struct QtDC {
+  QImage *img;      // Image being drawn upon, if any.
+  QPainter *paint;  // Active painter on that image, if any.
+  COLORREF kvText;  // Current text color.
+  int nBkMode;      // TRANSPARENT or OPAQUE.
+};
+
+// Keyboard accelerator table entry, generated into rcqt.inc.
+struct QtAccel {
+  int key;    // Virtual key code, or character if not QTACCEL_VIRTKEY.
+  int flags;  // QTACCEL_* bits below.
+  int cmd;    // Menu command to run.
+};
+#define QTACCEL_VIRTKEY 1
+#define QTACCEL_SHIFT   2
+#define QTACCEL_CONTROL 4
+#define QTACCEL_ALT     8
+
+#include "rcqt.inc"
+
+class AstroChartView;
+class AstroMainWindow;
+
+static QApplication *g_app = NULL;
+static AstroMainWindow *g_win = NULL;
+static AstroChartView *g_view = NULL;
+static QScrollBar *g_sbHorz = NULL, *g_sbVert = NULL;
+static QTimer *g_timer = NULL;
+static QImage g_imgChart;        // What's currently displayed in the window.
+static flag g_fImgText = fFalse; // Is the above a text chart?
+static flag g_fRedrawPending = fFalse;
+static flag g_fClosing = fFalse;
+static int g_cWait = 0;          // Nesting count of hourglass cursor.
+
+static QtWnd g_wndMain = {NULL};
+static QtMenu g_menuMain = {menu, -1};
+static QtMenu g_menuEdit = {menu, 1};
+static QtDC g_dcWin = {NULL, NULL, 0xffffff, OPAQUE};
+
+// Menu state remembered until the menu bar is built (phase 2), so that the
+// check marks and custom macro names set at startup aren't lost.
+static std::map<UINT, flag> g_mapCheck;
+static std::map<UINT, std::string> g_mapMenuText;
+static std::map<UINT, std::string> g_mapEditText;
+
+#define HCURSOR_ARROW ((HCURSOR)(intptr_t)1)
+#define HCURSOR_WAIT  ((HCURSOR)(intptr_t)2)
+
+static void QtDispatch(UINT wMsg, WPARAM wParam, LPARAM lParam);
+static void QtScheduleRedraw(void);
+
+
+/*
+******************************************************************************
+** Helper Routines.
+******************************************************************************
+*/
+
+// Convert an Astrolog color value (Win32 COLORREF layout) to a Qt color.
+
+static QColor QcFromKv(KV kv)
+{
+  return QColor(RgbR(kv), RgbG(kv), RgbB(kv));
+}
+
+
+// Convert an 8 bit string from Astrolog in its current output character set
+// to a Qt Unicode string.
+
+static QString QsFromSz(CONST char *sz, int cch = -1)
+{
+  QString qs;
+  int i;
+
+  if (sz == NULL)
+    return qs;
+  if (cch < 0)
+    cch = CchSz(sz);
+  if (us.nCharset >= ccUTF8)
+    return QString::fromUtf8(sz, cch);
+  for (i = 0; i < cch; i++)
+    qs += QChar((ushort)(us.nCharset == ccIBM ? WchFromChIBM((uchar)sz[i]) :
+      WchFromChLatin((uchar)sz[i])));
+  return qs;
+}
+
+
+// Copy a Qt string into an 8 bit Astrolog string buffer as UTF-8.
+
+static void CopyQsToSz(const QString &qs, char *sz, int cchMax)
+{
+  QByteArray ba = qs.toUtf8();
+  int cch;
+
+  if (cchMax <= 0)
+    return;
+  cch = (int)ba.size();
+  if (cch > cchMax-1)
+    cch = cchMax-1;
+  memcpy(sz, ba.constData(), cch);
+  sz[cch] = chNull;
+}
+
+
+// Convert a Qt key event to a Win32 virtual key code. Like Windows, this
+// assumes a US keyboard layout for which shifted keys map to which keys.
+
+static int VkFromQtKey(int key)
+{
+  if (key >= Qt::Key_A && key <= Qt::Key_Z)
+    return 'A' + (key - Qt::Key_A);
+  if (key >= Qt::Key_0 && key <= Qt::Key_9)
+    return '0' + (key - Qt::Key_0);
+  if (key >= Qt::Key_F1 && key <= Qt::Key_F24)
+    return VK_F1 + (key - Qt::Key_F1);
+  switch (key) {
+  case Qt::Key_Backspace:   return 0x08;
+  case Qt::Key_Tab:
+  case Qt::Key_Backtab:     return 0x09;
+  case Qt::Key_Return:
+  case Qt::Key_Enter:       return 0x0D;
+  case Qt::Key_Pause:       return 0x13;
+  case Qt::Key_Escape:      return 0x1B;
+  case Qt::Key_Space:       return 0x20;
+  case Qt::Key_PageUp:      return 0x21;
+  case Qt::Key_PageDown:    return 0x22;
+  case Qt::Key_End:         return 0x23;
+  case Qt::Key_Home:        return 0x24;
+  case Qt::Key_Left:        return 0x25;
+  case Qt::Key_Up:          return 0x26;
+  case Qt::Key_Right:       return 0x27;
+  case Qt::Key_Down:        return 0x28;
+  case Qt::Key_Exclam:      return '1';
+  case Qt::Key_At:          return '2';
+  case Qt::Key_NumberSign:  return '3';
+  case Qt::Key_Dollar:      return '4';
+  case Qt::Key_Percent:     return '5';
+  case Qt::Key_AsciiCircum: return '6';
+  case Qt::Key_Ampersand:   return '7';
+  case Qt::Key_Asterisk:    return '8';
+  case Qt::Key_ParenLeft:   return '9';
+  case Qt::Key_ParenRight:  return '0';
+  case Qt::Key_Semicolon:
+  case Qt::Key_Colon:       return 0xBA;
+  case Qt::Key_Plus:
+  case Qt::Key_Equal:       return 0xBB;
+  case Qt::Key_Comma:
+  case Qt::Key_Less:        return 0xBC;
+  case Qt::Key_Minus:
+  case Qt::Key_Underscore:  return 0xBD;
+  case Qt::Key_Period:
+  case Qt::Key_Greater:     return 0xBE;
+  case Qt::Key_Slash:
+  case Qt::Key_Question:    return 0xBF;
+  case Qt::Key_QuoteLeft:
+  case Qt::Key_AsciiTilde:  return 0xC0;
+  case Qt::Key_BracketLeft:
+  case Qt::Key_BraceLeft:   return 0xDB;
+  case Qt::Key_Backslash:
+  case Qt::Key_Bar:         return 0xDC;
+  case Qt::Key_BracketRight:
+  case Qt::Key_BraceRight:  return 0xDD;
+  case Qt::Key_Apostrophe:
+  case Qt::Key_QuoteDbl:    return 0xDE;
+  }
+  return 0;
+}
+
+
+// Look up a key press in the accelerator table generated from astrolog.rc,
+// returning the menu command it invokes, or 0 if none. Like Windows, virtual
+// key entries (which must match modifiers exactly) take precedence over
+// character entries.
+
+static int CmdFromKeyEvent(QKeyEvent *e)
+{
+  Qt::KeyboardModifiers km = e->modifiers();
+  int vk = VkFromQtKey(e->key()), flags = 0, i;
+  QString qs;
+
+  if (km & Qt::ShiftModifier)
+    flags |= QTACCEL_SHIFT;
+  if (km & Qt::ControlModifier)
+    flags |= QTACCEL_CONTROL;
+  if (km & Qt::AltModifier)
+    flags |= QTACCEL_ALT;
+  if (vk != 0)
+    for (i = 0; rgQtAccel[i].cmd != 0; i++)
+      if ((rgQtAccel[i].flags & QTACCEL_VIRTKEY) && rgQtAccel[i].key == vk &&
+        (rgQtAccel[i].flags & ~QTACCEL_VIRTKEY) == flags)
+        return rgQtAccel[i].cmd;
+  if (flags & (QTACCEL_CONTROL | QTACCEL_ALT))
+    return 0;
+  qs = e->text();
+  if (qs.size() != 1 || qs[0].unicode() >= 128)
+    return 0;
+  for (i = 0; rgQtAccel[i].cmd != 0; i++)
+    if (!(rgQtAccel[i].flags & QTACCEL_VIRTKEY) &&
+      rgQtAccel[i].key == qs[0].unicode())
+      return rgQtAccel[i].cmd;
+  return 0;
+}
+
+
+// Return the Win32 style MK_* flags for the current mouse and modifier keys.
+
+static WPARAM MkFromQt(Qt::MouseButtons mb, Qt::KeyboardModifiers km)
+{
+  WPARAM w = 0;
+
+  if (mb & Qt::LeftButton)
+    w |= MK_LBUTTON;
+  if (mb & Qt::RightButton)
+    w |= MK_RBUTTON;
+  if (km & Qt::ShiftModifier)
+    w |= MK_SHIFT;
+  if (km & Qt::ControlModifier)
+    w |= MK_CONTROL;
+  return w;
+}
+
+
+// Return the pixel offset the displayed chart image has within the window,
+// based on the scrollbar positions, the same as the Windows version does.
+
+static void GetChartOffset(int *px, int *py)
+{
+  if (g_fImgText || g_imgChart.isNull()) {
+    *px = *py = 0;
+    return;
+  }
+  *px = NMultDiv(wi.xClient - g_imgChart.width(), wi.xScroll, nScrollDiv);
+  *py = NMultDiv(wi.yClient - g_imgChart.height(), wi.yScroll, nScrollDiv);
+}
+
+
+/*
+******************************************************************************
+** Chart View and Main Window.
+******************************************************************************
+*/
+
+// The client area of the main window, which displays the current chart, and
+// forwards mouse and keyboard input to the Windows style message handler.
+
+class AstroChartView : public QWidget
+{
+public:
+  AstroChartView(QWidget *parent) : QWidget(parent)
+  {
+    setFocusPolicy(Qt::StrongFocus);
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setMouseTracking(fTrue);
+    setMinimumSize(BITMAPX1, BITMAPY1);
+  }
+
+protected:
+  void paintEvent(QPaintEvent *) override
+  {
+    QPainter p(this);
+    int x, y;
+
+    p.fillRect(rect(), QcFromKv(KvFromKi(g_fImgText ?
+      (gs.fInverse ? kWhiteA : kBlackA) : gi.kiOff)));
+    if (g_imgChart.isNull())
+      return;
+    GetChartOffset(&x, &y);
+    gi.xOffset = x; gi.yOffset = y;
+    p.drawImage(x, y, g_imgChart);
+  }
+
+  void resizeEvent(QResizeEvent *) override
+  {
+    QtDispatch(WM_SIZE, 0, MAKELPARAM(width(), height()));
+    QtScheduleRedraw();
+  }
+
+  void mousePressEvent(QMouseEvent *e) override
+  {
+    QPoint pt = e->position().toPoint();
+
+    if (e->button() == Qt::LeftButton)
+      QtDispatch(WM_LBUTTONDOWN, MkFromQt(e->buttons(), e->modifiers()),
+        MAKELPARAM(pt.x(), pt.y()));
+    else if (e->button() == Qt::RightButton)
+      QtDispatch(WM_RBUTTONDOWN, MkFromQt(e->buttons(), e->modifiers()),
+        MAKELPARAM(pt.x(), pt.y()));
+  }
+
+  void mouseReleaseEvent(QMouseEvent *e) override
+  {
+    QPoint pt = e->position().toPoint();
+
+    if (e->button() == Qt::RightButton)
+      QtDispatch(WM_RBUTTONUP, MkFromQt(e->buttons(), e->modifiers()),
+        MAKELPARAM(pt.x(), pt.y()));
+  }
+
+  void mouseMoveEvent(QMouseEvent *e) override
+  {
+    QPoint pt = e->position().toPoint();
+
+    if (e->buttons() == Qt::NoButton)
+      return;
+    QtDispatch(WM_MOUSEMOVE, MkFromQt(e->buttons(), e->modifiers()),
+      MAKELPARAM(pt.x(), pt.y()));
+  }
+
+  void wheelEvent(QWheelEvent *e) override
+  {
+    int n = e->angleDelta().y(), m = e->angleDelta().x();
+
+    if (n != 0)
+      QtDispatch(WM_VSCROLL, n > 0 ? SB_LINEUP : SB_LINEDOWN, 0);
+    if (m != 0)
+      QtDispatch(WM_HSCROLL, m > 0 ? SB_LINELEFT : SB_LINERIGHT, 0);
+    e->accept();
+  }
+
+  void keyPressEvent(QKeyEvent *e) override
+  {
+    int cmd = CmdFromKeyEvent(e);
+
+    if (cmd == 0) {
+      QWidget::keyPressEvent(e);
+      return;
+    }
+    e->accept();
+    QtDispatch(WM_COMMAND, (WPARAM)cmd, 0);
+  }
+
+  // Don't let Tab move keyboard focus away, since Tab is an accelerator.
+  bool focusNextPrevChild(bool) override
+  {
+    return fFalse;
+  }
+};
+
+
+// The top level frame window, containing the menu bar, chart view, and the
+// scrollbars (which work like the Windows version's, from 0 to nScrollDiv).
+
+class AstroMainWindow : public QMainWindow
+{
+public:
+  AstroMainWindow()
+  {
+    QWidget *w = new QWidget(this);
+    QGridLayout *grid = new QGridLayout(w);
+
+    grid->setContentsMargins(0, 0, 0, 0);
+    grid->setSpacing(0);
+    g_view = new AstroChartView(w);
+    g_sbHorz = new QScrollBar(Qt::Horizontal, w);
+    g_sbVert = new QScrollBar(Qt::Vertical, w);
+    g_sbHorz->setRange(0, nScrollDiv);
+    g_sbVert->setRange(0, nScrollDiv);
+    g_sbHorz->setPageStep(nScrollPage);
+    g_sbVert->setPageStep(nScrollPage);
+    grid->addWidget(g_view, 0, 0);
+    grid->addWidget(g_sbVert, 0, 1);
+    grid->addWidget(g_sbHorz, 1, 0);
+    setCentralWidget(w);
+    QObject::connect(g_sbHorz, &QScrollBar::actionTriggered, [](int)
+      { QtDispatch(WM_HSCROLL,
+        MAKEWPARAM(SB_THUMBPOSITION, g_sbHorz->sliderPosition()), 0); });
+    QObject::connect(g_sbVert, &QScrollBar::actionTriggered, [](int)
+      { QtDispatch(WM_VSCROLL,
+        MAKEWPARAM(SB_THUMBPOSITION, g_sbVert->sliderPosition()), 0); });
+    setWindowTitle(szAppNameCore " " szVersionCore);
+  }
+
+protected:
+  void closeEvent(QCloseEvent *e) override
+  {
+    if (!g_fClosing) {
+      e->ignore();
+      QtDispatch(WM_CLOSE, 0, 0);
+    } else
+      e->accept();
+  }
+};
+
+
+/*
+******************************************************************************
+** Message Handling.
+******************************************************************************
+*/
+
+// Draw on the chart window with the scribble pen, as done with the mouse.
+// This corresponds to the drawing on the window DC in Windows' WndProc().
+
+static void ScribbleDraw(int nShape, int x1, int y1, int x2, int y2)
+{
+  int xo, yo, n;
+
+  if (g_imgChart.isNull() || g_fImgText)
+    return;
+  GetChartOffset(&xo, &yo);
+  QPainter p(&g_imgChart);
+  p.translate(-xo, -yo);
+  n = (!gs.fThick ? 0 : 2) + gs.nThickAdjust;
+  p.setPen(QPen(QcFromKv(KvFromKi(gi.kiPen)), n < 1 ? 1 : n));
+  p.setBrush(Qt::NoBrush);
+  if (nShape == 0)
+    p.drawPoint(x2, y2);
+  else if (nShape == 1)
+    p.drawLine(x1, y1, x2, y2);
+  else if (nShape == 2)
+    p.drawRect(QRect(QPoint(x1, y1), QPoint(x2, y2)).normalized());
+  else
+    p.drawEllipse(QRect(QPoint(x1, y1), QPoint(x2, y2)).normalized());
+  p.end();
+  g_view->update();
+}
+
+
+// Close the main window and exit the event loop, if allowed.
+
+static void DoClose(void)
+{
+  if (us.fNoQuit) {
+    PrintWarning("Program exiting is not allowed now.");
+    return;
+  }
+  if (wi.lTimer != 0)
+    KillTimer(wi.hwnd, 1);
+  g_fClosing = fTrue;
+  if (g_win != NULL)
+    g_win->close();
+  PostQuitMessage(0);
+}
+
+
+// Process one Windows style message for the main window. This is the Qt
+// version's equivalent of WndProc() in wdriver.cpp, and follows it closely.
+
+static void QtDispatch(UINT wMsg, WPARAM wParam, LPARAM lParam)
+{
+  int iParam, x, y, n;
+
+  wi.hwnd = wi.hwndMain;
+  switch (wMsg) {
+
+  // A command, most likely a menu option or accelerator key, was given.
+  case WM_COMMAND:
+    iParam = (int)(wParam & 0xffff);
+    n = NWmCommand((WORD)iParam);
+    if (n == 1 || (n < 0 && iParam == cmdMacro40/*Alt+F4*/))
+      DoClose();
+    else if (n == 0)
+      ProcessState();
+    break;
+
+  // The window has been resized. Change the chart size if need be.
+  case WM_SIZE:
+    wi.xClient = LOWORD(lParam);
+    wi.yClient = HIWORD(lParam);
+    if (wi.fWindowChart || wi.fChartWindow) {
+      gs.xWin = wi.xClient; gs.yWin = wi.yClient;
+      if (!wi.fNotManual) {
+        gi.xWinResize = gs.xWin; gi.yWinResize = gs.yWin;
+      }
+    }
+    break;
+
+  // The mouse has been left clicked or dragged over the window.
+  case WM_LBUTTONDOWN:
+  case WM_MOUSEMOVE:
+    x = (short)LOWORD(lParam);
+    y = (short)HIWORD(lParam);
+    if (wMsg == WM_MOUSEMOVE) {
+      // Dragging with right mouse down rotates and tilts globes.
+      if ((wParam & MK_RBUTTON) != 0 && us.fGraphics && (fMap ||
+        gi.nMode == gMidpoint || gi.nMode == gLocal ||
+        gi.nMode == gSphere || gi.nMode == gGlobe ||
+        gi.nMode == gPolar || gi.nMode == gTelescope)) {
+        gs.rRot += (real)(x-(short)WLo(wi.lParamRC)) * rDegHalf /
+          (real)gs.xWin * (gi.nMode == gLocal || gi.nMode == gTelescope ?
+          -gi.zViewRatio : 1.0);
+        gs.rTilt += (real)(y-(short)WHi(wi.lParamRC)) * rDegHalf /
+          (real)gs.yWin * (gi.nMode == gLocal || gi.nMode == gTelescope ?
+          gi.zViewRatio : (gi.nMode == gGlobe ? -1.0 : 1.0));
+        while (gs.rRot >= rDegMax)
+          gs.rRot -= rDegMax;
+        while (gs.rRot < 0.0)
+          gs.rRot += rDegMax;
+        if (gs.rTilt > rDegQuad)
+          gs.rTilt = rDegQuad;
+        if (gs.rTilt < -rDegQuad)
+          gs.rTilt = -rDegQuad;
+        if (gi.nMode == gMidpoint || gi.nMode == gTelescope) {
+          if (gi.nMode == gMidpoint && gs.objTrack >= 0)
+            gs.rRot = planet[gs.objTrack];
+          gs.objTrack = -1;
+        }
+        wi.lParamRC = lParam;
+        wi.fRedraw = fTrue;
+        wi.fMoved = fTrue;
+        ProcessState();
+        break;
+      }
+
+      // Treat dragging with left mouse down as a Shift+left click.
+      if ((wParam & MK_LBUTTON) == 0 ||
+        (wParam & MK_SHIFT) || (wParam & MK_CONTROL))
+        break;
+      wParam = MK_SHIFT;
+    }
+
+    // Alt+click on a world map chart means relocate the chart there.
+    if (wMsg == WM_LBUTTONDOWN && GetKeyState(VK_MENU) < 0) {
+      if (fMap && !gs.fConstel && !gs.fMollweide) {
+        Lon = rDegHalf -
+          Mod((real)(x-gi.xOffset) / (real)gs.xWin*rDegMax - gs.rRot);
+        if (Lon < -rDegHalf)
+          Lon = -rDegHalf;
+        else if (Lon > rDegHalf)
+          Lon = rDegHalf;
+        Lat = rDegQuad-(real)(y-gi.yOffset)/(real)gs.yWin*rDegHalf;
+        if (Lat < -rDegQuad)
+          Lat = -rDegQuad;
+        else if (Lat > rDegQuad)
+          Lat = rDegQuad;
+        wi.xMouse = -1;
+        ciCore = ciMain;
+        wi.fCast = fTrue;
+        ProcessState();
+      }
+      break;
+    }
+
+    // Ctrl+click means draw a rectangle. Ctrl+Shift+click does ellipse.
+    if (wParam & MK_CONTROL)
+      ScribbleDraw((wParam & MK_SHIFT) ? 3 : 2, wi.xMouse, wi.yMouse, x, y);
+
+    // Shift+click means draw a line from the last to current position.
+    else if (wParam & MK_SHIFT) {
+      if (wi.xMouse >= 0) {
+        ScribbleDraw(1, wi.xMouse, wi.yMouse, x, y);
+        if (wMsg == WM_MOUSEMOVE) {
+          wi.xMouse = x; wi.yMouse = y;
+        }
+      }
+
+    // A simple click means set a pixel and remember that location.
+    } else {
+      ScribbleDraw(0, x, y, x, y);
+      wi.xMouse = x; wi.yMouse = y;
+    }
+    break;
+
+  // The mouse has been right clicked on the window.
+  case WM_RBUTTONDOWN:
+    wi.fMoved = fFalse;
+    if (us.fGraphics) {
+      if (fMap || gi.nMode == gMidpoint || gi.nMode == gLocal ||
+        gi.nMode == gSphere || gi.nMode == gGlobe || gi.nMode == gPolar ||
+        gi.nMode == gTelescope)
+        wi.lParamRC = lParam;
+      // Most graphics modes show popup right when mouse button clicked.
+      switch (gi.nMode) {
+      case gWheel: case gHouse:
+        DoPopup(!gs.fIndianWheel ? menuV : menuV2, wi.hwnd, lParam); break;
+      case gGrid:      DoPopup(menuG,  wi.hwnd, lParam); break;
+      case gHorizon:   DoPopup(menuZ,  wi.hwnd, lParam); break;
+      case gOrbit:     DoPopup(menuS,  wi.hwnd, lParam); break;
+      case gSector:    DoPopup(menuH,  wi.hwnd, lParam); break;
+      case gCalendar:  DoPopup(menuK,  wi.hwnd, lParam); break;
+      case gDisposit:  DoPopup(menuJ,  wi.hwnd, lParam); break;
+      case gEsoteric:  DoPopup(menu7,  wi.hwnd, lParam); break;
+      case gEphemeris: DoPopup(menuE,  wi.hwnd, lParam); break;
+      case gRising:    DoPopup(menuZd, wi.hwnd, lParam); break;
+      case gMoons:     DoPopup(menu8,  wi.hwnd, lParam); break;
+      case gBiorhythm: DoPopup(menuY,  wi.hwnd, lParam); break;
+      case gTraTraGra: case gTraNatGra:
+        DoPopup(menuB, wi.hwnd, lParam); break;
+      }
+    } else {
+      if (us.nRel == rcBiorhythm) DoPopup(menu_Y,  wi.hwnd, lParam);
+      else if (us.fListing)       DoPopup(menu_V,  wi.hwnd, lParam);
+      else if (us.fWheel)         DoPopup(menu_W,  wi.hwnd, lParam);
+      else if (us.fGrid)          DoPopup(menu_G,  wi.hwnd, lParam);
+      else if (us.fAspList)       DoPopup(menu_A,  wi.hwnd, lParam);
+      else if (us.fMidpoint)      DoPopup(menu_M,  wi.hwnd, lParam);
+      else if (us.fHorizon)       DoPopup(menu_Z,  wi.hwnd, lParam);
+      else if (us.fOrbit)         DoPopup(menu_S,  wi.hwnd, lParam);
+      else if (us.fSector)        DoPopup(menu_H,  wi.hwnd, lParam);
+      else if (us.fCalendar)      DoPopup(menu_K,  wi.hwnd, lParam);
+      else if (us.fInfluence)     DoPopup(menu_J,  wi.hwnd, lParam);
+      else if (us.fEsoteric)      DoPopup(menu_7,  wi.hwnd, lParam);
+      else if (us.fAstroGraph)    DoPopup(menu_L,  wi.hwnd, lParam);
+      else if (us.fEphemeris)     DoPopup(menu_E,  wi.hwnd, lParam);
+      else if (us.fArabic)        DoPopup(menu_P,  wi.hwnd, lParam);
+      else if (us.fHorizonSearch) DoPopup(menu_I,  wi.hwnd, lParam);
+      else if (us.fAtlasNear)     DoPopup(menu_N,  wi.hwnd, lParam);
+      else if (us.fMoonChart)     DoPopup(menu_8,  wi.hwnd, lParam);
+      else if (us.fExoTransit)    DoPopup(menu_Ux, wi.hwnd, lParam);
+      else if (us.fInDay    || us.fTransit)    DoPopup(menu_D, wi.hwnd, lParam);
+      else if (us.fInDayInf || us.fTransitInf) DoPopup(menu_T, wi.hwnd, lParam);
+      else if (us.fInDayGra || us.fTransitGra) DoPopup(menu_B, wi.hwnd, lParam);
+    }
+    break;
+
+  // The right mouse button was clicked, but has now been lifted.
+  case WM_RBUTTONUP:
+    if (!wi.fMoved && us.fGraphics) {
+      // Some graphics modes can't show popup until mouse button lifted,
+      // because can click and drag right mouse in window to rotate chart.
+      switch (gi.nMode) {
+      case gMidpoint:   DoPopup(menuM,  wi.hwnd, lParam); break;
+      case gAstroGraph: DoPopup(menuL,  wi.hwnd, lParam); break;
+      case gLocal:      DoPopup(menuN,  wi.hwnd, lParam); break;
+      case gTelescope:  DoPopup(menuXZ, wi.hwnd, lParam); break;
+      case gSphere:     DoPopup(menuXX, wi.hwnd, lParam); break;
+      case gWorldMap: case gGlobe: case gPolar:
+        DoPopup(menuXG, wi.hwnd, lParam); break;
+      }
+    }
+    break;
+
+  // A timer message is received at a defined regular interval.
+  case WM_TIMER:
+    if (gs.nAnim < 1 || gi.fPause)
+      break;
+    Animate(gs.nAnim, gi.nDir);  // Update chart if animation mode on.
+    wi.fRedraw = fTrue;
+    ProcessState();
+    break;
+
+  // The horizontal or vertical scrollbar was clicked on or used.
+  case WM_HSCROLL:
+  case WM_VSCROLL:
+    n = (wMsg == WM_HSCROLL ? wi.xScroll : wi.yScroll);
+    x = n;
+    switch (LOWORD(wParam)) {
+    case SB_TOP:           n = 0;               break;
+    case SB_BOTTOM:        n = nScrollDiv;      break;
+    case SB_LINEUP:        n--;                 break;
+    case SB_LINEDOWN:      n++;                 break;
+    case SB_PAGEUP:        n -= nScrollPage;    break;
+    case SB_PAGEDOWN:      n += nScrollPage;    break;
+    case SB_THUMBPOSITION:
+    case SB_THUMBTRACK:    n = HIWORD(wParam);  break;
+    default:
+      return;
+    }
+    n = n < 0 ? 0 : (n > nScrollDiv ? nScrollDiv : n);
+    if (n == x)
+      break;
+    if (wMsg == WM_HSCROLL) {
+      wi.xScroll = n;
+      SetScrollPos(wi.hwnd, SB_HORZ, n, fTrue);
+    } else {
+      wi.yScroll = n;
+      SetScrollPos(wi.hwnd, SB_VERT, n, fTrue);
+    }
+    // Scrolling a graphics chart only moves it, while a text chart needs to
+    // be redrawn starting at a different row or column.
+    if (us.fGraphics && !g_fImgText)
+      g_view->update();
+    else {
+      wi.fRedraw = fTrue;
+      ProcessState();
+    }
+    break;
+
+  // The window is being terminated. Clean up and free program data.
+  case WM_CLOSE:
+    DoClose();
+    break;
+  }
+}
+
+
+// Schedule FRedraw() to be called soon from the event loop. Several requests
+// before it runs are combined into one redraw.
+
+static void QtScheduleRedraw(void)
+{
+  if (g_fRedrawPending || g_fClosing || g_app == NULL)
+    return;
+  g_fRedrawPending = fTrue;
+  QTimer::singleShot(0, []() {
+    g_fRedrawPending = fFalse;
+    if (g_fClosing)
+      return;
+    if (!(wi.fNoUpdate & 1))
+      FRedraw();
+    if (g_view != NULL)
+      g_view->update();
+  });
+}
+
+
+/*
+******************************************************************************
+** Drawing the Window.
+******************************************************************************
+*/
+
+// Copy a temporary file the chart was saved to onto the clipboard. This is
+// how the Edit / Copy commands work, like the Windows version.
+
+static void CopyTempFileToClipboard(WORD wCmd)
+{
+  QClipboard *clip = QGuiApplication::clipboard();
+  QFile file(szFileTemp);
+  QByteArray ba;
+  QImage img;
+  QMimeData *mime;
+
+  if (!file.open(QIODevice::ReadOnly))
+    return;
+  ba = file.readAll();
+  file.close();
+  if (wCmd == cmdCopyBitmap) {
+    if (img.loadFromData(ba))
+      clip->setImage(img);
+  } else if (wCmd == cmdCopyText && us.fTextHTML) {
+    mime = new QMimeData;
+    mime->setHtml(QString::fromUtf8(ba));
+    clip->setMimeData(mime);
+  } else if (wCmd == cmdCopySVG) {
+    mime = new QMimeData;
+    mime->setData("image/svg+xml", ba);
+    mime->setText(QString::fromUtf8(ba));
+    clip->setMimeData(mime);
+  } else if (wCmd == cmdCopyPicture) {
+    mime = new QMimeData;
+    mime->setData("image/x-wmf", ba);
+    clip->setMimeData(mime);
+  } else
+    clip->setText(QsFromSz(ba.constData(), (int)ba.size()));
+  unlink(szFileTemp);
+}
+
+
+// This important routine is the bottleneck to redraw the window and call into
+// the program to draw or do action with a particular chart type. This is the
+// Qt version of FRedraw() in wdriver.cpp. Graphics charts get drawn into the
+// gi.bmp memory bitmap (see FActionX), and text charts get drawn with
+// TextOut() calls into a window sized image.
+
+flag API FRedraw(void)
+{
+  HCURSOR hcurPrev = NULL;
+  QPainter paint;
+  QFont font;
+  QImage imgText;
+  char szFile[cchSzDef];
+  int i;
+  flag fSmartText = fFalse, fAnsiColor = fFalse, fAnsiChar = fFalse,
+    fSmartHTML = fFalse, fInverse = fFalse, fText;
+
+  if (us.fSmartSave && (wi.wCmd == cmdSaveText || wi.wCmd == cmdCopyText)) {
+    if (!us.fTextHTML)
+      fSmartText = fTrue;
+    else
+      fSmartHTML = fTrue;
+  }
+  HourglassOn;
+  wi.fSmoothZoom = fFalse;
+  fText = !us.fGraphics;
+
+  if (!fText) {
+    // Set up a graphics chart.
+    if (wi.fWindowChart) {
+      gs.xWin = wi.xClient; gs.yWin = wi.yClient;
+    }
+    gi.nScale = gs.nScale/100;
+    gi.nScaleText = gs.nScaleText/50;
+    gi.kiCur = -1;
+    wi.hdc = hdcNil;
+  } else {
+    // Set up a text chart, drawn into an image the size of the window.
+    gi.xOffset = gi.yOffset = 0;
+    imgText = QImage(wi.xClient > 0 ? wi.xClient : 1,
+      wi.yClient > 0 ? wi.yClient : 1, QImage::Format_RGB32);
+    i = gs.nScale/100;
+    if (gs.nFontTxt > 0) {
+      font = QFont(rgszFontName[gs.nFontTxt]);
+      font.setPixelSize((3 + 3*i)*2 - (gs.nFontTxt == fiLucida ? 5 : 0));
+    } else {
+      font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+      font.setPixelSize(i < 2 ? 8 : (i < 3 ? 12 : (i < 4 ? 16 : 18)));
+    }
+    font.setStyleHint(QFont::TypeWriter);
+    font.setFixedPitch(fTrue);
+    font.setBold(gs.fThick && gs.nFontTxt > 0);
+    {
+      QFontMetrics fm(font);
+      wi.xChar = fm.horizontalAdvance(QLatin1Char('M'));
+      wi.yChar = fm.lineSpacing();
+    }
+    paint.begin(&imgText);
+    paint.setFont(font);
+    g_dcWin.img = &imgText;
+    g_dcWin.paint = &paint;
+    g_dcWin.kvText = KvFromKi(kLtGrayA);
+    g_dcWin.nBkMode = TRANSPARENT;
+    wi.hdc = &g_dcWin;
+    TextClearScreen();
+    if (wi.wCmd == cmdCopyText && us.fTextHTML)
+      is.nHTML = -1;
+  }
+  if (fSmartText) {
+    fAnsiColor = us.fAnsiColor; fAnsiChar = us.fAnsiChar;
+    us.fAnsiColor = fFalse; us.fAnsiChar = fFalse;
+  } else if (fSmartHTML) {
+    fInverse = gs.fInverse; fAnsiChar = us.fAnsiChar;
+    gs.fInverse = fTrue; us.fAnsiChar = fFalse;
+    InitColorPalette(1);
+  }
+
+  Action();    // Actually go and create the chart here.
+
+  // Create the chart again if also autosaving chart to file.
+
+  if (wi.fAutoSave && us.fGraphics &&
+    gs.ft != (!wi.fAutoSaveWire ? ftBmp : ftWire)) {
+    gs.ft = !wi.fAutoSaveWire ? ftBmp : ftWire;
+    if (!wi.fAutoSaveNum)
+      sprintf(szFile, "%s",
+        !wi.fAutoSaveWire ? szFileAutoCore : "astrolog.dw");
+    else {
+      sprintf(szFile, "ast%05d.%s", wi.nAutoSaveNum,
+        !wi.fAutoSaveWire ? (gs.chBmpMode != 'P' ? "bmp" : "png") : "dw");
+      wi.nAutoSaveNum++;
+    }
+    FCloneSz(szFile, &gi.szFileOut);
+    Action();
+    FCloneSz(NULL, &gi.szFileOut);
+    if (gs.ft == ftWire) {
+      gs.xWin /= WIREMUL; gs.yWin /= WIREMUL; gs.nScale /= WIREMUL;
+    }
+    gs.ft = ftNone;
+  }
+
+  // Cleanup and keep the result to show in the window.
+
+  if (fSmartText) {
+    us.fAnsiColor = fAnsiColor; us.fAnsiChar = fAnsiChar;
+  } else if (fSmartHTML) {
+    gs.fInverse = fInverse; us.fAnsiChar = fAnsiChar;
+    InitColorPalette(fInverse);
+  }
+  if (fText) {
+    paint.end();
+    g_dcWin.paint = NULL;
+    g_dcWin.img = NULL;
+    wi.hdc = hdcNil;
+    if (is.szFileScreen == NULL) {
+      g_imgChart = imgText;
+      g_fImgText = fTrue;
+    }
+  } else if (gs.ft == ftNone && gi.bmp.rgb != NULL && is.szFileScreen == NULL)
+  {
+    // Copy the chart from the 24 bit bitmap the core program drew it in.
+    g_imgChart = QImage(gi.bmp.rgb, gi.bmp.x, gi.bmp.y, gi.bmp.clRow << 2,
+      QImage::Format_BGR888).copy();
+    g_fImgText = fFalse;
+  }
+  HourglassOff;
+#ifdef EXPRESS
+  // Notify AstroExpression the screen has just been redrawn.
+  if (!us.fExpOff && FSzSet(us.szExpDisp3))
+    ParseExpression(us.szExpDisp3);
+#endif
+
+  // If all text was scrolled off the top of the screen, scroll up.
+  // If all text was scrolled off the left of the screen, scroll left.
+
+  if (fText && is.S == stdout) {
+    if (is.cchRow - wi.yScroll * 10 < 0)
+      PostMessage(wi.hwnd, WM_VSCROLL,
+        LFromWW(SB_THUMBPOSITION, is.cchRow / 10 - 2), 0);
+    if (is.cchColMax - wi.xScroll * 10 < 0)
+      PostMessage(wi.hwnd, WM_HSCROLL,
+        LFromWW(SB_THUMBPOSITION, is.cchColMax / 10 - 2), 0);
+  }
+
+  // Sometimes creating a chart means saving it to a file instead of drawing
+  // it on screen. If were in file mode, cleanup things here.
+
+  if (is.szFileScreen != NULL || gs.ft != ftNone) {
+    FCloneSz(NULL, &is.szFileScreen);
+    gs.ft = ftNone;
+    if (wi.wCmd == cmdCopyText || wi.wCmd == cmdCopyBitmap ||
+      wi.wCmd == cmdCopyPicture || wi.wCmd == cmdCopyPS ||
+      wi.wCmd == cmdCopySVG || wi.wCmd == cmdCopyWire) {
+      CopyTempFileToClipboard(wi.wCmd);
+      wi.wCmd = 0;
+    }
+    // Draw the chart again on screen, since it was saved to a file instead.
+    wi.fRedraw = fTrue;
+    ProcessState();
+  }
+  if (fSmartText || fSmartHTML)
+    wi.wCmd = 0;
+
+  wi.fRedraw = fFalse;
+  if (wi.fNoUpdate != 0)
+    wi.fNoUpdate = fTrue;
+  if (g_view != NULL)
+    g_view->update();
+  return fTrue;
+}
+
+
+// Clear and erase the entire text screen. For graphics charts this is done
+// within the 24 bit bitmap, so this is only called for text charts.
+
+void WinClearScreen(KI ki)
+{
+  QtDC *pdc = wi.hdc;
+
+  if (pdc == NULL || pdc->img == NULL)
+    return;
+  if (pdc->paint != NULL)
+    pdc->paint->fillRect(pdc->img->rect(), QcFromKv(KvFromKi(ki)));
+  else
+    pdc->img->fill(QcFromKv(KvFromKi(ki)));
+}
+
+
+// Change the size of the window so its client area is the dimensions of the
+// current graphics chart. This is the Qt version of the routine in xscreen.
+
+void ResizeWindowToChart()
+{
+  QSize sizeWin, sizeView;
+  QRect rcScr;
+  int x, y;
+
+  if (!us.fGraphics || g_win == NULL || g_view == NULL)
+    return;
+  if (gs.xWin == 0)
+    gs.xWin = DEFAULTX;
+  if (gs.yWin == 0)
+    gs.yWin = DEFAULTY;
+  sizeWin = g_win->size();
+  sizeView = g_view->size();
+  x = gs.xWin + (gi.nMode == 0 ? (SIDESIZE * gi.nScaleText) >> 1 : 0) +
+    (sizeWin.width() - sizeView.width());
+  y = gs.yWin + (sizeWin.height() - sizeView.height());
+  if (g_win->screen() != NULL) {
+    rcScr = g_win->screen()->availableGeometry();
+    if (x > rcScr.width())
+      x = rcScr.width();
+    if (y > rcScr.height())
+      y = rcScr.height();
+  }
+  wi.fNotManual = fTrue;
+  g_win->resize(x, y);
+  wi.fNotManual = fFalse;
+}
+
+
+// Implements the Edit / Paste menu command: Load text chart info or a bitmap
+// from the clipboard. This is the Qt version of the routine in wdriver.cpp.
+
+flag FFilePaste(void)
+{
+  QClipboard *clip = QGuiApplication::clipboard();
+  const QMimeData *mime = clip->mimeData();
+  QImage img;
+  QFile file(szFileTemp);
+  QByteArray ba;
+  flag fText;
+
+  if (mime == NULL)
+    return fFalse;
+  if (mime->hasImage())
+    fText = fFalse;
+  else if (mime->hasText())
+    fText = fTrue;
+  else {
+    PrintWarning("There is nothing on the clipboard to paste.");
+    return fFalse;
+  }
+  if (fText) {
+    ba = mime->text().toUtf8();
+    if (!file.open(QIODevice::WriteOnly))
+      return fFalse;
+    file.write(ba);
+    file.close();
+    FInputData(szFileTemp);
+  } else {
+    img = qvariant_cast<QImage>(mime->imageData());
+    if (img.isNull() || !img.save(szFileTemp, "BMP"))
+      return fFalse;
+    FLoadBmp(szFileTemp, &gi.bmpBack, fTrue);
+  }
+  unlink(szFileTemp);
+  return fTrue;
+}
+
+
+// Implements the File / Print menu command. Not yet available in Qt.
+
+flag API DlgPrint()
+{
+  PrintWarning("Printing is not yet available in the Qt version.\n"
+    "Use File / Export to save the chart as a bitmap, PostScript, or SVG "
+    "file, and print that file instead.");
+  return fTrue;
+}
+
+
+/*
+******************************************************************************
+** Win32 Subset: Messages and Windows.
+******************************************************************************
+*/
+
+LRESULT SendMessage(HWND hwnd, UINT wMsg, WPARAM wParam, LPARAM lParam)
+{
+  if (hwnd == wi.hwndMain)
+    QtDispatch(wMsg, wParam, lParam);
+  return 0;
+}
+
+BOOL PostMessage(HWND hwnd, UINT wMsg, WPARAM wParam, LPARAM lParam)
+{
+  if (g_app == NULL)
+    return fFalse;
+  QTimer::singleShot(0, [=]() {
+    if (!g_fClosing)
+      QtDispatch(wMsg, wParam, lParam);
+  });
+  return fTrue;
+}
+
+BOOL SetWindowText(HWND hwnd, LPCSTR sz)
+{
+  if (hwnd != NULL && hwnd->widget != NULL)
+    hwnd->widget->setWindowTitle(QsFromSz(sz));
+  return fTrue;
+}
+
+BOOL GetWindowRect(HWND hwnd, LPRECT prc)
+{
+  QRect rc;
+
+  if (hwnd == GetDesktopWindow()) {
+    rc = QGuiApplication::primaryScreen()->geometry();
+  } else if (hwnd != NULL && hwnd->widget != NULL)
+    rc = hwnd->widget->frameGeometry();
+  prc->left = rc.left(); prc->top = rc.top();
+  prc->right = rc.left() + rc.width(); prc->bottom = rc.top() + rc.height();
+  return fTrue;
+}
+
+BOOL GetClientRect(HWND hwnd, LPRECT prc)
+{
+  prc->left = prc->top = 0;
+  prc->right = wi.xClient; prc->bottom = wi.yClient;
+  return fTrue;
+}
+
+// Note that on Wayland, applications can't position their own windows, so
+// only the size will change there.
+
+BOOL SetWindowPos(HWND hwnd, HWND hwndAfter, int x, int y, int cx, int cy,
+  UINT uFlags)
+{
+  if (hwnd == NULL || hwnd->widget == NULL)
+    return fFalse;
+  if (hwnd == wi.hwndMain && wi.fWindowFull) {
+    hwnd->widget->showFullScreen();
+    return fTrue;
+  }
+  if (hwnd->widget->isFullScreen())
+    hwnd->widget->showNormal();
+  hwnd->widget->move(x, y);
+  hwnd->widget->resize(cx, cy);
+  return fTrue;
+}
+
+BOOL MoveWindow(HWND hwnd, int x, int y, int cx, int cy, BOOL fRepaint)
+{
+  return SetWindowPos(hwnd, NULL, x, y, cx, cy, 0);
+}
+
+BOOL ClientToScreen(HWND hwnd, LPPOINT ppt)
+{
+  QPoint pt(ppt->x, ppt->y);
+
+  if (hwnd == wi.hwndMain && g_view != NULL)
+    pt = g_view->mapToGlobal(pt);
+  ppt->x = pt.x(); ppt->y = pt.y();
+  return fTrue;
+}
+
+BOOL ScreenToClient(HWND hwnd, LPPOINT ppt)
+{
+  QPoint pt(ppt->x, ppt->y);
+
+  if (hwnd == wi.hwndMain && g_view != NULL)
+    pt = g_view->mapFromGlobal(pt);
+  ppt->x = pt.x(); ppt->y = pt.y();
+  return fTrue;
+}
+
+BOOL GetCursorPos(LPPOINT ppt)
+{
+  QPoint pt = QCursor::pos();
+
+  ppt->x = pt.x(); ppt->y = pt.y();
+  return fTrue;
+}
+
+HWND GetDesktopWindow(void)
+{
+  static QtWnd wndDesktop = {NULL};
+  return &wndDesktop;
+}
+
+HWND GetTopWindow(HWND hwnd)
+{
+  return NULL;
+}
+
+int SetScrollPos(HWND hwnd, int nBar, int nPos, BOOL fRedraw)
+{
+  QScrollBar *sb = (nBar == SB_HORZ ? g_sbHorz : g_sbVert);
+
+  if (sb == NULL)
+    return 0;
+  sb->blockSignals(fTrue);
+  sb->setValue(nPos);
+  sb->blockSignals(fFalse);
+  return nPos;
+}
+
+BOOL SetScrollRange(HWND hwnd, int nBar, int nMin, int nMax, BOOL fRedraw)
+{
+  if (nBar == SB_HORZ || nBar == SB_BOTH)
+    if (g_sbHorz != NULL)
+      g_sbHorz->setRange(nMin, nMax);
+  if (nBar == SB_VERT || nBar == SB_BOTH)
+    if (g_sbVert != NULL)
+      g_sbVert->setRange(nMin, nMax);
+  return fTrue;
+}
+
+BOOL ShowScrollBar(HWND hwnd, int nBar, BOOL fShow)
+{
+  if ((nBar == SB_HORZ || nBar == SB_BOTH) && g_sbHorz != NULL)
+    g_sbHorz->setVisible(fShow);
+  if ((nBar == SB_VERT || nBar == SB_BOTH) && g_sbVert != NULL)
+    g_sbVert->setVisible(fShow);
+  return fTrue;
+}
+
+BOOL RedrawWindow(HWND hwnd, const RECT *prc, HRGN hrgn, UINT uFlags)
+{
+  QtScheduleRedraw();
+  return fTrue;
+}
+
+BOOL InvalidateRect(HWND hwnd, const RECT *prc, BOOL fErase)
+{
+  QtScheduleRedraw();
+  return fTrue;
+}
+
+BOOL ShowWindow(HWND hwnd, int nCmdShow)
+{
+  if (hwnd == NULL || hwnd->widget == NULL)
+    return fFalse;
+  hwnd->widget->setVisible(nCmdShow != SW_HIDE);
+  return fTrue;
+}
+
+BOOL EnableWindow(HWND hwnd, BOOL fEnable)
+{
+  if (hwnd == NULL || hwnd->widget == NULL)
+    return fFalse;
+  hwnd->widget->setEnabled(fEnable);
+  return fTrue;
+}
+
+HWND SetFocus(HWND hwnd)
+{
+  if (hwnd != NULL && hwnd->widget != NULL)
+    hwnd->widget->setFocus();
+  return hwnd;
+}
+
+BOOL DestroyWindow(HWND hwnd)
+{
+  return fTrue;
+}
+
+short GetKeyState(int vk)
+{
+  Qt::KeyboardModifiers km = QGuiApplication::queryKeyboardModifiers();
+
+  switch (vk) {
+  case VK_SHIFT:   return (km & Qt::ShiftModifier)   ? (short)0x8000 : 0;
+  case VK_CONTROL: return (km & Qt::ControlModifier) ? (short)0x8000 : 0;
+  case VK_MENU:    return (km & Qt::AltModifier)     ? (short)0x8000 : 0;
+  }
+  return 0;
+}
+
+HCURSOR LoadCursor(HINSTANCE hinst, LPCSTR id)
+{
+  return id == IDC_WAIT ? HCURSOR_WAIT : HCURSOR_ARROW;
+}
+
+// The hourglass macros call SetCursor(wait) and later SetCursor(previous).
+
+HCURSOR SetCursor(HCURSOR hcur)
+{
+  if (g_app == NULL)
+    return HCURSOR_ARROW;
+  if (hcur == HCURSOR_WAIT) {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    g_cWait++;
+  } else if (g_cWait > 0) {
+    QApplication::restoreOverrideCursor();
+    g_cWait--;
+  }
+  return HCURSOR_ARROW;
+}
+
+int ShowCursor(BOOL fShow)
+{
+  if (g_view != NULL)
+    g_view->setCursor(fShow ? Qt::ArrowCursor : Qt::BlankCursor);
+  return fShow ? 0 : -1;
+}
+
+uintptr_t SetTimer(HWND hwnd, uintptr_t id, UINT ms, TIMERPROC pfn)
+{
+  if (g_timer == NULL)
+    return 0;
+  g_timer->start((int)(ms > 0 ? ms : 1));
+  return id;
+}
+
+BOOL KillTimer(HWND hwnd, uintptr_t id)
+{
+  if (g_timer != NULL)
+    g_timer->stop();
+  return fTrue;
+}
+
+int MessageBox(HWND hwnd, LPCSTR sz, LPCSTR szTitle, UINT uType)
+{
+  QMessageBox::Icon qicon = QMessageBox::NoIcon;
+  QWidget *parent = (hwnd != NULL ? hwnd->widget : NULL);
+  QMessageBox::StandardButtons sb = QMessageBox::Ok;
+  int n;
+
+  switch (uType & 0xf0) {
+  case MB_ICONSTOP:        qicon = QMessageBox::Critical;    break;
+  case MB_ICONQUESTION:    qicon = QMessageBox::Question;    break;
+  case MB_ICONEXCLAMATION: qicon = QMessageBox::Warning;     break;
+  case MB_ICONINFORMATION: qicon = QMessageBox::Information; break;
+  }
+  if ((uType & 0xf) == MB_OKCANCEL)
+    sb = QMessageBox::Ok | QMessageBox::Cancel;
+  else if ((uType & 0xf) == MB_YESNO)
+    sb = QMessageBox::Yes | QMessageBox::No;
+  if (g_app == NULL) {
+    fprintf(stderr, "%s: %s\n", szTitle, sz);
+    return IDOK;
+  }
+  QMessageBox mb(qicon, QsFromSz(szTitle), QsFromSz(sz), sb, parent);
+  n = mb.exec();
+  return n == QMessageBox::Cancel ? IDCANCEL : (n == QMessageBox::Yes ? IDYES :
+    (n == QMessageBox::No ? IDNO : IDOK));
+}
+
+BOOL MessageBeep(UINT uType)
+{
+  QApplication::beep();
+  return fTrue;
+}
+
+void PostQuitMessage(int nExit)
+{
+  if (g_app != NULL)
+    QTimer::singleShot(0, []() { QApplication::quit(); });
+}
+
+
+/*
+******************************************************************************
+** Win32 Subset: Menus.
+******************************************************************************
+*/
+
+// The menu bar and context menus are built from astrolog.rc in phase 2.
+// Until then, menu state changes are remembered so nothing is lost.
+
+HMENU LoadMenu(HINSTANCE hinst, LPCSTR id)
+{
+  if ((intptr_t)id == menu)
+    return &g_menuMain;
+  return NULL;
+}
+
+HMENU GetSubMenu(HMENU hmenu, int i)
+{
+  if (hmenu == &g_menuMain && i == 1)
+    return &g_menuEdit;
+  return NULL;
+}
+
+BOOL DestroyMenu(HMENU hmenu)
+{
+  return fTrue;
+}
+
+BOOL DrawMenuBar(HWND hwnd)
+{
+  return fTrue;
+}
+
+DWORD CheckMenuItem(HMENU hmenu, UINT id, UINT uCheck)
+{
+  flag fOld;
+
+  if (hmenu != &g_menuMain)
+    return (DWORD)-1;
+  fOld = g_mapCheck[id];
+  g_mapCheck[id] = (uCheck & MF_CHECKED) != 0;
+  return fOld ? MF_CHECKED : MF_UNCHECKED;
+}
+
+BOOL CheckMenuRadioItem(HMENU hmenu, UINT idFirst, UINT idLast, UINT idCheck,
+  UINT uFlags)
+{
+  UINT id;
+
+  if (hmenu != &g_menuMain)
+    return fFalse;
+  for (id = idFirst; id <= idLast; id++)
+    g_mapCheck[id] = (id == idCheck);
+  if (idCheck < idFirst || idCheck > idLast)
+    g_mapCheck[idCheck] = fTrue;
+  return fTrue;
+}
+
+BOOL EnableMenuItem(HMENU hmenu, UINT id, UINT uEnable)
+{
+  return fTrue;
+}
+
+BOOL ModifyMenu(HMENU hmenu, UINT id, UINT uFlags, uintptr_t idNew,
+  LPCSTR sz)
+{
+  if (hmenu == &g_menuMain && !(uFlags & MF_BYPOSITION))
+    g_mapMenuText[id] = sz != NULL ? sz : "";
+  else if (hmenu == &g_menuEdit && (uFlags & MF_BYPOSITION))
+    g_mapEditText[id] = sz != NULL ? sz : "";
+  return fTrue;
+}
+
+BOOL DeleteMenu(HMENU hmenu, UINT id, UINT uFlags)
+{
+  return fTrue;
+}
+
+int GetMenuString(HMENU hmenu, UINT id, LPSTR sz, int cchMax, UINT uFlags)
+{
+  std::map<UINT, std::string> &map =
+    (hmenu == &g_menuEdit ? g_mapEditText : g_mapMenuText);
+  std::map<UINT, std::string>::iterator it = map.find(id);
+  std::string s = (it != map.end() ? it->second : std::string());
+
+  if (cchMax <= 0)
+    return 0;
+  strncpy(sz, s.c_str(), cchMax-1);
+  sz[cchMax-1] = chNull;
+  return (int)CchSz(sz);
+}
+
+BOOL TrackPopupMenu(HMENU hmenu, UINT uFlags, int x, int y, int nReserved,
+  HWND hwnd, const RECT *prc)
+{
+  return fFalse;
+}
+
+
+/*
+******************************************************************************
+** Win32 Subset: Dialogs.
+******************************************************************************
+*/
+
+// The dialogs are built from astrolog.rc in phase 3. Until then, the Enter
+// Command dialog is provided with a simple input box, since it can be used
+// to change any setting, and the other dialogs show a notice.
+
+intptr_t DialogBox(HINSTANCE hinst, LPCSTR id, HWND hwndParent,
+  DLGPROC pfn)
+{
+  QWidget *parent = (g_win != NULL ? (QWidget *)g_win : NULL);
+  QString qs;
+  char sz[cchSzLine];
+  bool fOk = false;
+
+  if ((intptr_t)id == dlgCommand) {
+    qs = QInputDialog::getText(parent, QString("Enter Command"),
+      QString("Command line switches:"), QLineEdit::Normal, QString(), &fOk);
+    if (fOk) {
+      CopyQsToSz(qs, sz, cchSzLine);
+      FProcessCommandLine(sz);
+      wi.fCast = wi.fMenuAll = fTrue;
+    }
+    return fOk ? IDOK : IDCANCEL;
+  }
+  QMessageBox::information(parent, QString(szAppName),
+    QString("This dialog is not yet available in the Qt version.\n"
+    "Use Edit / Enter Command (the switch equivalent) instead."));
+  return IDCANCEL;
+}
+
+BOOL EndDialog(HWND hdlg, intptr_t nResult)
+{
+  return fTrue;
+}
+
+HWND GetDlgItem(HWND hdlg, int id)
+{
+  return NULL;
+}
+
+BOOL SetDlgItemText(HWND hdlg, int id, LPCSTR sz)
+{
+  return fFalse;
+}
+
+UINT GetDlgItemText(HWND hdlg, int id, LPSTR sz, int cchMax)
+{
+  if (cchMax > 0)
+    *sz = chNull;
+  return 0;
+}
+
+BOOL SetDlgItemInt(HWND hdlg, int id, UINT n, BOOL fSigned)
+{
+  return fFalse;
+}
+
+BOOL CheckDlgButton(HWND hdlg, int id, UINT uCheck)
+{
+  return fFalse;
+}
+
+UINT IsDlgButtonChecked(HWND hdlg, int id)
+{
+  return BST_UNCHECKED;
+}
+
+BOOL CheckRadioButton(HWND hdlg, int idFirst, int idLast, int idCheck)
+{
+  return fFalse;
+}
+
+LRESULT SendDlgItemMessage(HWND hdlg, int id, UINT wMsg, WPARAM wParam,
+  LPARAM lParam)
+{
+  return 0;
+}
+
+
+/*
+******************************************************************************
+** Win32 Subset: Common Dialogs.
+******************************************************************************
+*/
+
+#include <QFileDialog>
+#include <QColorDialog>
+
+// Convert a Win32 filter string ("Desc\0*.ext\0Desc2\0*.ext2\0\0") to a Qt
+// one ("Desc (*.ext);;Desc2 (*.ext2)"), returning the selected entry too.
+
+static QString QsFilterFromOfn(LPOPENFILENAME pofn, QString *pqsSel)
+{
+  QStringList list;
+  CONST char *pch = pofn->lpstrFilter, *pchPat;
+  QString qsDesc, qsPat;
+  int i = 1;
+
+  if (pch == NULL)
+    return QString();
+  while (*pch) {
+    qsDesc = QString::fromLatin1(pch);
+    pchPat = pch + CchSz(pch) + 1;
+    qsPat = QString::fromLatin1(pchPat).replace(';', ' ');
+    if (qsDesc.contains('('))
+      qsDesc = qsDesc.left(qsDesc.indexOf('(')).trimmed();
+    if (qsPat == "*.*")
+      qsPat = "*";
+    list << QString("%1 (%2)").arg(qsDesc, qsPat);
+    if (i == (int)pofn->nFilterIndex && pqsSel != NULL)
+      *pqsSel = list.last();
+    pch = pchPat + CchSz(pchPat) + 1;
+    i++;
+  }
+  return list.join(";;");
+}
+
+// Store a chosen file name into the OPENFILENAME's buffers: the full path in
+// lpstrFile, and the name alone in lpstrFileTitle.
+
+static void SetOfnResult(LPOPENFILENAME pofn, const QString &qs)
+{
+  QByteArray ba = QDir::toNativeSeparators(qs).toLocal8Bit(),
+    baTitle = QFileInfo(qs).fileName().toLocal8Bit();
+  int cch;
+
+  if (pofn->lpstrFile != NULL && pofn->nMaxFile > 0) {
+    cch = (int)ba.size();
+    if (cch >= (int)pofn->nMaxFile)
+      cch = pofn->nMaxFile - 1;
+    memcpy(pofn->lpstrFile, ba.constData(), cch);
+    pofn->lpstrFile[cch] = chNull;
+  }
+  // Astrolog opens lpstrFileTitle relative to the current directory, so for
+  // a file in another folder give the full path there too.
+  if (pofn->lpstrFileTitle != NULL && pofn->nMaxFileTitle > 0) {
+    if (QFileInfo(qs).absolutePath() != QDir::currentPath())
+      baTitle = ba;
+    cch = (int)baTitle.size();
+    if (cch >= (int)pofn->nMaxFileTitle)
+      cch = pofn->nMaxFileTitle - 1;
+    memcpy(pofn->lpstrFileTitle, baTitle.constData(), cch);
+    pofn->lpstrFileTitle[cch] = chNull;
+  }
+}
+
+static BOOL FDoFileDialog(LPOPENFILENAME pofn, flag fSave)
+{
+  QWidget *parent = (g_win != NULL ? (QWidget *)g_win : NULL);
+  QString qsSel, qsFilter = QsFilterFromOfn(pofn, &qsSel), qs, qsDir;
+  char *pch = pofn->lpstrFile;
+
+  qsDir = (pofn->lpstrInitialDir != NULL ?
+    QString::fromLocal8Bit(pofn->lpstrInitialDir) : QDir::currentPath());
+  // Default file name, if it isn't just a wildcard pattern.
+  if (pch != NULL && *pch && strchr(pch, '*') == NULL)
+    qsDir = QDir(qsDir).filePath(QString::fromLocal8Bit(pch));
+  if (!fSave)
+    qs = QFileDialog::getOpenFileName(parent,
+      QsFromSz(pofn->lpstrTitle), qsDir, qsFilter, &qsSel);
+  else
+    qs = QFileDialog::getSaveFileName(parent,
+      QsFromSz(pofn->lpstrTitle), qsDir, qsFilter, &qsSel);
+  if (qs.isEmpty())
+    return fFalse;
+  if (fSave && pofn->lpstrDefExt != NULL && QFileInfo(qs).suffix().isEmpty())
+    qs += QString(".") + QString::fromLatin1(pofn->lpstrDefExt);
+  SetOfnResult(pofn, qs);
+  return fTrue;
+}
+
+BOOL GetOpenFileName(LPOPENFILENAME pofn)
+{
+  return FDoFileDialog(pofn, fFalse);
+}
+
+BOOL GetSaveFileName(LPOPENFILENAME pofn)
+{
+  return FDoFileDialog(pofn, fTrue);
+}
+
+BOOL ChooseColor(LPCHOOSECOLOR pcc)
+{
+  QWidget *parent = (g_win != NULL ? (QWidget *)g_win : NULL);
+  QColor qc;
+  int i;
+
+  // Make Astrolog's palette available as the custom colors.
+  if (pcc->lpCustColors != NULL)
+    for (i = 0; i < 16 && i < QColorDialog::customCount(); i++)
+      QColorDialog::setCustomColor(i, QcFromKv(pcc->lpCustColors[i]));
+  qc = QColorDialog::getColor(QcFromKv(pcc->rgbResult), parent);
+  if (!qc.isValid())
+    return fFalse;
+  pcc->rgbResult = Rgb(qc.red(), qc.green(), qc.blue());
+  return fTrue;
+}
+
+BOOL PrintDlg(LPPRINTDLG ppd)
+{
+  return fFalse;
+}
+
+
+/*
+******************************************************************************
+** Win32 Subset: GDI Text Output.
+******************************************************************************
+*/
+
+HDC GetDC(HWND hwnd)
+{
+  g_dcWin.img = (!g_imgChart.isNull() ? &g_imgChart : NULL);
+  g_dcWin.paint = NULL;
+  return &g_dcWin;
+}
+
+int ReleaseDC(HWND hwnd, HDC hdc)
+{
+  if (g_view != NULL)
+    g_view->update();
+  if (hdc == &g_dcWin && hdc->paint == NULL)
+    hdc->img = NULL;
+  return 1;
+}
+
+int GetDeviceCaps(HDC hdc, int nIndex)
+{
+  QScreen *scr = QGuiApplication::primaryScreen();
+
+  if (scr == NULL)
+    return 0;
+  switch (nIndex) {
+  case HORZRES:    return scr->geometry().width();
+  case VERTRES:    return scr->geometry().height();
+  case LOGPIXELSX: return (int)scr->logicalDotsPerInchX();
+  case LOGPIXELSY: return (int)scr->logicalDotsPerInchY();
+  }
+  return 0;
+}
+
+// Text output for text charts. The characters come from PrintSz() in the IBM
+// or Latin-1 character set, and are drawn one per fixed width cell.
+
+BOOL TextOut(HDC hdc, int x, int y, LPCSTR sz, int cch)
+{
+  QString qs;
+  QFontMetrics *pfm;
+  int i;
+
+  if (hdc == NULL || hdc->paint == NULL)
+    return fFalse;
+  for (i = 0; i < cch; i++)
+    qs += QChar((ushort)(us.nCharsetOut != ccLatin ?
+      WchFromChIBM((uchar)sz[i]) : WchFromChLatin((uchar)sz[i])));
+  pfm = new QFontMetrics(hdc->paint->font());
+  if (hdc->nBkMode == OPAQUE)
+    hdc->paint->fillRect(x, y, wi.xChar * cch, wi.yChar,
+      QcFromKv(KvFromKi(gs.fInverse ? kWhiteA : kBlackA)));
+  hdc->paint->setPen(QcFromKv(hdc->kvText));
+  for (i = 0; i < qs.size(); i++)
+    hdc->paint->drawText(x + i*wi.xChar, y + pfm->ascent(), QString(qs[i]));
+  delete pfm;
+  return fTrue;
+}
+
+COLORREF SetTextColor(HDC hdc, COLORREF kv)
+{
+  COLORREF kvOld;
+
+  if (hdc == NULL)
+    return 0;
+  kvOld = hdc->kvText;
+  hdc->kvText = kv;
+  return kvOld;
+}
+
+int SetBkMode(HDC hdc, int nMode)
+{
+  int nOld;
+
+  if (hdc == NULL)
+    return 0;
+  nOld = hdc->nBkMode;
+  hdc->nBkMode = nMode;
+  return nOld;
+}
+
+HGDIOBJ SelectObject(HDC hdc, HGDIOBJ hobj)
+{
+  return NULL;
+}
+
+BOOL DeleteObject(HGDIOBJ hobj)
+{
+  return fTrue;
+}
+
+HGDIOBJ GetStockObject(int n)
+{
+  return NULL;
+}
+
+int SetMapMode(HDC hdc, int nMode)
+{
+  return MM_TEXT;
+}
+
+BOOL SetWindowOrgEx(HDC hdc, int x, int y, LPPOINT ppt)
+{
+  return fTrue;
+}
+
+BOOL SetWindowExtEx(HDC hdc, int x, int y, SIZE *psize)
+{
+  return fTrue;
+}
+
+BOOL SetViewportOrgEx(HDC hdc, int x, int y, LPPOINT ppt)
+{
+  return fTrue;
+}
+
+BOOL SetViewportExtEx(HDC hdc, int x, int y, SIZE *psize)
+{
+  return fTrue;
+}
+
+
+/*
+******************************************************************************
+** Win32 Subset: System.
+******************************************************************************
+*/
+
+DWORD GetModuleFileName(HINSTANCE hinst, LPSTR sz, DWORD cchMax)
+{
+  QByteArray ba;
+  ssize_t cch;
+
+  if (cchMax == 0)
+    return 0;
+  if (g_app != NULL)
+    ba = QCoreApplication::applicationFilePath().toLocal8Bit();
+  else {
+    cch = readlink("/proc/self/exe", sz, cchMax-1);
+    if (cch < 0)
+      cch = 0;
+    sz[cch] = chNull;
+    return (DWORD)cch;
+  }
+  if ((DWORD)ba.size() >= cchMax)
+    ba.truncate(cchMax-1);
+  memcpy(sz, ba.constData(), ba.size());
+  sz[ba.size()] = chNull;
+  return (DWORD)ba.size();
+}
+
+// Open a file with the desktop's default application for it. For Windows
+// Internet Shortcut (.url) files, open the URL they contain instead.
+
+static void OpenWithDesktop(const QString &qsFile)
+{
+  QFile file(qsFile);
+  QString qsLine;
+
+  if (qsFile.endsWith(".url", Qt::CaseInsensitive) &&
+    file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    while (!file.atEnd()) {
+      qsLine = QString::fromLocal8Bit(file.readLine()).trimmed();
+      if (qsLine.startsWith("URL=", Qt::CaseInsensitive)) {
+        QDesktopServices::openUrl(QUrl(qsLine.mid(4)));
+        return;
+      }
+    }
+  }
+  QDesktopServices::openUrl(QUrl::fromLocalFile(qsFile));
+}
+
+// WinExec is only used to open a text file in "Notepad": Use the desktop's
+// default text editor instead.
+
+UINT WinExec(LPCSTR szCmd, UINT uShow)
+{
+  CONST char *pch = strchr(szCmd, ' ');
+
+  OpenWithDesktop(QString::fromLocal8Bit(pch != NULL ? pch+1 : szCmd));
+  return 32;
+}
+
+HINSTANCE ShellExecute(HWND hwnd, LPCSTR szOp, LPCSTR szFile, LPCSTR szParam,
+  LPCSTR szDir, int nShow)
+{
+  OpenWithDesktop(QString::fromLocal8Bit(szFile));
+  return (HINSTANCE)(intptr_t)33;
+}
+
+UINT GetWindowsDirectory(LPSTR sz, UINT cchMax)
+{
+  QByteArray ba = QDir::homePath().toLocal8Bit();
+
+  if (cchMax == 0)
+    return 0;
+  if ((UINT)ba.size() >= cchMax)
+    ba.truncate(cchMax-1);
+  memcpy(sz, ba.constData(), ba.size());
+  sz[ba.size()] = chNull;
+  return (UINT)ba.size();
+}
+
+HANDLE CreateMutex(void *psa, BOOL fOwner, LPCSTR szName)
+{
+  return NULL;
+}
+
+DWORD WaitForSingleObject(HANDLE h, DWORD ms)
+{
+  return 0;
+}
+
+BOOL ReleaseMutex(HANDLE h)
+{
+  return fTrue;
+}
+
+BOOL CloseHandle(HANDLE h)
+{
+  return fTrue;
+}
+
+
+/*
+******************************************************************************
+** Main Program.
+******************************************************************************
+*/
+
+// Combine command line arguments into one string for FProcessCommandLine(),
+// quoting any arguments containing spaces.
+
+static void SzFromArgv(int argc, char **argv, char *sz, int cchMax)
+{
+  std::string s;
+  int i;
+
+  for (i = 1; i < argc; i++) {
+    if (i > 1)
+      s += ' ';
+    if (strchr(argv[i], ' ') != NULL) {
+      s += '"'; s += argv[i]; s += '"';
+    } else
+      s += argv[i];
+  }
+  strncpy(sz, s.c_str(), cchMax-1);
+  sz[cchMax-1] = chNull;
+}
+
+
+// The main program, the starting point of the Qt version of Astrolog. This
+// follows WinMain() in wdriver.cpp: Initialize, process the astrolog.as file
+// and command line, bring up the window, then process events until done.
+
+int main(int argc, char **argv)
+{
+  char szCmdLine[cchSzMax];
+  int nRet;
+#ifdef BETA
+  char sz[cchSzMax];
+#endif
+
+  QApplication app(argc, argv);
+  g_app = &app;
+  QApplication::setApplicationName(QString(szAppName));
+  QApplication::setApplicationVersion(QString(szVersionCore));
+  QGuiApplication::setDesktopFileName(QString("astrolog"));
+
+  // Create the window and the globals that refer to it.
+
+  g_win = new AstroMainWindow();
+  g_wndMain.widget = g_win;
+  wi.hwndMain = wi.hwnd = &g_wndMain;
+  wi.hmenu = &g_menuMain;
+  wi.hmenuEdit = GetSubMenu(wi.hmenu, 1);
+  g_timer = new QTimer(g_win);
+  QObject::connect(g_timer, &QTimer::timeout, []()
+    { QtDispatch(WM_TIMER, 1, 0); });
+
+  // Set up some globals that can't be initialized at compile time.
+
+  InitProgram();
+  is.szProgName = argv[0];
+  ofn.hwndOwner = wi.hwndMain;
+  ofn.lpstrFile = szFileName;
+  ofn.lpstrFileTitle = szFileTitle;
+  prd.hwndOwner = wi.hwndMain;
+
+  // Process the astrolog.as file and the command line.
+
+  FProcessSwitchFile(DEFAULT_INFOFILE, NULL);
+  ciTran = ciHexa = ciFive = ciFour = ciThre = ciTwin = ciMain = ciCore;
+  SzFromArgv(argc, argv, szCmdLine, cchSzMax);
+  FProcessCommandLine(szCmdLine);
+  InitRestrictions(fTrue);
+
+  // Actually bring up and display the window for the first time.
+
+  if (gs.xWin <= 0)
+    gs.xWin = DEFAULTX;
+  if (gs.yWin <= 0)
+    gs.yWin = DEFAULTY;
+  g_win->resize(gs.xWin + g_sbVert->sizeHint().width(),
+    gs.yWin + g_sbHorz->sizeHint().height());
+  g_win->show();
+  g_view->setFocus();
+  ResizeWindowToChart();
+  RedoMenu();
+  wi.lTimer = SetTimer(wi.hwnd, 1, wi.nTimerDelay, NULL);
+#ifdef BETA
+  sprintf(sz, "This is a beta version of %s %s! "
+    "That means changes are still being made and testing is not complete. "
+    "If this is being run after %s %d, %d, "
+    "it should be replaced with the finished release.",
+    szAppName, szVersionCore, szMonth[ciSave.mon], ciSave.day, ciSave.yea);
+  PrintWarning(sz);
+#endif
+  wi.fRedraw = fTrue;
+  ProcessState();
+
+  // Process events until the program is told to terminate.
+
+  nRet = app.exec();
+  g_fClosing = fTrue;
+  g_timer->stop();
+  wi.hwndMain = wi.hwnd = NULL;
+  g_view = NULL;
+  delete g_win;
+  g_win = NULL;
+  g_app = NULL;
+
+  // Cleanup and exit Astrolog.
+
+  FinalizeProgram(fFalse);
+  return nRet;
+}
+#endif // QT
+
+/* wqt.cpp */

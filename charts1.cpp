@@ -2716,7 +2716,7 @@ void PrintChart(flag fProg)
 {
   int fCall = fFalse, nSav;
   flag fHaveGrid = fFalse;
-#ifdef WIN
+#ifdef WINUI
   // Turn off IBM line characters if displaying in font other than Terminal.
   int nSavAnsi;
 
@@ -2942,7 +2942,7 @@ void PrintChart(flag fProg)
     PrintChart(fProg);
     is.fMult = fTrue;
   }
-#ifdef WIN
+#ifdef WINUI
   if (gs.nFontTxt > 0)
     us.fAnsiChar = nSavAnsi;
 #endif

@@ -2515,14 +2515,14 @@ void DrawChartX()
   case gMoons:
     XChartMoons();
     break;
-#ifdef WIN
+#ifdef WINUI
   case gTraTraTim:
   case gTraTraInf:
 #endif
   case gTraTraGra:
     XChartTransit(fFalse, is.fProgress);
     break;
-#ifdef WIN
+#ifdef WINUI
   case gTraNatTim:
   case gTraNatInf:
 #endif
@@ -2599,7 +2599,7 @@ void DrawChartX()
   if (fDrawBorder)
     DrawEdgeAll();
   if (gs.fAntialias
-#ifdef WIN
+#ifdef WINUI
     && wi.nAntialias < 2
 #endif
     )

@@ -1268,12 +1268,12 @@ flag BeginFileX()
 
   if (us.fNoWrite)
     return fFalse;
-#ifdef WIN
+#ifdef WINUI
   if (gi.szFileOut == NULL)
     return fFalse;
 #endif
 
-#ifndef WIN
+#ifndef WINUI
   if (gi.szFileOut == NULL && (gs.ft != ftBmp || (gs.ft == ftBmp &&
     (gs.chBmpMode == 'B' || gs.chBmpMode == 'P')))) {
     sprintf(sz, "(It is recommended to specify an extension of '.%s'.)\n",
@@ -1290,7 +1290,7 @@ flag BeginFileX()
 #endif // WIN
 
   loop {
-#ifndef WIN
+#ifndef WINUI
     if (gi.szFileOut == NULL) {
       sprintf(sz, "Enter name of file to write %s to", gs.ft == ftBmp ?
         "bitmap" : (gs.ft == ftPS ? "PostScript" : (gs.ft == ftWmf ?
@@ -1312,14 +1312,14 @@ flag BeginFileX()
       gs.chBmpMode == 'P')) || gs.ft == ftWmf ? "wb" : "w");
     if (gi.file != NULL)
       break;
-#ifdef WIN
+#ifdef WINUI
     if (wi.fAutoSave)
       break;
 #endif
     sprintf(sz, "Couldn't create output file: %s", gi.szFileOut);
     PrintWarning(sz);
     FCloneSz(NULL, &gi.szFileOut);
-#ifdef WIN
+#ifdef WINUI
     break;
 #endif
   }
