@@ -21,6 +21,7 @@
 
 // Qt headers must come before astrolog.h, since astrolog.h defines short
 // macros (e.g. loop, inv, neg, P, S, min, max) that would clash with them.
+#include <QAction>
 #include <QApplication>
 #include <QClipboard>
 #include <QCloseEvent>
@@ -36,6 +37,8 @@
 #include <QInputDialog>
 #include <QKeyEvent>
 #include <QMainWindow>
+#include <QMenu>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QMouseEvent>
@@ -47,6 +50,8 @@
 #include <QWheelEvent>
 #include <QWidget>
 #include <map>
+#include <tuple>
+#include <vector>
 #include <string>
 #include <unistd.h>
 
@@ -68,9 +73,21 @@ struct QtWnd {
   QWidget *widget;
 };
 
+// A menu or submenu. Each menu resource loaded (the main menu bar, or a
+// context menu) is a tree of these, all sharing the same root, which knows
+// every action in the tree by its command id.
+
+struct QtMenuAction {
+  QAction *action;
+  QMenu *parent;
+};
+
 struct QtMenu {
-  int id;      // Menu resource id (or 0 for the main menu bar).
-  int iSub;    // Submenu index, or -1 for the menu itself.
+  QMenu *qmenu;                 // The Qt menu, or NULL for a root.
+  QtMenu *root;                 // Root of this menu tree.
+  std::vector<QtMenu *> rgSub;  // Submenu at each position, or NULL.
+  std::multimap<UINT, QtMenuAction> mapCmd;  // Root only: Actions by id.
+  std::vector<QtMenu *> rgAll;  // Root only: All nodes, for freeing.
 };
 
 struct QtDC {
@@ -91,6 +108,18 @@ struct QtAccel {
 #define QTACCEL_CONTROL 4
 #define QTACCEL_ALT     8
 
+// Menu table entry, generated into rcqt.inc.
+struct QtMenuEntry {
+  int idMenu;  // Menu resource id, e.g. menu or menuV.
+  int nKind;   // QTMENU_* kind below.
+  int cmd;     // Menu command, for QTMENU_ITEM.
+  CONST char *sz;  // Text (UTF-8), for QTMENU_ITEM and QTMENU_POPUP.
+};
+#define QTMENU_ITEM  0
+#define QTMENU_SEP   1
+#define QTMENU_POPUP 2
+#define QTMENU_END   3
+
 #include "rcqt.inc"
 
 class AstroChartView;
@@ -108,15 +137,8 @@ static flag g_fClosing = fFalse;
 static int g_cWait = 0;          // Nesting count of hourglass cursor.
 
 static QtWnd g_wndMain = {NULL};
-static QtMenu g_menuMain = {menu, -1};
-static QtMenu g_menuEdit = {menu, 1};
+static QtMenu *g_pmenuMain = NULL;  // The main menu bar's tree.
 static QtDC g_dcWin = {NULL, NULL, 0xffffff, OPAQUE};
-
-// Menu state remembered until the menu bar is built (phase 2), so that the
-// check marks and custom macro names set at startup aren't lost.
-static std::map<UINT, flag> g_mapCheck;
-static std::map<UINT, std::string> g_mapMenuText;
-static std::map<UINT, std::string> g_mapEditText;
 
 #define HCURSOR_ARROW ((HCURSOR)(intptr_t)1)
 #define HCURSOR_WAIT  ((HCURSOR)(intptr_t)2)
@@ -408,6 +430,19 @@ protected:
   bool focusNextPrevChild(bool) override
   {
     return fFalse;
+  }
+
+  // Like Windows, accelerator keys take precedence over menu mnemonics such
+  // as Alt+F, so claim any key that has an accelerator before Qt's shortcut
+  // handling sees it. It then arrives in keyPressEvent() above.
+  bool event(QEvent *e) override
+  {
+    if (e->type() == QEvent::ShortcutOverride &&
+      CmdFromKeyEvent((QKeyEvent *)e) != 0) {
+      e->accept();
+      return fTrue;
+    }
+    return QWidget::event(e);
   }
 };
 
@@ -1371,25 +1406,150 @@ void PostQuitMessage(int nExit)
 ******************************************************************************
 */
 
-// The menu bar and context menus are built from astrolog.rc in phase 2.
-// Until then, menu state changes are remembered so nothing is lost.
+// Menus are built from the MENU resources in astrolog.rc, via the rgQtMenu
+// table generated into rcqt.inc. Each menu item's QAction stores its command
+// id, and is found again through the root's mapCmd for the functions below.
+
+// Build the menu tree for the given menu resource. If mb is given, then the
+// top level popups are added to that menu bar (for the main menu).
+
+static QtMenu *PmenuBuild(int idMenu, QMenuBar *mb)
+{
+  QtMenu *root = new QtMenu, *node, *sub;
+  std::vector<QtMenu *> stack;
+  QAction *a;
+  QMenu *qm;
+  CONST QtMenuEntry *pme;
+  QtMenuAction ma;
+
+  root->qmenu = NULL;
+  root->root = root;
+  root->rgAll.push_back(root);
+  stack.push_back(root);
+  for (pme = rgQtMenu; pme->idMenu != 0; pme++) {
+    if (pme->idMenu != idMenu)
+      continue;
+    node = stack.back();
+    switch (pme->nKind) {
+    case QTMENU_POPUP:
+      sub = new QtMenu;
+      sub->root = root;
+      if (node->qmenu != NULL)
+        qm = node->qmenu->addMenu(QString::fromUtf8(pme->sz));
+      else if (mb != NULL)
+        qm = mb->addMenu(QString::fromUtf8(pme->sz));
+      else
+        qm = new QMenu(QString::fromUtf8(pme->sz), g_win);
+      sub->qmenu = qm;
+      node->rgSub.push_back(sub);
+      root->rgAll.push_back(sub);
+      stack.push_back(sub);
+      break;
+    case QTMENU_END:
+      if (stack.size() > 1)
+        stack.pop_back();
+      break;
+    case QTMENU_SEP:
+      if (node->qmenu != NULL)
+        node->qmenu->addSeparator();
+      node->rgSub.push_back(NULL);
+      break;
+    default:
+      if (node->qmenu == NULL)
+        break;
+      a = node->qmenu->addAction(QString::fromUtf8(pme->sz));
+      a->setData(pme->cmd);
+      ma.action = a; ma.parent = node->qmenu;
+      root->mapCmd.insert(std::make_pair((UINT)pme->cmd, ma));
+      node->rgSub.push_back(NULL);
+      // Qt toggles checkable actions when triggered, but Windows doesn't:
+      // The command itself sets the new check state, so undo the toggle.
+      if (mb != NULL)
+        QObject::connect(a, &QAction::triggered, [a](bool fChecked) {
+          if (a->isCheckable()) {
+            a->blockSignals(fTrue);
+            a->setChecked(!fChecked);
+            a->blockSignals(fFalse);
+          }
+          QtDispatch(WM_COMMAND, (WPARAM)a->data().toInt(), 0);
+        });
+      break;
+    }
+  }
+  return root;
+}
+
+
+// Hide any submenus that have become empty, e.g. after DeleteMenu().
+
+static void HideEmptyMenus(QtMenu *root)
+{
+  QList<QAction *> list;
+  size_t i;
+  flag fAny;
+  int j;
+
+  // Go in reverse, so that nested submenus are checked before their parents.
+  for (i = root->rgAll.size(); i-- > 0;) {
+    if (root->rgAll[i]->qmenu == NULL)
+      continue;
+    list = root->rgAll[i]->qmenu->actions();
+    fAny = fFalse;
+    for (j = 0; j < list.size(); j++)
+      if (!list[j]->isSeparator() && list[j]->isVisible())
+        fAny = fTrue;
+    root->rgAll[i]->qmenu->menuAction()->setVisible(fAny);
+  }
+}
+
+
+// Return the action at the given position within a menu, counting items,
+// separators, and submenus like Windows does.
+
+static QAction *PactionFromPos(HMENU hmenu, UINT iPos)
+{
+  QList<QAction *> list;
+
+  if (hmenu == NULL || hmenu->qmenu == NULL)
+    return NULL;
+  list = hmenu->qmenu->actions();
+  return iPos < (UINT)list.size() ? list[iPos] : NULL;
+}
+
 
 HMENU LoadMenu(HINSTANCE hinst, LPCSTR id)
 {
   if ((intptr_t)id == menu)
-    return &g_menuMain;
-  return NULL;
+    return g_pmenuMain;
+  if (g_win == NULL)
+    return NULL;
+  return PmenuBuild((int)(intptr_t)id, NULL);
 }
 
 HMENU GetSubMenu(HMENU hmenu, int i)
 {
-  if (hmenu == &g_menuMain && i == 1)
-    return &g_menuEdit;
-  return NULL;
+  if (hmenu == NULL || i < 0 || i >= (int)hmenu->rgSub.size())
+    return NULL;
+  return hmenu->rgSub[i];
 }
+
+// Free a context menu tree loaded with LoadMenu(). The main menu stays.
 
 BOOL DestroyMenu(HMENU hmenu)
 {
+  QtMenu *root;
+  size_t i;
+
+  if (hmenu == NULL || hmenu->root == g_pmenuMain)
+    return fFalse;
+  root = hmenu->root;
+  for (i = 0; i < root->rgSub.size(); i++)
+    if (root->rgSub[i] != NULL && root->rgSub[i]->qmenu != NULL)
+      root->rgSub[i]->qmenu->deleteLater();  // Deletes nested ones too.
+  for (i = 0; i < root->rgAll.size(); i++)
+    if (root->rgAll[i] != root)
+      delete root->rgAll[i];
+  delete root;
   return fTrue;
 }
 
@@ -1400,67 +1560,201 @@ BOOL DrawMenuBar(HWND hwnd)
 
 DWORD CheckMenuItem(HMENU hmenu, UINT id, UINT uCheck)
 {
-  flag fOld;
+  std::multimap<UINT, QtMenuAction>::iterator it, itEnd;
+  DWORD dwOld = (DWORD)-1;
 
-  if (hmenu != &g_menuMain)
-    return (DWORD)-1;
-  fOld = g_mapCheck[id];
-  g_mapCheck[id] = (uCheck & MF_CHECKED) != 0;
-  return fOld ? MF_CHECKED : MF_UNCHECKED;
+  if (hmenu == NULL)
+    return dwOld;
+  std::tie(it, itEnd) = hmenu->root->mapCmd.equal_range(id);
+  for (; it != itEnd; it++) {
+    if (dwOld == (DWORD)-1)
+      dwOld = it->second.action->isChecked() ? MF_CHECKED : MF_UNCHECKED;
+    it->second.action->setCheckable(fTrue);
+    it->second.action->setChecked((uCheck & MF_CHECKED) != 0);
+  }
+  return dwOld;
 }
 
 BOOL CheckMenuRadioItem(HMENU hmenu, UINT idFirst, UINT idLast, UINT idCheck,
   UINT uFlags)
 {
-  UINT id;
+  std::multimap<UINT, QtMenuAction>::iterator it, itEnd;
 
-  if (hmenu != &g_menuMain)
+  if (hmenu == NULL)
     return fFalse;
-  for (id = idFirst; id <= idLast; id++)
-    g_mapCheck[id] = (id == idCheck);
-  if (idCheck < idFirst || idCheck > idLast)
-    g_mapCheck[idCheck] = fTrue;
+  it = hmenu->root->mapCmd.lower_bound(idFirst);
+  itEnd = hmenu->root->mapCmd.upper_bound(idLast);
+  for (; it != itEnd; it++) {
+    it->second.action->setCheckable(fTrue);
+    it->second.action->setChecked(it->first == idCheck);
+  }
   return fTrue;
 }
 
 BOOL EnableMenuItem(HMENU hmenu, UINT id, UINT uEnable)
 {
+  std::multimap<UINT, QtMenuAction>::iterator it, itEnd;
+  QAction *a;
+
+  if (hmenu == NULL)
+    return fFalse;
+  if (uEnable & MF_BYPOSITION) {
+    a = PactionFromPos(hmenu, id);
+    if (a != NULL)
+      a->setEnabled(!(uEnable & (MF_GRAYED | MF_DISABLED)));
+    return a != NULL;
+  }
+  std::tie(it, itEnd) = hmenu->root->mapCmd.equal_range(id);
+  for (; it != itEnd; it++)
+    it->second.action->setEnabled(!(uEnable & (MF_GRAYED | MF_DISABLED)));
   return fTrue;
 }
+
+// Change the text of a menu item, e.g. to give a macro a custom name.
 
 BOOL ModifyMenu(HMENU hmenu, UINT id, UINT uFlags, uintptr_t idNew,
   LPCSTR sz)
 {
-  if (hmenu == &g_menuMain && !(uFlags & MF_BYPOSITION))
-    g_mapMenuText[id] = sz != NULL ? sz : "";
-  else if (hmenu == &g_menuEdit && (uFlags & MF_BYPOSITION))
-    g_mapEditText[id] = sz != NULL ? sz : "";
+  std::multimap<UINT, QtMenuAction>::iterator it, itEnd;
+  QString qs = QsFromSz(sz);
+  QAction *a;
+
+  if (hmenu == NULL)
+    return fFalse;
+  if (uFlags & MF_BYPOSITION) {
+    a = PactionFromPos(hmenu, id);
+    if (a != NULL)
+      a->setText(qs);
+    return a != NULL;
+  }
+  std::tie(it, itEnd) = hmenu->root->mapCmd.equal_range(id);
+  for (; it != itEnd; it++)
+    it->second.action->setText(qs);
   return fTrue;
 }
 
 BOOL DeleteMenu(HMENU hmenu, UINT id, UINT uFlags)
 {
+  std::multimap<UINT, QtMenuAction>::iterator it, itEnd;
+  QAction *a;
+
+  if (hmenu == NULL)
+    return fFalse;
+  if (uFlags & MF_BYPOSITION) {
+    a = PactionFromPos(hmenu, id);
+    if (a != NULL)
+      a->setVisible(fFalse);
+    return a != NULL;
+  }
+  std::tie(it, itEnd) = hmenu->root->mapCmd.equal_range(id);
+  for (; it != itEnd; it++) {
+    it->second.parent->removeAction(it->second.action);
+    it->second.action->deleteLater();
+  }
+  hmenu->root->mapCmd.erase(id);
+  HideEmptyMenus(hmenu->root);
   return fTrue;
 }
 
 int GetMenuString(HMENU hmenu, UINT id, LPSTR sz, int cchMax, UINT uFlags)
 {
-  std::map<UINT, std::string> &map =
-    (hmenu == &g_menuEdit ? g_mapEditText : g_mapMenuText);
-  std::map<UINT, std::string>::iterator it = map.find(id);
-  std::string s = (it != map.end() ? it->second : std::string());
+  std::multimap<UINT, QtMenuAction>::iterator it;
+  QAction *a = NULL;
 
   if (cchMax <= 0)
     return 0;
-  strncpy(sz, s.c_str(), cchMax-1);
-  sz[cchMax-1] = chNull;
+  *sz = chNull;
+  if (hmenu == NULL)
+    return 0;
+  if (uFlags & MF_BYPOSITION)
+    a = PactionFromPos(hmenu, id);
+  else {
+    it = hmenu->root->mapCmd.find(id);
+    if (it != hmenu->root->mapCmd.end())
+      a = it->second.action;
+  }
+  if (a == NULL)
+    return 0;
+  CopyQsToSz(a->text(), sz, cchMax);
   return (int)CchSz(sz);
 }
+
+// Show a context menu at a screen position. Like Windows, the chosen command
+// is posted to the window as a WM_COMMAND message.
 
 BOOL TrackPopupMenu(HMENU hmenu, UINT uFlags, int x, int y, int nReserved,
   HWND hwnd, const RECT *prc)
 {
-  return fFalse;
+  QAction *a;
+
+  if (hmenu == NULL || hmenu->qmenu == NULL)
+    return fFalse;
+  a = hmenu->qmenu->exec(QPoint(x, y));
+  if (a == NULL || !a->data().isValid())
+    return fFalse;
+  PostMessage(hwnd, WM_COMMAND, (WPARAM)a->data().toInt(), 0);
+  return fTrue;
+}
+
+
+// Create the main menu bar, and remove the commands not available in this
+// build. This follows the same in WinMain() in wdriver.cpp, plus removes the
+// commands that only make sense on Windows.
+
+static void CreateMainMenu(void)
+{
+  g_pmenuMain = PmenuBuild(menu, g_win->menuBar());
+  wi.hmenu = g_pmenuMain;
+#ifndef PS
+  DeleteMenu(wi.hmenu, cmdSavePS, MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdCopyPS, MF_BYCOMMAND);
+#endif
+#ifndef META
+  DeleteMenu(wi.hmenu, cmdSavePicture, MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdCopyPicture, MF_BYCOMMAND);
+#endif
+#ifndef SVG
+  DeleteMenu(wi.hmenu, cmdSaveSVG, MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdCopySVG, MF_BYCOMMAND);
+#endif
+#ifndef WIRE
+  DeleteMenu(wi.hmenu, cmdSaveWire, MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdCopyWire, MF_BYCOMMAND);
+#endif
+#ifndef INTERPRET
+  DeleteMenu(wi.hmenu, cmdInterpret,   MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdHelpMeaning, MF_BYCOMMAND);
+#endif
+#ifndef ARABIC
+  DeleteMenu(wi.hmenu, cmdChartArabic, MF_BYCOMMAND);
+#endif
+#ifndef CONSTEL
+  DeleteMenu(wi.hmenu, cmdConstellation,     MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdGraphicsStarLine,  MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdHelpConstellation, MF_BYCOMMAND);
+#endif
+#ifndef BIORHYTHM
+  DeleteMenu(wi.hmenu, cmdRelBiorhythm, MF_BYCOMMAND);
+#endif
+#ifndef ATLAS
+  DeleteMenu(wi.hmenu, cmdGraphicsCity, MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdDocAtlas,     MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdDocTimezone,  MF_BYCOMMAND);
+#endif
+  // Windows only setup, folder browsing, wallpaper, and print setup.
+  DeleteMenu(wi.hmenu, cmdOpenDir,         MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdSetupUser,       MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdSetupAll,        MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdSetupDesktop,    MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdSetupExtension,  MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdUnsetup,         MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdSaveWallTile,    MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdSaveWallCenter,  MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdSaveWallStretch, MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdSaveWallFit,     MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdSaveWallFill,    MF_BYCOMMAND);
+  DeleteMenu(wi.hmenu, cmdPrintSetup,      MF_BYCOMMAND);
+  wi.hmenuEdit = GetSubMenu(wi.hmenu, 1);
 }
 
 
@@ -1949,8 +2243,7 @@ int main(int argc, char **argv)
   g_win = new AstroMainWindow();
   g_wndMain.widget = g_win;
   wi.hwndMain = wi.hwnd = &g_wndMain;
-  wi.hmenu = &g_menuMain;
-  wi.hmenuEdit = GetSubMenu(wi.hmenu, 1);
+  CreateMainMenu();
   g_timer = new QTimer(g_win);
   QObject::connect(g_timer, &QTimer::timeout, []()
     { QtDispatch(WM_TIMER, 1, 0); });

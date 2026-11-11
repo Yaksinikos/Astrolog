@@ -374,3 +374,922 @@ static const QtAccel rgQtAccel[] = {
   {0x5A, 7, 40333},  // cmdSetInfoAll
   {0x5A, 11, 40332},  // cmdSetInfo2
   {0, 0, 0}};
+
+// Menus: {menu id, kind, command id, text}. Each menu's entries end
+// with a QTMENU_END entry for each POPUP, and the table with id 0.
+
+static const QtMenuEntry rgQtMenu[] = {
+  // menu
+  {121, QTMENU_POPUP, 0, "&File"},
+  {121, QTMENU_ITEM, 40256, "&Open Chart...\tAlt+o"},  // cmdOpenChart
+  {121, QTMENU_ITEM, 40257, "Open Chart #&2...\tAlt+O"},  // cmdOpenChart2
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40305, "&Save Chart Info...\tAlt+w"},  // cmdSaveChart
+  {121, QTMENU_ITEM, 40308, "Save Chart &Positions...\tAlt+W"},  // cmdSavePositions
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40311, "Save Program Settin&gs...\tCtrl+9"},  // cmdSaveSettings
+  {121, QTMENU_POPUP, 0, "Ot&her Formats"},
+  {121, QTMENU_ITEM, 40258, "Open Charts in &Folder...\tCtrl+Alt+o"},  // cmdOpenDir
+  {121, QTMENU_ITEM, 40306, "Save Chart &List...\tCtrl++"},  // cmdSaveList
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40302, "Save Chart &Exchange...\tCtrl+Alt+p"},  // cmdSaveAAF
+  {121, QTMENU_ITEM, 40310, "Save Chart &Quick*Chart...\tCtrl+Alt+k"},  // cmdSaveQuick
+  {121, QTMENU_ITEM, 40304, "Save Chart i&Calendar...\tCtrl+Alt+v"},  // cmdSaveCalendar
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40313, "Export Chart &Text Output...\tCtrl+5"},  // cmdSaveText
+  {121, QTMENU_ITEM, 40303, "Export Chart &Bitmap...\tCtrl+6"},  // cmdSaveBitmap
+  {121, QTMENU_POPUP, 0, "Export &Vector Format"},
+  {121, QTMENU_ITEM, 40307, "Export Chart &Metafile...\tCtrl+7"},  // cmdSavePicture
+  {121, QTMENU_ITEM, 40309, "Export Chart &PostScript...\tCtrl+8"},  // cmdSavePS
+  {121, QTMENU_ITEM, 40312, "Export Chart &SVG...\tCtrl+\\"},  // cmdSaveSVG
+  {121, QTMENU_ITEM, 40319, "Export Chart &Wireframe...\tCtrl+-"},  // cmdSaveWire
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Export as &Wallpaper"},
+  {121, QTMENU_ITEM, 40318, "&Tile Bitmap\tCtrl+Alt+t"},  // cmdSaveWallTile
+  {121, QTMENU_ITEM, 40314, "&Center Bitmap\tCtrl+Alt+c"},  // cmdSaveWallCenter
+  {121, QTMENU_ITEM, 40317, "&Stretch Bitmap\tCtrl+Alt+h"},  // cmdSaveWallStretch
+  {121, QTMENU_ITEM, 40316, "&Fit Bitmap\tCtrl+Alt+i"},  // cmdSaveWallFit
+  {121, QTMENU_ITEM, 40315, "Fi&ll Bitmap\tCtrl+Alt+l"},  // cmdSaveWallFill
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Open Bit&map"},
+  {121, QTMENU_ITEM, 40255, "Open Chart &Background...\tCtrl+B"},  // cmdOpenBackground
+  {121, QTMENU_ITEM, 40259, "Open &World Map...\tCtrl+Alt+b"},  // cmdOpenWorld
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_ITEM, 40335, "&File Settings...\tAlt+E"},  // cmdSettingFile
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40278, "P&rint...\tCtrl+p"},  // cmdPrint
+  {121, QTMENU_ITEM, 40279, "Pr&int Setup...\tCtrl+q"},  // cmdPrintSetup
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40083, "E&xit\tEsc"},  // cmdFileExit
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Edit"},
+  {121, QTMENU_ITEM, 40060, "Enter Command &Line...\tReturn"},  // cmdCommand
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Run Macro (&Normal Set)"},
+  {121, QTMENU_ITEM, 40154, "Macro &1\tF1"},  // cmdMacro01
+  {121, QTMENU_ITEM, 40155, "Macro &2\tF2"},  // cmdMacro02
+  {121, QTMENU_ITEM, 40156, "Macro &3\tF3"},  // cmdMacro03
+  {121, QTMENU_ITEM, 40157, "Macro &4\tF4"},  // cmdMacro04
+  {121, QTMENU_ITEM, 40158, "Macro &5\tF5"},  // cmdMacro05
+  {121, QTMENU_ITEM, 40159, "Macro &6\tF6"},  // cmdMacro06
+  {121, QTMENU_ITEM, 40160, "Macro &7\tF7"},  // cmdMacro07
+  {121, QTMENU_ITEM, 40161, "Macro &8\tF8"},  // cmdMacro08
+  {121, QTMENU_ITEM, 40162, "Macro &9\tF9"},  // cmdMacro09
+  {121, QTMENU_ITEM, 40163, "Macro 1&0\tF10"},  // cmdMacro10
+  {121, QTMENU_ITEM, 40164, "&Macro 11\tF11"},  // cmdMacro11
+  {121, QTMENU_ITEM, 40165, "M&acro 12\tF12"},  // cmdMacro12
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Run Macro (&Shift Set)"},
+  {121, QTMENU_ITEM, 40166, "Macro 1&3\tShift+F1"},  // cmdMacro13
+  {121, QTMENU_ITEM, 40167, "Macro 1&4\tShift+F2"},  // cmdMacro14
+  {121, QTMENU_ITEM, 40168, "Macro 1&5\tShift+F3"},  // cmdMacro15
+  {121, QTMENU_ITEM, 40169, "Macro 1&6\tShift+F4"},  // cmdMacro16
+  {121, QTMENU_ITEM, 40170, "Macro 1&7\tShift+F5"},  // cmdMacro17
+  {121, QTMENU_ITEM, 40171, "Macro 1&8\tShift+F6"},  // cmdMacro18
+  {121, QTMENU_ITEM, 40172, "Macro 1&9\tShift+F7"},  // cmdMacro19
+  {121, QTMENU_ITEM, 40173, "Macro 2&0\tShift+F8"},  // cmdMacro20
+  {121, QTMENU_ITEM, 40174, "Macro 2&1\tShift+F9"},  // cmdMacro21
+  {121, QTMENU_ITEM, 40175, "Macro 2&2\tShift+F10"},  // cmdMacro22
+  {121, QTMENU_ITEM, 40176, "&Macro 23\tShift+F11"},  // cmdMacro23
+  {121, QTMENU_ITEM, 40177, "M&acro 24\tShift+F12"},  // cmdMacro24
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Run Macro (&Control Set)"},
+  {121, QTMENU_ITEM, 40178, "Macro 2&5\tCtrl+F1"},  // cmdMacro25
+  {121, QTMENU_ITEM, 40179, "Macro 2&6\tCtrl+F2"},  // cmdMacro26
+  {121, QTMENU_ITEM, 40180, "Macro 2&7\tCtrl+F3"},  // cmdMacro27
+  {121, QTMENU_ITEM, 40181, "Macro 2&8\tCtrl+F4"},  // cmdMacro28
+  {121, QTMENU_ITEM, 40182, "Macro 2&9\tCtrl+F5"},  // cmdMacro29
+  {121, QTMENU_ITEM, 40183, "Macro 3&0\tCtrl+F6"},  // cmdMacro30
+  {121, QTMENU_ITEM, 40184, "Macro 3&1\tCtrl+F7"},  // cmdMacro31
+  {121, QTMENU_ITEM, 40185, "Macro 3&2\tCtrl+F8"},  // cmdMacro32
+  {121, QTMENU_ITEM, 40186, "Macro 3&3\tCtrl+F9"},  // cmdMacro33
+  {121, QTMENU_ITEM, 40187, "Macro 3&4\tCtrl+F10"},  // cmdMacro34
+  {121, QTMENU_ITEM, 40188, "&Macro 35\tCtrl+F11"},  // cmdMacro35
+  {121, QTMENU_ITEM, 40189, "M&acro 36\tCtrl+F12"},  // cmdMacro36
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Run Macro (&Alt Set)"},
+  {121, QTMENU_ITEM, 40190, "Macro 3&7\tAlt+F1"},  // cmdMacro37
+  {121, QTMENU_ITEM, 40191, "Macro 3&8\tAlt+F2"},  // cmdMacro38
+  {121, QTMENU_ITEM, 40192, "Macro 3&9\tAlt+F3"},  // cmdMacro39
+  {121, QTMENU_ITEM, 40193, "Macro 4&0\tAlt+F4"},  // cmdMacro40
+  {121, QTMENU_ITEM, 40194, "Macro 4&1\tAlt+F5"},  // cmdMacro41
+  {121, QTMENU_ITEM, 40195, "Macro 4&2\tAlt+F6"},  // cmdMacro42
+  {121, QTMENU_ITEM, 40196, "Macro 4&3\tAlt+F7"},  // cmdMacro43
+  {121, QTMENU_ITEM, 40197, "Macro 4&4\tAlt+F8"},  // cmdMacro44
+  {121, QTMENU_ITEM, 40198, "Macro 4&5\tAlt+F9"},  // cmdMacro45
+  {121, QTMENU_ITEM, 40199, "Macro 4&6\tAlt+F10"},  // cmdMacro46
+  {121, QTMENU_ITEM, 40200, "&Macro 47\tAlt+F11"},  // cmdMacro47
+  {121, QTMENU_ITEM, 40201, "M&acro 48\tAlt+F12"},  // cmdMacro48
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Run Macro (Ctrl+S&hift Set)"},
+  {121, QTMENU_ITEM, 40202, "Macro 4&9\tCtrl+Shift+F1"},  // cmdMacro49
+  {121, QTMENU_ITEM, 40203, "Macro 5&0\tCtrl+Shift+F2"},  // cmdMacro50
+  {121, QTMENU_ITEM, 40204, "Macro 5&1\tCtrl+Shift+F3"},  // cmdMacro51
+  {121, QTMENU_ITEM, 40205, "Macro 5&2\tCtrl+Shift+F4"},  // cmdMacro52
+  {121, QTMENU_ITEM, 40206, "Macro 5&3\tCtrl+Shift+F5"},  // cmdMacro53
+  {121, QTMENU_ITEM, 40207, "Macro 5&4\tCtrl+Shift+F6"},  // cmdMacro54
+  {121, QTMENU_ITEM, 40208, "Macro 5&5\tCtrl+Shift+F7"},  // cmdMacro55
+  {121, QTMENU_ITEM, 40209, "Macro 5&6\tCtrl+Shift+F8"},  // cmdMacro56
+  {121, QTMENU_ITEM, 40210, "Macro 5&7\tCtrl+Shift+F9"},  // cmdMacro57
+  {121, QTMENU_ITEM, 40211, "Macro 5&8\tCtrl+Shift+F10"},  // cmdMacro58
+  {121, QTMENU_ITEM, 40212, "&Macro 59\tCtrl+Shift+F11"},  // cmdMacro59
+  {121, QTMENU_ITEM, 40213, "M&acro 60\tCtrl+Shift+F12"},  // cmdMacro60
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Run Macro (Alt+Sh&ift Set)"},
+  {121, QTMENU_ITEM, 40214, "Macro 6&1\tAlt+Shift+F1"},  // cmdMacro61
+  {121, QTMENU_ITEM, 40215, "Macro 6&2\tAlt+Shift+F2"},  // cmdMacro62
+  {121, QTMENU_ITEM, 40216, "Macro 6&3\tAlt+Shift+F3"},  // cmdMacro63
+  {121, QTMENU_ITEM, 40217, "Macro 6&4\tAlt+Shift+F4"},  // cmdMacro64
+  {121, QTMENU_ITEM, 40218, "Macro 6&5\tAlt+Shift+F5"},  // cmdMacro65
+  {121, QTMENU_ITEM, 40219, "Macro 6&6\tAlt+Shift+F6"},  // cmdMacro66
+  {121, QTMENU_ITEM, 40220, "Macro 6&7\tAlt+Shift+F7"},  // cmdMacro67
+  {121, QTMENU_ITEM, 40221, "Macro 6&8\tAlt+Shift+F8"},  // cmdMacro68
+  {121, QTMENU_ITEM, 40222, "Macro 6&9\tAlt+Shift+F9"},  // cmdMacro69
+  {121, QTMENU_ITEM, 40223, "Macro 7&0\tAlt+Shift+F10"},  // cmdMacro70
+  {121, QTMENU_ITEM, 40224, "&Macro 71\tAlt+Shift+F11"},  // cmdMacro71
+  {121, QTMENU_ITEM, 40225, "M&acro 72\tAlt+Shift+F12"},  // cmdMacro72
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Run Macro (Ct&rl+Alt Set)"},
+  {121, QTMENU_ITEM, 40226, "Macro 7&3\tCtrl+Alt+F1"},  // cmdMacro73
+  {121, QTMENU_ITEM, 40227, "Macro 7&4\tCtrl+Alt+F2"},  // cmdMacro74
+  {121, QTMENU_ITEM, 40228, "Macro 7&5\tCtrl+Alt+F3"},  // cmdMacro75
+  {121, QTMENU_ITEM, 40229, "Macro 7&6\tCtrl+Alt+F4"},  // cmdMacro76
+  {121, QTMENU_ITEM, 40230, "Macro 7&7\tCtrl+Alt+F5"},  // cmdMacro77
+  {121, QTMENU_ITEM, 40231, "Macro 7&8\tCtrl+Alt+F6"},  // cmdMacro78
+  {121, QTMENU_ITEM, 40232, "Macro 7&9\tCtrl+Alt+F7"},  // cmdMacro79
+  {121, QTMENU_ITEM, 40233, "Macro 8&0\tCtrl+Alt+F8"},  // cmdMacro80
+  {121, QTMENU_ITEM, 40234, "Macro 8&1\tCtrl+Alt+F9"},  // cmdMacro81
+  {121, QTMENU_ITEM, 40235, "Macro 8&2\tCtrl+Alt+F10"},  // cmdMacro82
+  {121, QTMENU_ITEM, 40236, "&Macro 83\tCtrl+Alt+F11"},  // cmdMacro83
+  {121, QTMENU_ITEM, 40237, "M&acro 84\tCtrl+Alt+F12"},  // cmdMacro84
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Run Macro (Ctrl+Alt+Shi&ft)"},
+  {121, QTMENU_ITEM, 40238, "Macro 8&5\tCtrl+Alt+Shift+F1"},  // cmdMacro85
+  {121, QTMENU_ITEM, 40239, "Macro 8&6\tCtrl+Alt+Shift+F2"},  // cmdMacro86
+  {121, QTMENU_ITEM, 40240, "Macro 8&7\tCtrl+Alt+Shift+F3"},  // cmdMacro87
+  {121, QTMENU_ITEM, 40241, "Macro 8&8\tCtrl+Alt+Shift+F4"},  // cmdMacro88
+  {121, QTMENU_ITEM, 40242, "Macro 8&9\tCtrl+Alt+Shift+F5"},  // cmdMacro89
+  {121, QTMENU_ITEM, 40243, "Macro 9&0\tCtrl+Alt+Shift+F6"},  // cmdMacro90
+  {121, QTMENU_ITEM, 40244, "Macro 9&1\tCtrl+Alt+Shift+F7"},  // cmdMacro91
+  {121, QTMENU_ITEM, 40245, "Macro 9&2\tCtrl+Alt+Shift+F8"},  // cmdMacro92
+  {121, QTMENU_ITEM, 40246, "Macro 9&3\tCtrl+Alt+Shift+F9"},  // cmdMacro93
+  {121, QTMENU_ITEM, 40247, "Macro 9&4\tCtrl+Alt+Shift+F10"},  // cmdMacro94
+  {121, QTMENU_ITEM, 40248, "&Macro 95\tCtrl+Alt+Shift+F11"},  // cmdMacro95
+  {121, QTMENU_ITEM, 40249, "M&acro 96\tCtrl+Alt+Shift+F12"},  // cmdMacro96
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40066, "Copy Chart &Text Output\tCtrl+%"},  // cmdCopyText
+  {121, QTMENU_ITEM, 40062, "Copy Chart &Bitmap\tCtrl+^"},  // cmdCopyBitmap
+  {121, QTMENU_POPUP, 0, "Copy &Vector Format"},
+  {121, QTMENU_ITEM, 40063, "Copy Chart &Metafile\tCtrl+&&"},  // cmdCopyPicture
+  {121, QTMENU_ITEM, 40064, "Copy Chart &PostScript\tCtrl+*"},  // cmdCopyPS
+  {121, QTMENU_ITEM, 40065, "Copy Chart &SVG\tCtrl+|"},  // cmdCopySVG
+  {121, QTMENU_ITEM, 40067, "Copy Chart &Wireframe\tCtrl+_"},  // cmdCopyWire
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40261, "&Paste\tCtrl+v"},  // cmdPaste
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&View"},
+  {121, QTMENU_ITEM, 40084, "Show &Graphics\tv"},  // cmdGraphics
+  {121, QTMENU_POPUP, 0, "&Window Settings"},
+  {121, QTMENU_ITEM, 40358, "&Buffer Redraws\tTab"},  // cmdWinBuffer
+  {121, QTMENU_ITEM, 40362, "&Redraw Screen\tSpace"},  // cmdWinRedraw
+  {121, QTMENU_ITEM, 40359, "&Clear Screen\tDel"},  // cmdWinClear
+  {121, QTMENU_ITEM, 40361, "&Hourglass on Redraw\tAlt+u"},  // cmdWinHourglass
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40051, "Ch&art Resizes Window\tAlt+Q"},  // cmdChartResizesWindow
+  {121, QTMENU_ITEM, 40360, "&Window Resizes Chart\tCtrl+Alt+q"},  // cmdWindowResizesChart
+  {121, QTMENU_ITEM, 40342, "Si&ze Chart to Window\tB"},  // cmdSizeChartToWindow
+  {121, QTMENU_ITEM, 40344, "&Size Window to Chart\tAlt+U"},  // cmdSizeWindowToChart
+  {121, QTMENU_ITEM, 40343, "Size Window &Full Screen\tShift+Tab"},  // cmdSizeWindowFull
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40329, "Scroll Page &Up\tPgUp"},  // cmdScrollPageUp
+  {121, QTMENU_ITEM, 40328, "Scroll Page &Down\tPgDn"},  // cmdScrollPageDown
+  {121, QTMENU_ITEM, 40327, "Scroll &to Beginning\tHome"},  // cmdScrollHome
+  {121, QTMENU_ITEM, 40326, "Scroll to &End\tEnd"},  // cmdScrollEnd
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_ITEM, 40059, "&Colored Text\tAlt+k"},  // cmdColoredText
+  {121, QTMENU_ITEM, 40058, "&Set Colors...\tAlt+K"},  // cmdColor
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40148, "Show &Interpretations\tAlt+I"},  // cmdInterpret
+  {121, QTMENU_ITEM, 40330, "Print &Nearest Second\tAlt+b"},  // cmdSecond
+  {121, QTMENU_ITEM, 40260, "&Parallel Aspects\tAlt+x"},  // cmdParallel
+  {121, QTMENU_ITEM, 40026, "&Applying Aspects\tAlt+X"},  // cmdApplying
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Info"},
+  {121, QTMENU_ITEM, 40331, "Set Chart &Info...\tAlt+z"},  // cmdSetInfo
+  {121, QTMENU_ITEM, 40251, "Chart for &Now\tn"},  // cmdNow
+  {121, QTMENU_ITEM, 40070, "D&efault Chart Info...\tAlt+d"},  // cmdDefaultInfo
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40332, "Set Chart #&2 Info...\tAlt+Z"},  // cmdSetInfo2
+  {121, QTMENU_ITEM, 40333, "Charts #&3 Through #6...\tCtrl+Z"},  // cmdSetInfoAll
+  {121, QTMENU_POPUP, 0, "Chart &List"},
+  {121, QTMENU_ITEM, 40149, "&Chart List...\tCtrl+Alt+z"},  // cmdList
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40153, "&Previous Chart\tShift+Up"},  // cmdListPrev
+  {121, QTMENU_ITEM, 40152, "&Next Chart\tShift+Down"},  // cmdListNext
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40150, "&First Chart\tCtrl+Up"},  // cmdListFirst
+  {121, QTMENU_ITEM, 40151, "&Last Chart\tCtrl+Down"},  // cmdListLast
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40349, "Swap Chart #&1 and #2\tCtrl+X"},  // cmdSwap12
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40287, "No &Relationship Chart\tc"},  // cmdRelNo
+  {121, QTMENU_ITEM, 40283, "Com&parison Chart\tc"},  // cmdRelComparison
+  {121, QTMENU_ITEM, 40289, "&Synastry Chart\tAlt+y"},  // cmdRelSynastry
+  {121, QTMENU_ITEM, 40284, "&Composite Chart\tAlt+Y"},  // cmdRelComposite
+  {121, QTMENU_ITEM, 40286, "Time Space &Midpoint Chart\tAlt+M"},  // cmdRelMidpoint
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40285, "Date &Difference Chart\tD"},  // cmdRelDate
+  {121, QTMENU_ITEM, 40282, "&Biorhythm Chart\tY"},  // cmdRelBiorhythm
+  {121, QTMENU_ITEM, 40290, "&Transit and Natal\tAlt+N"},  // cmdRelTransit
+  {121, QTMENU_ITEM, 40288, "&Progressed and Natal\tAlt+D"},  // cmdRelProgressed
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Setting"},
+  {121, QTMENU_ITEM, 40341, "&Sidereal Zodiac\ts"},  // cmdSidereal
+  {121, QTMENU_ITEM, 40104, "He&liocentric\th"},  // cmdHeliocentric
+  {121, QTMENU_POPUP, 0, "&House System"},
+  {121, QTMENU_ITEM, 40117, "&Placidus\tCtrl+P"},  // cmdHouse00
+  {121, QTMENU_ITEM, 40118, "&Koch\tCtrl+K"},  // cmdHouse01
+  {121, QTMENU_ITEM, 40120, "&Campanus\tCtrl+C"},  // cmdHouse03
+  {121, QTMENU_ITEM, 40122, "&Regiomontanus\tCtrl+R"},  // cmdHouse05
+  {121, QTMENU_ITEM, 40125, "&Topocentric\tCtrl+T"},  // cmdHouse08
+  {121, QTMENU_ITEM, 40126, "Alca&bitius\tCtrl+A"},  // cmdHouse09
+  {121, QTMENU_ITEM, 40127, "Kr&usinski\tCtrl+S"},  // cmdHouse10
+  {121, QTMENU_ITEM, 40135, "A&.P.C.\tCtrl+L"},  // cmdHouse18
+  {121, QTMENU_ITEM, 40138, "Savard-&A\tCtrl+F"},  // cmdHouse21
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40123, "Porph&yry\tCtrl+Y"},  // cmdHouse06
+  {121, QTMENU_ITEM, 40129, "Pullen (S.Rati&o)\tCtrl+O"},  // cmdHouse12
+  {121, QTMENU_ITEM, 40130, "Pullen (S.&Delta)\tCtrl+D"},  // cmdHouse13
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40121, "&Meridian\tCtrl+M"},  // cmdHouse04
+  {121, QTMENU_ITEM, 40124, "Morinu&s\tCtrl+U"},  // cmdHouse07
+  {121, QTMENU_ITEM, 40134, "Hori&zon\tCtrl+H"},  // cmdHouse17
+  {121, QTMENU_ITEM, 40136, "Carter& P.Equat.\tCtrl+G"},  // cmdHouse19
+  {121, QTMENU_ITEM, 40137, "Suns&hine\tCtrl+J"},  // cmdHouse20
+  {121, QTMENU_ITEM, 40133, "Sr&ipati\tCtrl+I"},  // cmdHouse16
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40119, "&Equal\tCtrl+E"},  // cmdHouse02
+  {121, QTMENU_ITEM, 40128, "E&qual (MC)\tCtrl+Q"},  // cmdHouse11
+  {121, QTMENU_ITEM, 40131, "&Whole\tCtrl+W"},  // cmdHouse14
+  {121, QTMENU_ITEM, 40132, "&Vedic\tCtrl+V"},  // cmdHouse15
+  {121, QTMENU_ITEM, 40139, "&Null\tCtrl+N"},  // cmdHouse22
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "House S&ettings"},
+  {121, QTMENU_ITEM, 40147, "&Solar Chart\tAlt+1"},  // cmdHouseSetSolar
+  {121, QTMENU_ITEM, 40140, "&3D Houses\ta"},  // cmdHouseSet3D
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40141, "Show &Decans\tg"},  // cmdHouseSetDecan
+  {121, QTMENU_ITEM, 40142, "Show D&wads\tCtrl+w"},  // cmdHouseSetDwad
+  {121, QTMENU_ITEM, 40143, "&Flip Signs with Houses\tf"},  // cmdHouseSetFlip
+  {121, QTMENU_ITEM, 40144, "&Geodetic Houses\tAlt+H"},  // cmdHouseSetGeodetic
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40145, "&Indian Wheel Order\tz"},  // cmdHouseSetIndian
+  {121, QTMENU_ITEM, 40146, "Show &Navamsas\tAlt+("},  // cmdHouseSetNavamsa
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_ITEM, 40027, "&Aspect Settings...\tAlt+A"},  // cmdAspect
+  {121, QTMENU_ITEM, 40252, "&Object Settings...\tAlt+j"},  // cmdObject
+  {121, QTMENU_ITEM, 40253, "More Ob&ject Settings...\tAlt+J"},  // cmdObject2
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40291, "&Restrictions...\tAlt+r"},  // cmdRes
+  {121, QTMENU_ITEM, 40345, "Star Restr&ictions...\tAlt+F"},  // cmdStar
+  {121, QTMENU_ITEM, 40298, "&Transit Restrictions...\tAlt+R"},  // cmdResTransit
+  {121, QTMENU_POPUP, 0, "&Planetary Moons"},
+  {121, QTMENU_ITEM, 40048, "&Moons Chart\tM"},  // cmdChartMoons
+  {121, QTMENU_ITEM, 40034, "&Exoplanets Chart\tAlt+`"},  // cmdChartExo
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40250, "Moon &Restrictions...\tCtrl+Tab"},  // cmdMoons
+  {121, QTMENU_ITEM, 40254, "Moon &Object Settings...\tCtrl+Shift+Tab"},  // cmdObjectM
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40296, "&Include Moons\t`"},  // cmdResMoons
+  {121, QTMENU_ITEM, 40292, "Include &Body Centers (COB)\t~"},  // cmdResCOB
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40068, "Object &Customization...\tCtrl+Alt+w"},  // cmdCustom
+  {121, QTMENU_ITEM, 40069, "&Star Customization...\tCtrl+Alt+f"},  // cmdCustomS
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40295, "Include &Minors\tR"},  // cmdResMinor
+  {121, QTMENU_ITEM, 40293, "Include &Cusps\tC"},  // cmdResCusp
+  {121, QTMENU_ITEM, 40299, "Include &Uranians\tu"},  // cmdResUranian
+  {121, QTMENU_ITEM, 40294, "Include D&warfs\ty"},  // cmdResDwarf
+  {121, QTMENU_ITEM, 40297, "Include &Fixed Stars\tU"},  // cmdResStar
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40334, "Calculation Settin&gs...\tAlt+S"},  // cmdSettingCalc
+  {121, QTMENU_ITEM, 40071, "&Display Settings...\tAlt+B"},  // cmdDisplay
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Chart"},
+  {121, QTMENU_ITEM, 40043, "Standard Radi&x\tV"},  // cmdChartList
+  {121, QTMENU_ITEM, 40057, "House &Wheel\tAlt+V"},  // cmdChartWheel
+  {121, QTMENU_ITEM, 40036, "Aspect Midpoint &Grid\tA"},  // cmdChartGrid
+  {121, QTMENU_ITEM, 40029, "&Aspect List\tAlt+l"},  // cmdChartAspect
+  {121, QTMENU_ITEM, 40046, "&Midpoint List\tAlt+m"},  // cmdChartMidpoint
+  {121, QTMENU_ITEM, 40037, "Local Hori&zon\tZ"},  // cmdChartHorizon
+  {121, QTMENU_ITEM, 40049, "Solar System &Orbit\tS"},  // cmdChartOrbit
+  {121, QTMENU_ITEM, 40053, "Ga&uquelin Sectors\tH"},  // cmdChartSector
+  {121, QTMENU_ITEM, 40031, "&Calendar\tK"},  // cmdChartCalendar
+  {121, QTMENU_ITEM, 40042, "Inf&luence\tJ"},  // cmdChartInfluence
+  {121, QTMENU_ITEM, 40033, "Esoter&ic\tAlt+7"},  // cmdChartEsoteric
+  {121, QTMENU_ITEM, 40030, "Astrocartograp&hy\tL"},  // cmdChartAstroGraph
+  {121, QTMENU_ITEM, 40032, "&Ephemeris\tE"},  // cmdChartEphemeris
+  {121, QTMENU_ITEM, 40028, "Ara&bic Parts\tAlt+p"},  // cmdChartArabic
+  {121, QTMENU_ITEM, 40052, "Risi&ng and Setting\tI"},  // cmdChartRising
+  {121, QTMENU_ITEM, 40044, "Nea&rest Cities\tAlt+L"},  // cmdChartLocal
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40356, "&Transits...\tAlt+T"},  // cmdTransit
+  {121, QTMENU_ITEM, 40280, "&Progressions...\tAlt+P"},  // cmdProgress
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40054, "Chart &Settings...\tAlt+C"},  // cmdChartSettings
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Graphics"},
+  {121, QTMENU_ITEM, 40055, "Draw Chart Sp&here\tX"},  // cmdChartSphere
+  {121, QTMENU_ITEM, 40045, "Draw &World Map\tW"},  // cmdChartMap
+  {121, QTMENU_ITEM, 40035, "Draw &Globe\tG"},  // cmdChartGlobe
+  {121, QTMENU_ITEM, 40050, "Draw &Polar Globe\tP"},  // cmdChartPolar
+  {121, QTMENU_ITEM, 40056, "Draw &Telescope\tT"},  // cmdChartTelescope
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40098, "&Reverse Background\tx"},  // cmdGraphicsReverse
+  {121, QTMENU_ITEM, 40097, "&Monochrome\tm"},  // cmdGraphicsMonochrome
+  {121, QTMENU_ITEM, 40100, "S&quare Screen\tQ"},  // cmdGraphicsSquare
+  {121, QTMENU_POPUP, 0, "Character &Scale"},
+  {121, QTMENU_ITEM, 40320, "&Small\tCtrl+1"},  // cmdScale1
+  {121, QTMENU_ITEM, 40321, "&Medium\tCtrl+2"},  // cmdScale2
+  {121, QTMENU_ITEM, 40322, "&Large\tCtrl+3"},  // cmdScale3
+  {121, QTMENU_ITEM, 40323, "&Huge\tCtrl+4"},  // cmdScale4
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40324, "&Decrease\t<"},  // cmdScaleDecrease
+  {121, QTMENU_ITEM, 40325, "&Increase\t>"},  // cmdScaleIncrease
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40350, "D&ecrease Text\tCtrl+,"},  // cmdTextDecrease
+  {121, QTMENU_ITEM, 40351, "I&ncrease Text\tCtrl+."},  // cmdTextIncrease
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Chart Effects"},
+  {121, QTMENU_ITEM, 40090, "Show &Border\tb"},  // cmdGraphicsBorder
+  {121, QTMENU_ITEM, 40102, "Show Chart &Info\tt"},  // cmdGraphicsText
+  {121, QTMENU_ITEM, 40099, "Show Info &Sidebar\tAlt+t"},  // cmdGraphicsSidebar
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40103, "&Thicker Lines\tq"},  // cmdGraphicsThick
+  {121, QTMENU_ITEM, 40086, "&Antialias Lines\tAlt+q"},  // cmdGraphicsAntialias
+  {121, QTMENU_ITEM, 40095, "Show Glyph &Labels\tl"},  // cmdGraphicsLabel
+  {121, QTMENU_ITEM, 40087, "Show &Glyphs on Aspect Lines\tk"},  // cmdGraphicsAspect
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Map &Effects"},
+  {121, QTMENU_ITEM, 40061, "Show &Constellations\tF"},  // cmdConstellation
+  {121, QTMENU_ITEM, 40085, "Show Full &Star List\tCtrl+s"},  // cmdGraphicsAllStar
+  {121, QTMENU_ITEM, 40093, "Show E&xoplanets\tCtrl+`"},  // cmdGraphicsExo
+  {121, QTMENU_ITEM, 40101, "Show Constellation &Lines\tCtrl+Alt+s"},  // cmdGraphicsStarLine
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40094, "Show &House Details\td"},  // cmdGraphicsHouse
+  {121, QTMENU_ITEM, 40092, "Show &Equator\te"},  // cmdGraphicsEquator
+  {121, QTMENU_ITEM, 40091, "Show C&ities\tCtrl+c"},  // cmdGraphicsCity
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40089, "Use Detailed World &Map\tw"},  // cmdGraphicsBmp
+  {121, QTMENU_ITEM, 40088, "Use Ecliptic &Axis\tCtrl+x"},  // cmdGraphicsAxis
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Map &Orientation"},
+  {121, QTMENU_ITEM, 40301, "Rotate &West\t{"},  // cmdRotateWest
+  {121, QTMENU_ITEM, 40300, "Rotate &East\t}"},  // cmdRotateEast
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40352, "Tilt &North\t["},  // cmdTiltNorth
+  {121, QTMENU_ITEM, 40353, "Tilt &South\t]"},  // cmdTiltSouth
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40354, "Set Tilt to &Zero\tCtrl+Alt+n"},  // cmdTiltZero
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40364, "Zoom &Out\tCtrl+["},  // cmdZoomOut
+  {121, QTMENU_ITEM, 40363, "Zoom &In\tCtrl+]"},  // cmdZoomIn
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Indian Style Charts"},
+  {121, QTMENU_ITEM, 40038, "Show &Indian Wheels\t="},  // cmdChartIndian
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40041, "Draw &South Indian\tCtrl+="},  // cmdChartIndianS
+  {121, QTMENU_ITEM, 40040, "Draw &North Indian\tAlt+="},  // cmdChartIndianN
+  {121, QTMENU_ITEM, 40039, "Draw &East Indian\tCtrl+Alt+="},  // cmdChartIndianE
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_ITEM, 40096, "Modify &Display\ti"},  // cmdGraphicsModify
+  {121, QTMENU_ITEM, 40047, "Modif&y Chart\t0"},  // cmdChartModify
+  {121, QTMENU_POPUP, 0, "Scribb&le Color"},
+  {121, QTMENU_ITEM, 40262, "Blac&k\tCtrl+z"},  // cmdPen00
+  {121, QTMENU_ITEM, 40277, "&White\tCtrl+a"},  // cmdPen15
+  {121, QTMENU_ITEM, 40271, "&Red\tCtrl+r"},  // cmdPen09
+  {121, QTMENU_ITEM, 40272, "&Green\tCtrl+g"},  // cmdPen10
+  {121, QTMENU_ITEM, 40274, "&Blue\tCtrl+b"},  // cmdPen12
+  {121, QTMENU_ITEM, 40273, "&Yellow\tCtrl+y"},  // cmdPen11
+  {121, QTMENU_ITEM, 40275, "&Magenta\tCtrl+m"},  // cmdPen13
+  {121, QTMENU_ITEM, 40276, "&Cyan\tCtrl+j"},  // cmdPen14
+  {121, QTMENU_ITEM, 40270, "Gr&ay\tCtrl+d"},  // cmdPen08
+  {121, QTMENU_ITEM, 40269, "&Lt. Gray\tCtrl+l"},  // cmdPen07
+  {121, QTMENU_ITEM, 40263, "Maroo&n\tCtrl+e"},  // cmdPen01
+  {121, QTMENU_ITEM, 40264, "Dk. Gr&een\tCtrl+f"},  // cmdPen02
+  {121, QTMENU_ITEM, 40266, "Dk. Bl&ue\tCtrl+n"},  // cmdPen04
+  {121, QTMENU_ITEM, 40265, "Mai&ze\tCtrl+o"},  // cmdPen03
+  {121, QTMENU_ITEM, 40267, "&Purple\tCtrl+u"},  // cmdPen05
+  {121, QTMENU_ITEM, 40268, "&Dk. Cyan\tCtrl+k"},  // cmdPen06
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_ITEM, 40336, "&Graphics Settings...\tAlt+G"},  // cmdSettingGraphics
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Animate"},
+  {121, QTMENU_ITEM, 40010, "Do &Animation\tN"},  // cmdAnimateNo
+  {121, QTMENU_POPUP, 0, "&Jump Rate"},
+  {121, QTMENU_ITEM, 40020, "Update to &Now\tAlt+n"},  // cmdAnimateNow
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40011, "&Seconds\t!"},  // cmdAnimateNo1
+  {121, QTMENU_ITEM, 40012, "&Minutes\t@"},  // cmdAnimateNo2
+  {121, QTMENU_ITEM, 40013, "&Hours\t#"},  // cmdAnimateNo3
+  {121, QTMENU_ITEM, 40014, "&Days\t$"},  // cmdAnimateNo4
+  {121, QTMENU_ITEM, 40015, "M&onths\t%"},  // cmdAnimateNo5
+  {121, QTMENU_ITEM, 40016, "&Years\t^"},  // cmdAnimateNo6
+  {121, QTMENU_ITEM, 40017, "&Decades\t&&"},  // cmdAnimateNo7
+  {121, QTMENU_ITEM, 40018, "&Centuries\t*"},  // cmdAnimateNo8
+  {121, QTMENU_ITEM, 40019, "Mi&llennia\t("},  // cmdAnimateNo9
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40021, "1/&10th Seconds\tAlt+!"},  // cmdAnimateNo_11
+  {121, QTMENU_ITEM, 40022, "1/1&00th Seconds\tAlt+@"},  // cmdAnimateNo_12
+  {121, QTMENU_ITEM, 40023, "1&/1000th Seconds\tAlt+#"},  // cmdAnimateNo_13
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Jump &Factor"},
+  {121, QTMENU_ITEM, 40001, "&One Unit\t1"},  // cmdAnimateF1
+  {121, QTMENU_ITEM, 40002, "&Two Units\t2"},  // cmdAnimateF2
+  {121, QTMENU_ITEM, 40003, "T&hree Units\t3"},  // cmdAnimateF3
+  {121, QTMENU_ITEM, 40004, "&Four Units\t4"},  // cmdAnimateF4
+  {121, QTMENU_ITEM, 40005, "Fi&ve Units\t5"},  // cmdAnimateF5
+  {121, QTMENU_ITEM, 40006, "Si&x Units\t6"},  // cmdAnimateF6
+  {121, QTMENU_ITEM, 40007, "&Seven Units\t7"},  // cmdAnimateF7
+  {121, QTMENU_ITEM, 40008, "&Eight Units\t8"},  // cmdAnimateF8
+  {121, QTMENU_ITEM, 40009, "&Nine Units\t9"},  // cmdAnimateF9
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_ITEM, 40025, "&Reverse Direction\tr"},  // cmdAnimateReverse
+  {121, QTMENU_ITEM, 40024, "&Pause Animation\tp"},  // cmdAnimatePause
+  {121, QTMENU_ITEM, 40355, "&Timed Exposure\tj"},  // cmdTimedExposure
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40347, "Step &Forward\t+"},  // cmdStepForward
+  {121, QTMENU_ITEM, 40346, "Step &Backward\t-"},  // cmdStepBackward
+  {121, QTMENU_ITEM, 40348, "&Store Chart Info\to"},  // cmdStore
+  {121, QTMENU_ITEM, 40281, "Re&call Chart Info\tO"},  // cmdRecall
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Help"},
+  {121, QTMENU_ITEM, 40075, "Open &Documentation\tCtrl+h"},  // cmdDocHelpfile
+  {121, QTMENU_POPUP, 0, "&More Documentation"},
+  {121, QTMENU_ITEM, 40075, "&Open Documentation\t)"},  // cmdDocHelpfile
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40080, "Open &Changes\tCtrl+!"},  // cmdDocUpdate
+  {121, QTMENU_ITEM, 40076, "Open &License\tCtrl+@"},  // cmdDocLicense
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40081, "Open &Website\tCtrl+#"},  // cmdDocWebsite
+  {121, QTMENU_ITEM, 40082, "Open Website &Mirror\tCtrl+$"},  // cmdDocWebsite2
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_POPUP, 0, "Open Data &Files"},
+  {121, QTMENU_ITEM, 40073, "Open &Default Settings\tCtrl+("},  // cmdDocDefault
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40072, "Open &Atlas\tCtrl+Alt+m"},  // cmdDocAtlas
+  {121, QTMENU_ITEM, 40079, "Open &Time Zone Changes\tCtrl+Alt+y"},  // cmdDocTimezone
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40078, "Open &Star List\tCtrl+Alt+r"},  // cmdDocStar
+  {121, QTMENU_ITEM, 40077, "Open &Orbital Elements\tCtrl+Alt+e"},  // cmdDocOrbit
+  {121, QTMENU_ITEM, 40074, "Open &Exoplanet List\tCtrl+Alt+j"},  // cmdDocExo
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40115, "List Si&gns\tAlt+2"},  // cmdHelpSign
+  {121, QTMENU_ITEM, 40111, "List &Objects\tAlt+3"},  // cmdHelpObject
+  {121, QTMENU_ITEM, 40106, "List Aspec&ts\tAlt+4"},  // cmdHelpAspect
+  {121, QTMENU_ITEM, 40107, "List &Constellations\tAlt+5"},  // cmdHelpConstellation
+  {121, QTMENU_ITEM, 40113, "List &Planet Info\tAlt+6"},  // cmdHelpPlanetInfo
+  {121, QTMENU_ITEM, 40114, "List &Rays\tAlt+&&"},  // cmdHelpRay
+  {121, QTMENU_ITEM, 40110, "List &General Meanings\tCtrl+i"},  // cmdHelpMeaning
+  {121, QTMENU_ITEM, 40116, "List S&witches\tAlt+8"},  // cmdHelpSwitch
+  {121, QTMENU_ITEM, 40112, "List O&bscure Switches\tAlt+9"},  // cmdHelpObscure
+  {121, QTMENU_ITEM, 40109, "List &Keystrokes\t?"},  // cmdHelpKeystroke
+  {121, QTMENU_ITEM, 40108, "List Cr&edits\tCtrl+0"},  // cmdHelpCredit
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_POPUP, 0, "&Setup"},
+  {121, QTMENU_ITEM, 40340, "Create Program Group (&User)\tCtrl+Alt+g"},  // cmdSetupUser
+  {121, QTMENU_ITEM, 40337, "Create Program Group (&All)\tCtrl+Alt+a"},  // cmdSetupAll
+  {121, QTMENU_ITEM, 40338, "Create &Desktop Icon\tCtrl+Alt+d"},  // cmdSetupDesktop
+  {121, QTMENU_ITEM, 40339, "Install File &Extensions\tCtrl+Alt+x"},  // cmdSetupExtension
+  {121, QTMENU_SEP, 0, NULL},
+  {121, QTMENU_ITEM, 40357, "Uninstall File E&xtensions\tCtrl+Alt+u"},  // cmdUnsetup
+  {121, QTMENU_END, 0, NULL},
+  {121, QTMENU_ITEM, 40105, "&About Astrolog...\tAlt+0"},  // cmdHelpAbout
+  {121, QTMENU_END, 0, NULL},
+  // menuV
+  {122, QTMENU_POPUP, 0, "Wheel"},
+  {122, QTMENU_ITEM, 40283, "Toggle &Comparison Wheel\tc"},  // cmdRelComparison
+  {122, QTMENU_SEP, 0, NULL},
+  {122, QTMENU_ITEM, 40047, "Draw &Houses Same Size\t0"},  // cmdChartModify
+  {122, QTMENU_ITEM, 40140, "Position Planets Based on &3D Houses\ta"},  // cmdHouseSet3D
+  {122, QTMENU_ITEM, 40145, "&Indian Sign Arrangement\tz"},  // cmdHouseSetIndian
+  {122, QTMENU_ITEM, 40038, "Show Indian Style &Wheel\t="},  // cmdChartIndian
+  {122, QTMENU_SEP, 0, NULL},
+  {122, QTMENU_ITEM, 40092, "Show &Aspect Lines\te"},  // cmdGraphicsEquator
+  {122, QTMENU_ITEM, 40087, "Aspect Lines Show &Glyphs\tk"},  // cmdGraphicsAspect
+  {122, QTMENU_ITEM, 40096, "Aspect Lines Dotted Based on Max &Orb\ti"},  // cmdGraphicsModify
+  {122, QTMENU_ITEM, 40094, "Show Big &Planet Dots\td"},  // cmdGraphicsHouse
+  {122, QTMENU_ITEM, 40091, "Show &Degrees on Wheel\tCtrl+c"},  // cmdGraphicsCity
+  {122, QTMENU_ITEM, 40099, "Show Info &Sidebar\tAlt+t"},  // cmdGraphicsSidebar
+  {122, QTMENU_END, 0, NULL},
+  // menuV2
+  {123, QTMENU_POPUP, 0, "Indian Wheel"},
+  {123, QTMENU_ITEM, 40041, "Draw &South Indian\tCtrl+="},  // cmdChartIndianS
+  {123, QTMENU_ITEM, 40040, "Draw &North Indian\tAlt+="},  // cmdChartIndianN
+  {123, QTMENU_ITEM, 40039, "Draw &East Indian\tCtrl+Alt+="},  // cmdChartIndianE
+  {123, QTMENU_ITEM, 40038, "Show &Western Style Wheel\t="},  // cmdChartIndian
+  {123, QTMENU_SEP, 0, NULL},
+  {123, QTMENU_ITEM, 40047, "&Toggle North Indian\t0"},  // cmdChartModify
+  {123, QTMENU_ITEM, 40094, "To&ggle South/East Indian\td"},  // cmdGraphicsHouse
+  {123, QTMENU_ITEM, 40145, "&1st House on Left Edge\tz"},  // cmdHouseSetIndian
+  {123, QTMENU_SEP, 0, NULL},
+  {123, QTMENU_ITEM, 40092, "&Aspect Grid in South/East Indian\te"},  // cmdGraphicsEquator
+  {123, QTMENU_ITEM, 40087, "Aspect Grid &Highlights Main Axis\tk"},  // cmdGraphicsAspect
+  {123, QTMENU_ITEM, 40095, "Two &Letter Object Labels\tl"},  // cmdGraphicsLabel
+  {123, QTMENU_ITEM, 40091, "Show &Degrees on Wheel\tCtrl+c"},  // cmdGraphicsCity
+  {123, QTMENU_ITEM, 40099, "Show &Info Sidebar\tAlt+t"},  // cmdGraphicsSidebar
+  {123, QTMENU_END, 0, NULL},
+  // menuG
+  {124, QTMENU_POPUP, 0, "Grid"},
+  {124, QTMENU_ITEM, 40084, "&View Text Mode Grid\tv"},  // cmdGraphics
+  {124, QTMENU_SEP, 0, NULL},
+  {124, QTMENU_ITEM, 40325, "&Increase Aspect Size\t>"},  // cmdScaleIncrease
+  {124, QTMENU_ITEM, 40324, "&Decrease Aspect Size\t<"},  // cmdScaleDecrease
+  {124, QTMENU_SEP, 0, NULL},
+  {124, QTMENU_ITEM, 40260, "&Parallel Aspects\tAlt+x"},  // cmdParallel
+  {124, QTMENU_ITEM, 40026, "&Applying Aspects\tAlt+X"},  // cmdApplying
+  {124, QTMENU_SEP, 0, NULL},
+  {124, QTMENU_ITEM, 40096, "&Transpose Grid\ti"},  // cmdGraphicsModify
+  {124, QTMENU_ITEM, 40087, "&Highlight Main Axis\tk"},  // cmdGraphicsAspect
+  {124, QTMENU_END, 0, NULL},
+  // menuM
+  {125, QTMENU_POPUP, 0, "Midpoint"},
+  {125, QTMENU_ITEM, 40084, "&View Text List of Midpoints\tv"},  // cmdGraphics
+  {125, QTMENU_ITEM, 40145, "Wheel is &Flipped Over\tz"},  // cmdHouseSetIndian
+  {125, QTMENU_SEP, 0, NULL},
+  {125, QTMENU_ITEM, 40092, "Show &Aspect Lines\te"},  // cmdGraphicsEquator
+  {125, QTMENU_ITEM, 40087, "&Label Aspect/Midpoint Lines\tk"},  // cmdGraphicsAspect
+  {125, QTMENU_ITEM, 40091, "Label &Midpoint Lines with Orbs\tCtrl+c"},  // cmdGraphicsCity
+  {125, QTMENU_ITEM, 40096, "Lines Dotted Based on Max &Orb\ti"},  // cmdGraphicsModify
+  {125, QTMENU_SEP, 0, NULL},
+  {125, QTMENU_ITEM, 40094, "Show Big Planet &Dots\td"},  // cmdGraphicsHouse
+  {125, QTMENU_ITEM, 40099, "Show Info &Sidebar\tAlt+t"},  // cmdGraphicsSidebar
+  {125, QTMENU_END, 0, NULL},
+  // menuZ
+  {126, QTMENU_POPUP, 0, "Horizon"},
+  {126, QTMENU_ITEM, 40084, "&View Text Horizon List\tv"},  // cmdGraphics
+  {126, QTMENU_ITEM, 40047, "Use &Polar Projection\t0"},  // cmdChartModify
+  {126, QTMENU_ITEM, 40088, "Use Ecliptic &Axis\tCtrl+x"},  // cmdGraphicsAxis
+  {126, QTMENU_SEP, 0, NULL},
+  {126, QTMENU_ITEM, 40061, "Show &Constellations\tF"},  // cmdConstellation
+  {126, QTMENU_ITEM, 40145, "Show Sign &Boundaries\tz"},  // cmdHouseSetIndian
+  {126, QTMENU_ITEM, 40094, "Show &House Boundaries\td"},  // cmdGraphicsHouse
+  {126, QTMENU_ITEM, 40140, "House Boundaries Are &3D\ta"},  // cmdHouseSet3D
+  {126, QTMENU_ITEM, 40092, "Show Earth's &Equator\te"},  // cmdGraphicsEquator
+  {126, QTMENU_SEP, 0, NULL},
+  {126, QTMENU_ITEM, 40085, "Show Full &Star List\tCtrl+s"},  // cmdGraphicsAllStar
+  {126, QTMENU_ITEM, 40093, "Show E&xoplanets\tCtrl+`"},  // cmdGraphicsExo
+  {126, QTMENU_ITEM, 40095, "Show Planet &Glyphs\tl"},  // cmdGraphicsLabel
+  {126, QTMENU_ITEM, 40096, "Show Big Planet &Dots\ti"},  // cmdGraphicsModify
+  {126, QTMENU_ITEM, 40091, "Show Aspect &Lines\tCtrl+c"},  // cmdGraphicsCity
+  {126, QTMENU_ITEM, 40087, "Aspect Lines Show Gl&yphs\tk"},  // cmdGraphicsAspect
+  {126, QTMENU_END, 0, NULL},
+  // menuS
+  {127, QTMENU_POPUP, 0, "Orbit"},
+  {127, QTMENU_ITEM, 40084, "&View Text Orbit Positions\tv"},  // cmdGraphics
+  {127, QTMENU_SEP, 0, NULL},
+  {127, QTMENU_ITEM, 40364, "Zoom &Out\tCtrl+["},  // cmdZoomOut
+  {127, QTMENU_ITEM, 40363, "Zoom &In\tCtrl+]"},  // cmdZoomIn
+  {127, QTMENU_SEP, 0, NULL},
+  {127, QTMENU_ITEM, 40140, "&Logarithmic Distances\ta"},  // cmdHouseSet3D
+  {127, QTMENU_ITEM, 40085, "Show Full &Star List\tCtrl+s"},  // cmdGraphicsAllStar
+  {127, QTMENU_SEP, 0, NULL},
+  {127, QTMENU_ITEM, 40094, "Show Sign &Boundaries\td"},  // cmdGraphicsHouse
+  {127, QTMENU_ITEM, 40092, "Show &Aspect Lines\te"},  // cmdGraphicsEquator
+  {127, QTMENU_ITEM, 40087, "Aspect Lines Show Gl&yphs\tk"},  // cmdGraphicsAspect
+  {127, QTMENU_ITEM, 40091, "Show Solid Orbit &Trails\tCtrl+c"},  // cmdGraphicsCity
+  {127, QTMENU_ITEM, 40095, "Show Planet &Glyphs\tl"},  // cmdGraphicsLabel
+  {127, QTMENU_ITEM, 40096, "Show Big Planet &Dots\ti"},  // cmdGraphicsModify
+  {127, QTMENU_END, 0, NULL},
+  // menuH
+  {128, QTMENU_POPUP, 0, "Sector"},
+  {128, QTMENU_ITEM, 40084, "&View Text Sector List\tv"},  // cmdGraphics
+  {128, QTMENU_SEP, 0, NULL},
+  {128, QTMENU_ITEM, 40092, "Show &Aspect Lines\te"},  // cmdGraphicsEquator
+  {128, QTMENU_ITEM, 40087, "Aspect Lines Show &Glyphs\tk"},  // cmdGraphicsAspect
+  {128, QTMENU_ITEM, 40096, "Aspect Lines Dotted Based on Max &Orb\ti"},  // cmdGraphicsModify
+  {128, QTMENU_SEP, 0, NULL},
+  {128, QTMENU_ITEM, 40145, "Wheel is &Flipped Over\tz"},  // cmdHouseSetIndian
+  {128, QTMENU_ITEM, 40094, "Show Big Planet &Dots\td"},  // cmdGraphicsHouse
+  {128, QTMENU_ITEM, 40099, "Show Info &Sidebar\tAlt+t"},  // cmdGraphicsSidebar
+  {128, QTMENU_END, 0, NULL},
+  // menuK
+  {129, QTMENU_POPUP, 0, "Calendar"},
+  {129, QTMENU_ITEM, 40084, "&View Text Mode Calendar\tv"},  // cmdGraphics
+  {129, QTMENU_SEP, 0, NULL},
+  {129, QTMENU_ITEM, 40047, "Show Entire &Year\t0"},  // cmdChartModify
+  {129, QTMENU_ITEM, 40087, "Show &Transits Within Days\tk"},  // cmdGraphicsAspect
+  {129, QTMENU_ITEM, 40283, "Transits are Transit to &Natal\tc"},  // cmdRelComparison
+  {129, QTMENU_SEP, 0, NULL},
+  {129, QTMENU_ITEM, 40145, "Weeks Start on &Monday\tz"},  // cmdHouseSetIndian
+  {129, QTMENU_ITEM, 40096, "&Center Date Numbers\ti"},  // cmdGraphicsModify
+  {129, QTMENU_ITEM, 40102, "&Justify Date Numbers\tt"},  // cmdGraphicsText
+  {129, QTMENU_ITEM, 40095, "Highlight Current &Date\tl"},  // cmdGraphicsLabel
+  {129, QTMENU_END, 0, NULL},
+  // menuJ
+  {130, QTMENU_POPUP, 0, "Influence"},
+  {130, QTMENU_ITEM, 40084, "&View Text Influences\tv"},  // cmdGraphics
+  {130, QTMENU_SEP, 0, NULL},
+  {130, QTMENU_ITEM, 40096, "&Include House Cusp Objects\ti"},  // cmdGraphicsModify
+  {130, QTMENU_ITEM, 40087, "&Circle Final Dispositors\tk"},  // cmdGraphicsAspect
+  {130, QTMENU_ITEM, 40145, "&Planets Arranged Clockwise\tz"},  // cmdHouseSetIndian
+  {130, QTMENU_ITEM, 40094, "Sun at &Top of Wheels\td"},  // cmdGraphicsHouse
+  {130, QTMENU_END, 0, NULL},
+  // menu7
+  {131, QTMENU_POPUP, 0, "Esoteric"},
+  {131, QTMENU_ITEM, 40084, "&View Text Esoteric Chart\tv"},  // cmdGraphics
+  {131, QTMENU_SEP, 0, NULL},
+  {131, QTMENU_ITEM, 40047, "Show Entire &Year\t0"},  // cmdChartModify
+  {131, QTMENU_ITEM, 40330, "Year Plots Every &Day\tAlt+b"},  // cmdSecond
+  {131, QTMENU_SEP, 0, NULL},
+  {131, QTMENU_ITEM, 40096, "Ray Powers Are &Slice Not Count\ti"},  // cmdGraphicsModify
+  {131, QTMENU_ITEM, 40095, "Highlight &Current Date\tl"},  // cmdGraphicsLabel
+  {131, QTMENU_ITEM, 40092, "Show &Horizontal Lines\te"},  // cmdGraphicsEquator
+  {131, QTMENU_END, 0, NULL},
+  // menuL
+  {132, QTMENU_POPUP, 0, "Astro-Graph"},
+  {132, QTMENU_ITEM, 40084, "&View Text Astro-Graph Table\tv"},  // cmdGraphics
+  {132, QTMENU_SEP, 0, NULL},
+  {132, QTMENU_ITEM, 40325, "&Increase Map Size\t>"},  // cmdScaleIncrease
+  {132, QTMENU_ITEM, 40324, "&Decrease Map Size\t<"},  // cmdScaleDecrease
+  {132, QTMENU_SEP, 0, NULL},
+  {132, QTMENU_ITEM, 40140, "Ignore Planet &Latitudes\ta"},  // cmdHouseSet3D
+  {132, QTMENU_ITEM, 40089, "Show Detailed &World Map\tw"},  // cmdGraphicsBmp
+  {132, QTMENU_ITEM, 40047, "Show Latitude &Crossing\t0"},  // cmdChartModify
+  {132, QTMENU_ITEM, 40096, "Only Show &Midheaven Lines\ti"},  // cmdGraphicsModify
+  {132, QTMENU_SEP, 0, NULL},
+  {132, QTMENU_ITEM, 40091, "Show Ci&ties from Atlas\tCtrl+c"},  // cmdGraphicsCity
+  {132, QTMENU_ITEM, 40087, "Cities Colored By &Region\tk"},  // cmdGraphicsAspect
+  {132, QTMENU_END, 0, NULL},
+  // menuE
+  {133, QTMENU_POPUP, 0, "Ephemeris"},
+  {133, QTMENU_ITEM, 40084, "&View Text Mode Ephemeris\tv"},  // cmdGraphics
+  {133, QTMENU_SEP, 0, NULL},
+  {133, QTMENU_ITEM, 40047, "Show Entire &Year\t0"},  // cmdChartModify
+  {133, QTMENU_ITEM, 40330, "Year Plots Every &Day\tAlt+b"},  // cmdSecond
+  {133, QTMENU_ITEM, 40260, "Plot Vertical &Latitudes\tAlt+x"},  // cmdParallel
+  {133, QTMENU_SEP, 0, NULL},
+  {133, QTMENU_ITEM, 40096, "Don't Show &Moon\ti"},  // cmdGraphicsModify
+  {133, QTMENU_ITEM, 40095, "Highlight &Current Date\tl"},  // cmdGraphicsLabel
+  {133, QTMENU_ITEM, 40092, "Show &Horizontal Lines\te"},  // cmdGraphicsEquator
+  {133, QTMENU_END, 0, NULL},
+  // menuZd
+  {134, QTMENU_POPUP, 0, "Rising"},
+  {134, QTMENU_ITEM, 40084, "&View Rising/Setting Times\tv"},  // cmdGraphics
+  {134, QTMENU_SEP, 0, NULL},
+  {134, QTMENU_ITEM, 40330, "Year Plots Every &Day\tAlt+b"},  // cmdSecond
+  {134, QTMENU_ITEM, 40089, "Show Detailed &Color\tw"},  // cmdGraphicsBmp
+  {134, QTMENU_ITEM, 40095, "Show &Object Key\tl"},  // cmdGraphicsLabel
+  {134, QTMENU_SEP, 0, NULL},
+  {134, QTMENU_ITEM, 40091, "Show &Grid\tCtrl+c"},  // cmdGraphicsCity
+  {134, QTMENU_ITEM, 40096, "Show Current &Time\ti"},  // cmdGraphicsModify
+  {134, QTMENU_END, 0, NULL},
+  // menuN
+  {135, QTMENU_POPUP, 0, "Local"},
+  {135, QTMENU_ITEM, 40084, "&View Nearest City List\tv"},  // cmdGraphics
+  {135, QTMENU_SEP, 0, NULL},
+  {135, QTMENU_ITEM, 40364, "Zoom &Out\tCtrl+["},  // cmdZoomOut
+  {135, QTMENU_ITEM, 40363, "Zoom &In\tCtrl+]"},  // cmdZoomIn
+  {135, QTMENU_SEP, 0, NULL},
+  {135, QTMENU_ITEM, 40145, "Show Lines to &Planets\tz"},  // cmdHouseSetIndian
+  {135, QTMENU_ITEM, 40088, "Lines are &Astrocartography\tCtrl+x"},  // cmdGraphicsAxis
+  {135, QTMENU_ITEM, 40140, "Ignore Planet La&titudes\ta"},  // cmdHouseSet3D
+  {135, QTMENU_ITEM, 40092, "Show &Equator\te"},  // cmdGraphicsEquator
+  {135, QTMENU_ITEM, 40094, "Show &Degree Grid\td"},  // cmdGraphicsHouse
+  {135, QTMENU_SEP, 0, NULL},
+  {135, QTMENU_ITEM, 40091, "&Label Cities\tCtrl+c"},  // cmdGraphicsCity
+  {135, QTMENU_ITEM, 40087, "&Color Cities\tk"},  // cmdGraphicsAspect
+  {135, QTMENU_ITEM, 40096, "Show &Big City Dots\ti"},  // cmdGraphicsModify
+  {135, QTMENU_END, 0, NULL},
+  // menu8
+  {136, QTMENU_POPUP, 0, "Moons"},
+  {136, QTMENU_ITEM, 40084, "&View Text Mode Moons Chart\tv"},  // cmdGraphics
+  {136, QTMENU_SEP, 0, NULL},
+  {136, QTMENU_ITEM, 40094, "Show Prominence &Zones\td"},  // cmdGraphicsHouse
+  {136, QTMENU_ITEM, 40092, "Show Outer &Boundary\te"},  // cmdGraphicsEquator
+  {136, QTMENU_SEP, 0, NULL},
+  {136, QTMENU_ITEM, 40095, "Show Planet &Glyphs\tl"},  // cmdGraphicsLabel
+  {136, QTMENU_ITEM, 40096, "Show Big Planet &Dots\ti"},  // cmdGraphicsModify
+  {136, QTMENU_SEP, 0, NULL},
+  {136, QTMENU_ITEM, 40091, "Show Aspect &Lines\tCtrl+c"},  // cmdGraphicsCity
+  {136, QTMENU_ITEM, 40087, "Aspect Lines Show Gl&yphs\tk"},  // cmdGraphicsAspect
+  {136, QTMENU_END, 0, NULL},
+  // menuB
+  {137, QTMENU_POPUP, 0, "Transits"},
+  {137, QTMENU_ITEM, 40084, "&View Text Mode Transit Graph\tv"},  // cmdGraphics
+  {137, QTMENU_SEP, 0, NULL},
+  {137, QTMENU_ITEM, 40260, "&Parallel Aspects\tAlt+x"},  // cmdParallel
+  {137, QTMENU_ITEM, 40047, "Show &All Aspects\t0"},  // cmdChartModify
+  {137, QTMENU_ITEM, 40145, "Show Only &Exact Aspects\tz"},  // cmdHouseSetIndian
+  {137, QTMENU_ITEM, 40096, "Highlight Chart &Time\ti"},  // cmdGraphicsModify
+  {137, QTMENU_END, 0, NULL},
+  // menuY
+  {138, QTMENU_POPUP, 0, "Biorhythm"},
+  {138, QTMENU_ITEM, 40084, "&View Text Mode Biorhythm\tv"},  // cmdGraphics
+  {138, QTMENU_ITEM, 40096, "Show &Average Line\ti"},  // cmdGraphicsModify
+  {138, QTMENU_END, 0, NULL},
+  // menuXX
+  {139, QTMENU_POPUP, 0, "Sphere"},
+  {139, QTMENU_ITEM, 40047, "Show &Other Half of Sphere\t0"},  // cmdChartModify
+  {139, QTMENU_ITEM, 40096, "Show Just Half of S&phere\ti"},  // cmdGraphicsModify
+  {139, QTMENU_ITEM, 40099, "Show Info &Sidebar\tAlt+t"},  // cmdGraphicsSidebar
+  {139, QTMENU_SEP, 0, NULL},
+  {139, QTMENU_ITEM, 40145, "Show Sign &Boundaries\tz"},  // cmdHouseSetIndian
+  {139, QTMENU_ITEM, 40094, "Show &House Boundaries\td"},  // cmdGraphicsHouse
+  {139, QTMENU_ITEM, 40140, "House Boundaries Are &3D\ta"},  // cmdHouseSet3D
+  {139, QTMENU_SEP, 0, NULL},
+  {139, QTMENU_ITEM, 40087, "Aspect Lines Show &Glyphs\tk"},  // cmdGraphicsAspect
+  {139, QTMENU_ITEM, 40092, "Show Earth's &Equator\te"},  // cmdGraphicsEquator
+  {139, QTMENU_ITEM, 40061, "Show &Constellations\tF"},  // cmdConstellation
+  {139, QTMENU_ITEM, 40085, "Show Full &Star List\tCtrl+s"},  // cmdGraphicsAllStar
+  {139, QTMENU_ITEM, 40093, "Show E&xoplanets\tCtrl+`"},  // cmdGraphicsExo
+  {139, QTMENU_ITEM, 40088, "Use Ecliptic &Axis\tCtrl+x"},  // cmdGraphicsAxis
+  {139, QTMENU_END, 0, NULL},
+  // menuXG
+  {140, QTMENU_POPUP, 0, "Globe"},
+  {140, QTMENU_ITEM, 40096, "Show Astro-Graph &Lines\ti"},  // cmdGraphicsModify
+  {140, QTMENU_ITEM, 40061, "Show &Constellations\tF"},  // cmdConstellation
+  {140, QTMENU_SEP, 0, NULL},
+  {140, QTMENU_ITEM, 40140, "&Ignore Planet Latitudes\ta"},  // cmdHouseSet3D
+  {140, QTMENU_ITEM, 40089, "Show Detailed &World Map\tw"},  // cmdGraphicsBmp
+  {140, QTMENU_ITEM, 40094, "Show Sign &Boundaries\td"},  // cmdGraphicsHouse
+  {140, QTMENU_ITEM, 40092, "Show &Equator\te"},  // cmdGraphicsEquator
+  {140, QTMENU_ITEM, 40085, "Show Full &Star List\tCtrl+s"},  // cmdGraphicsAllStar
+  {140, QTMENU_ITEM, 40093, "Show E&xoplanets\tCtrl+`"},  // cmdGraphicsExo
+  {140, QTMENU_ITEM, 40088, "Use Ecliptic &Axis\tCtrl+x"},  // cmdGraphicsAxis
+  {140, QTMENU_SEP, 0, NULL},
+  {140, QTMENU_ITEM, 40091, "Show C&ities from Atlas\tCtrl+c"},  // cmdGraphicsCity
+  {140, QTMENU_ITEM, 40087, "Cities Colored By &Region\tk"},  // cmdGraphicsAspect
+  {140, QTMENU_END, 0, NULL},
+  // menuXZ
+  {141, QTMENU_POPUP, 0, "Telescope"},
+  {141, QTMENU_ITEM, 40364, "Zoom &Out\tCtrl+["},  // cmdZoomOut
+  {141, QTMENU_ITEM, 40363, "Zoom &In\tCtrl+]"},  // cmdZoomIn
+  {141, QTMENU_SEP, 0, NULL},
+  {141, QTMENU_ITEM, 40061, "Show &Constellations\tF"},  // cmdConstellation
+  {141, QTMENU_ITEM, 40145, "Show &Sign Boundaries\tz"},  // cmdHouseSetIndian
+  {141, QTMENU_ITEM, 40094, "Show &House Boundaries\td"},  // cmdGraphicsHouse
+  {141, QTMENU_ITEM, 40140, "House Boundaries Are &3D\ta"},  // cmdHouseSet3D
+  {141, QTMENU_ITEM, 40092, "Show Hori&zon Line\te"},  // cmdGraphicsEquator
+  {141, QTMENU_SEP, 0, NULL},
+  {141, QTMENU_ITEM, 40087, "Show Planet &Details\tk"},  // cmdGraphicsAspect
+  {141, QTMENU_ITEM, 40047, "O&utline Occulted Planets\t0"},  // cmdChartModify
+  {141, QTMENU_ITEM, 40095, "&Label Planets\tl"},  // cmdGraphicsLabel
+  {141, QTMENU_ITEM, 40096, "Show &Big Planet Dots\ti"},  // cmdGraphicsModify
+  {141, QTMENU_ITEM, 40085, "Show &Full Star List\tCtrl+s"},  // cmdGraphicsAllStar
+  {141, QTMENU_ITEM, 40093, "Show E&xoplanets\tCtrl+`"},  // cmdGraphicsExo
+  {141, QTMENU_ITEM, 40091, "Show Degree &Grid\tCtrl+c"},  // cmdGraphicsCity
+  {141, QTMENU_SEP, 0, NULL},
+  {141, QTMENU_ITEM, 40088, "Use &Ecliptic Axis\tCtrl+x"},  // cmdGraphicsAxis
+  {141, QTMENU_END, 0, NULL},
+  // menu_V
+  {142, QTMENU_POPUP, 0, "Listing"},
+  {142, QTMENU_ITEM, 40084, "&View Graphics Mode Wheel\tv"},  // cmdGraphics
+  {142, QTMENU_SEP, 0, NULL},
+  {142, QTMENU_ITEM, 40283, "Toggle &Comparison Chart\tc"},  // cmdRelComparison
+  {142, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {142, QTMENU_ITEM, 40140, "House Placements Based on &3D Houses\ta"},  // cmdHouseSet3D
+  {142, QTMENU_END, 0, NULL},
+  // menu_W
+  {143, QTMENU_POPUP, 0, "Text Wheel"},
+  {143, QTMENU_ITEM, 40084, "&View Graphic House Wheel\tv"},  // cmdGraphics
+  {143, QTMENU_SEP, 0, NULL},
+  {143, QTMENU_ITEM, 40145, "&Indian Sign Arrangement\tz"},  // cmdHouseSetIndian
+  {143, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {143, QTMENU_ITEM, 40140, "House Placements Based on &3D Houses\ta"},  // cmdHouseSet3D
+  {143, QTMENU_END, 0, NULL},
+  // menu_G
+  {144, QTMENU_POPUP, 0, "Text Grid"},
+  {144, QTMENU_ITEM, 40084, "&View Graphic Grid\tv"},  // cmdGraphics
+  {144, QTMENU_SEP, 0, NULL},
+  {144, QTMENU_ITEM, 40283, "Toggle &Comparison Chart\tc"},  // cmdRelComparison
+  {144, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {144, QTMENU_ITEM, 40260, "&Parallel Aspects\tAlt+x"},  // cmdParallel
+  {144, QTMENU_ITEM, 40026, "&Applying Aspects\tAlt+X"},  // cmdApplying
+  {144, QTMENU_END, 0, NULL},
+  // menu_A
+  {145, QTMENU_POPUP, 0, "Aspect"},
+  {145, QTMENU_ITEM, 40283, "Toggle &Comparison Chart\tc"},  // cmdRelComparison
+  {145, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {145, QTMENU_ITEM, 40260, "&Parallel Aspects\tAlt+x"},  // cmdParallel
+  {145, QTMENU_ITEM, 40026, "&Applying Aspects\tAlt+X"},  // cmdApplying
+  {145, QTMENU_END, 0, NULL},
+  // menu_M
+  {146, QTMENU_POPUP, 0, "Text Midpoint"},
+  {146, QTMENU_ITEM, 40084, "&View Graphic Dial Chart\tv"},  // cmdGraphics
+  {146, QTMENU_SEP, 0, NULL},
+  {146, QTMENU_ITEM, 40283, "Toggle &Comparison Chart\tc"},  // cmdRelComparison
+  {146, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {146, QTMENU_ITEM, 40260, "Show &Latitude Midpoints Too\tAlt+x"},  // cmdParallel
+  {146, QTMENU_ITEM, 40140, "Midpoints are &3D\ta"},  // cmdHouseSet3D
+  {146, QTMENU_END, 0, NULL},
+  // menu_Z
+  {147, QTMENU_POPUP, 0, "Text Horizon"},
+  {147, QTMENU_ITEM, 40084, "&View Graphic Horizon Chart\tv"},  // cmdGraphics
+  {147, QTMENU_SEP, 0, NULL},
+  {147, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {147, QTMENU_ITEM, 40140, "Show &3D House Placements\ta"},  // cmdHouseSet3D
+  {147, QTMENU_END, 0, NULL},
+  // menu_S
+  {148, QTMENU_POPUP, 0, "Text Orbit"},
+  {148, QTMENU_ITEM, 40084, "&View Graphic Orbit Chart\tv"},  // cmdGraphics
+  {148, QTMENU_SEP, 0, NULL},
+  {148, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {148, QTMENU_END, 0, NULL},
+  // menu_H
+  {149, QTMENU_POPUP, 0, "Text Sector"},
+  {149, QTMENU_ITEM, 40084, "&View Graphic Sector Wheel\tv"},  // cmdGraphics
+  {149, QTMENU_SEP, 0, NULL},
+  {149, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {149, QTMENU_END, 0, NULL},
+  // menu_K
+  {150, QTMENU_POPUP, 0, "Text Calendar"},
+  {150, QTMENU_ITEM, 40084, "&View Graphic Calendar\tv"},  // cmdGraphics
+  {150, QTMENU_SEP, 0, NULL},
+  {150, QTMENU_ITEM, 40145, "Weeks Start on &Monday\tz"},  // cmdHouseSetIndian
+  {150, QTMENU_END, 0, NULL},
+  // menu_J
+  {151, QTMENU_POPUP, 0, "Text Influence"},
+  {151, QTMENU_ITEM, 40084, "&View Graphic Dispositor Chart\tv"},  // cmdGraphics
+  {151, QTMENU_SEP, 0, NULL},
+  {151, QTMENU_ITEM, 40145, "&Combine Signs and Houses\tz"},  // cmdHouseSetIndian
+  {151, QTMENU_ITEM, 40330, "Print &Detailed Percentages\tAlt+b"},  // cmdSecond
+  {151, QTMENU_END, 0, NULL},
+  // menu_7
+  {152, QTMENU_POPUP, 0, "Text Esoteric"},
+  {152, QTMENU_ITEM, 40084, "&View Graphic Ray Ephemeris\tv"},  // cmdGraphics
+  {152, QTMENU_END, 0, NULL},
+  // menu_L
+  {153, QTMENU_POPUP, 0, "Text Astro-Graph"},
+  {153, QTMENU_ITEM, 40084, "&View Graphic Astro-Graph Chart\tv"},  // cmdGraphics
+  {153, QTMENU_SEP, 0, NULL},
+  {153, QTMENU_ITEM, 40140, "Ignore Planet &Latitudes\ta"},  // cmdHouseSet3D
+  {153, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {153, QTMENU_END, 0, NULL},
+  // menu_E
+  {154, QTMENU_POPUP, 0, "Text Ephemeris"},
+  {154, QTMENU_ITEM, 40084, "&View Graphic Ephemeris\tv"},  // cmdGraphics
+  {154, QTMENU_SEP, 0, NULL},
+  {154, QTMENU_ITEM, 40260, "Ephemeris Shows &Latitudes\tAlt+x"},  // cmdParallel
+  {154, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {154, QTMENU_END, 0, NULL},
+  // menu_I
+  {155, QTMENU_POPUP, 0, "Text Rising"},
+  {155, QTMENU_ITEM, 40084, "&View Graphic Rising Chart\tv"},  // cmdGraphics
+  {155, QTMENU_SEP, 0, NULL},
+  {155, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {155, QTMENU_END, 0, NULL},
+  // menu_N
+  {156, QTMENU_POPUP, 0, "Text Nearest"},
+  {156, QTMENU_ITEM, 40084, "&View Graphic Local Space Chart\tv"},  // cmdGraphics
+  {156, QTMENU_SEP, 0, NULL},
+  {156, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {156, QTMENU_END, 0, NULL},
+  // menu_P
+  {157, QTMENU_POPUP, 0, "Arabic"},
+  {157, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {157, QTMENU_END, 0, NULL},
+  // menu_D
+  {158, QTMENU_POPUP, 0, "Transit Times"},
+  {158, QTMENU_ITEM, 40260, "&Parallel Aspects\tAlt+x"},  // cmdParallel
+  {158, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {158, QTMENU_END, 0, NULL},
+  // menu_T
+  {159, QTMENU_POPUP, 0, "Transit Influence"},
+  {159, QTMENU_ITEM, 40260, "&Parallel Aspects\tAlt+x"},  // cmdParallel
+  {159, QTMENU_ITEM, 40026, "&Applying Aspects\tAlt+X"},  // cmdApplying
+  {159, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {159, QTMENU_END, 0, NULL},
+  // menu_B
+  {160, QTMENU_POPUP, 0, "Text Transit Graph"},
+  {160, QTMENU_ITEM, 40084, "&View Graphic Transit Graph\tv"},  // cmdGraphics
+  {160, QTMENU_SEP, 0, NULL},
+  {160, QTMENU_ITEM, 40260, "&Parallel Aspects\tAlt+x"},  // cmdParallel
+  {160, QTMENU_ITEM, 40145, "Show Only &Exact Aspects\tz"},  // cmdHouseSetIndian
+  {160, QTMENU_END, 0, NULL},
+  // menu_8
+  {161, QTMENU_POPUP, 0, "Text Moons"},
+  {161, QTMENU_ITEM, 40084, "&View Graphic Moons Chart\tv"},  // cmdGraphics
+  {161, QTMENU_SEP, 0, NULL},
+  {161, QTMENU_ITEM, 40260, "&Parallel Aspects\tAlt+x"},  // cmdParallel
+  {161, QTMENU_ITEM, 40330, "Print Nearest &Second\tAlt+b"},  // cmdSecond
+  {161, QTMENU_END, 0, NULL},
+  // menu_Ux
+  {162, QTMENU_POPUP, 0, "Exoplanets"},
+  {162, QTMENU_ITEM, 40260, "Transits at &Chart Time\tAlt+x"},  // cmdParallel
+  {162, QTMENU_ITEM, 40140, "&Exact Transits Only\ta"},  // cmdHouseSet3D
+  {162, QTMENU_END, 0, NULL},
+  // menu_Y
+  {163, QTMENU_POPUP, 0, "Text Biorhythm"},
+  {163, QTMENU_ITEM, 40084, "&View Graphic Biorhythm\tv"},  // cmdGraphics
+  {163, QTMENU_END, 0, NULL},
+  {0, 0, 0, NULL}};
