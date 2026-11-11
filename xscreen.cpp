@@ -2196,9 +2196,10 @@ flag FActionX()
 #ifdef QT
   // The Qt version draws screen charts into the 24 bit memory bitmap gi.bmp,
   // using the same code path as bitmap files, then displays that bitmap.
-  flag fQtScreen = (gs.ft == ftNone && !gs.fRoot), fBmpSav = gi.fBmp;
+  flag fBmpSav = gi.fBmp;
 
-  if (fQtScreen) {
+  fQtScreenChart = (gs.ft == ftNone && !gs.fRoot);
+  if (fQtScreenChart) {
     gs.ft = ftBmp;
     gi.fBmp = fTrue;
   }
@@ -2317,7 +2318,7 @@ flag FActionX()
 
   if (gi.fFile) {
 #ifdef QT
-    if (!fQtScreen)
+    if (!fQtScreenChart)
 #endif
     if (!BeginFileX())
       if (gs.ft == ftPS || gs.ft == ftSVG) {
@@ -2431,7 +2432,8 @@ flag FActionX()
       DrawChartX();
   }
 #ifdef QT
-  if (fQtScreen) {   // Leave bitmap in gi.bmp for the window to display.
+  if (fQtScreenChart) {  // Leave bitmap in gi.bmp for the window to show.
+    fQtScreenChart = fFalse;
     gs.ft = ftNone;
     gi.fFile = fFalse;
     gi.fBmp = fBmpSav;

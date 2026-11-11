@@ -468,7 +468,16 @@ extern BOOL CloseHandle(HANDLE);
 */
 
 // The Qt versions of FRedraw(), FFilePaste(), DlgPrint(), WinClearScreen(),
-// and ResizeWindowToChart() are also in wqt.cpp, replacing the GDI ones.
+// DrawGlyph(), and ResizeWindowToChart() are also in wqt.cpp, replacing the
+// GDI based ones.
+
+// Set while FActionX() draws a chart for the window (into gi.bmp), as
+// opposed to a chart file. TrueType fonts are only drawn in this case.
+extern int fQtScreenChart;
+
+// Draw one character of a TrueType font into the window chart bitmap.
+extern void QtDrawFontChar(int wch, int x, int y, int fi, int nHeight,
+  int fCenter);
 
 #endif // WQT_H
 
