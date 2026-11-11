@@ -54,7 +54,7 @@
 #include "astrolog.h"
 
 
-#ifdef WIN
+#ifdef WINUI
 /*
 ******************************************************************************
 ** Windows Command Processing.
@@ -546,6 +546,7 @@ void DoPopup(int imenu, HWND hwnd, LPARAM lParam)
 }
 
 
+#ifdef WIN
 // The main program, the starting point of Astrolog for Windows, follows. This
 // is like the "main" function in standard C. The program initializes here,
 // then spins in a tight message processing loop until it terminates.
@@ -1126,6 +1127,8 @@ LClose:
   return fFalse;
 }
 
+
+#endif // WIN (WinMain, WndProc)
 
 // This is called after some action has been done that probably changed the
 // chart state, such as a menu command was run. Update anything needing it.
@@ -2699,6 +2702,7 @@ flag FEnsureFontInstalled(int fi)
 #endif
 
 
+#ifdef WIN
 // Implements the Paste menu command.
 
 flag FFilePaste(void)
@@ -3029,6 +3033,8 @@ flag API FRedraw(void)
   return fTrue;
 }
 
+
+#endif // WIN (FFilePaste, FRedraw)
 
 #ifdef WSETUP
 /*

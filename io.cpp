@@ -83,7 +83,7 @@ FILE *FileOpen(CONST char *szFile, int nFileMode, char *szPath)
   // Some file types we want to open as binary instead of Ascii.
   sprintf(szMode, "r%s", nFileMode >= 2 ? "b" : "");
   // Get directory containing Astrolog executable.
-#ifdef WIN
+#ifdef WINUI
   GetModuleFileName(wi.hinst, szExe, cchSzMax);
 #else
   sprintf(szExe, "%s", is.szProgName != NULL ? is.szProgName : "");
@@ -1392,7 +1392,7 @@ flag FOutputSettings()
 #ifdef SWISS
   int j;
 #endif
-#ifdef WIN
+#ifdef WINUI
   char *pch;
 #endif
 
@@ -1964,7 +1964,7 @@ flag FOutputSettings()
   if (!fAny)
     PrintF("; [No macros defined]\n");
 
-#ifdef WIN
+#ifdef WINUI
   PrintF("\n\n");
   PrintF("; WINDOWS MENUS:\n\n");
   fAny = fFalse;
@@ -2460,7 +2460,7 @@ real RParseSz(CONST char *szEntry, int pm)
 }
 
 
-#ifndef WIN
+#ifndef WINUI
 // Stop and wait for the user to enter a line of text given a prompt to
 // display and a string buffer to fill with it.
 
@@ -2596,7 +2596,7 @@ flag FInputData(CONST char *szFile)
   }
 #endif
 
-#ifndef WIN
+#ifndef WINUI
   // If we are to read from the file "tty" then that means prompt the user
   // for all the chart information.
 

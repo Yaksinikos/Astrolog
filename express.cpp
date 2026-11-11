@@ -72,7 +72,7 @@
 #else
 #define cfunI 0
 #endif
-#ifdef WIN
+#ifdef WINUI
 #define cfunW 12
 #else
 #define cfunW 0
@@ -549,7 +549,7 @@ enum _functionindex {
   fun_Xnf,
 #endif
 
-#ifdef WIN
+#ifdef WINUI
   // Functions related to Windows operations
   funDlg,
   funMouse,
@@ -1130,7 +1130,7 @@ CONST FUN rgfun[cfun] = {
 {fun_Xnf, "_Xnf", 0, I_},
 #endif
 
-#ifdef WIN
+#ifdef WINUI
 // Functions related to Windows operations
 {funDlg,   "Dlg",   0, I_},
 {funMouse, "Mouse", 1, I_I},
@@ -1236,7 +1236,7 @@ flag FEvalFunction(int ifun, PAR *rgpar, char *rgpchEval[2])
   real r = 0.0, r1, r2, r3, r4;
   char sz[cchSzMax];
   flag fRetOpt = fFalse, fRetReal = fFalse, fOpt = fFalse, fOptReal = fFalse;
-#ifdef WIN
+#ifdef WINUI
   POINT pt;
 #endif
 
@@ -1870,7 +1870,7 @@ flag FEvalFunction(int ifun, PAR *rgpar, char *rgpchEval[2])
   case fun_Xnf: n = gi.nDir;   break;
 #endif
 
-#ifdef WIN
+#ifdef WINUI
   // Functions related to Windows operations
   case funDlg:
     n = KvDialog();
@@ -1907,7 +1907,7 @@ flag FEvalFunction(int ifun, PAR *rgpar, char *rgpchEval[2])
 #endif
     break;
   case funWin:
-#ifdef WIN
+#ifdef WINUI
     n = 1;
 #else
     n = 0;

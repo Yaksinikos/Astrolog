@@ -72,7 +72,7 @@ GS gs = {
   fFalse, fFalse, fFalse, fFalse, fFalse, fFalse, fTrue, fTrue, fFalse,
   fFalse, fFalse, fFalse, fFalse, fTrue,
   DEFAULTX, DEFAULTY,
-#ifdef WIN
+#ifdef WINUI
   -10,
 #else
   0,
@@ -111,7 +111,7 @@ GI gi = {
 #endif
   };
 
-#ifdef WIN
+#ifdef WINUI
 WI wi = {
   (HINSTANCE)NULL, (HWND)NULL, (HWND)NULL, (HMENU)NULL, (HMENU)NULL,
   (HACCEL)NULL, hdcNil, hdcNil, hdcNil, (HWND)NULL, (HPEN)NULL, (HBRUSH)NULL,
@@ -177,7 +177,7 @@ KV rgbbmp[cColor2], rgbbmpRay[cRay+2];
 #ifdef X11
 KV rgbind[cColor2], fg, bg;
 #endif
-#ifdef WIN
+#ifdef WINUI
 CONST int ikPalette[cColor] =
   {-0, -1, 1, 4, 6, 3, -8, 5, -3, -2, -4, -5, -7, 2, 7, -6};
 // Map _graphicschart enum to Windows commands

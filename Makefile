@@ -34,4 +34,37 @@ $(NAME): $(OBJS)
 
 clean:
 	$(RM) $(OBJS) $(NAME)
+	$(RM) -r $(QTDIR) $(QTNAME)
+
+# Qt 6 GUI version, with the same menus and dialogs as the Windows version.
+# Runs natively on Wayland and X11 (e.g. KDE Plasma). Build with "make qt".
+# Requires the Qt 6 development package, e.g. "qt6-base-dev" on Debian and
+# Ubuntu, or "qt6-qtbase-devel" on Fedora, plus pkg-config. Objects go in
+# their own directory so they don't mix with the X11 version's objects.
+# "make rcqt" regenerates rcqt.inc from astrolog.rc (needs python3).
+QTNAME = astrolog-qt
+QTDIR = obj-qt
+QTPKG = Qt6Widgets
+QTOBJS = $(addprefix $(QTDIR)/,$(OBJS) wdriver.o wdialog.o wqt.o)
+QTCPPFLAGS = -O -DQT -std=c++17 -fPIC -Wno-write-strings -Wno-narrowing\
+ -Wno-comment $(shell pkg-config --cflags $(QTPKG))
+QTLIBS = $(shell pkg-config --libs $(QTPKG)) -lm -ldl
+
+qt: $(QTNAME)
+
+$(QTNAME): $(QTOBJS)
+	$(CXX) -o $(QTNAME) $(QTOBJS) $(QTLIBS)
+
+$(QTDIR)/%.o: %.cpp astrolog.h extern.h wqt.h resource.h | $(QTDIR)
+	$(CXX) $(QTCPPFLAGS) -c $< -o $@
+
+$(QTDIR)/wqt.o: rcqt.inc
+
+$(QTDIR):
+	mkdir -p $(QTDIR)
+
+rcqt: tools/rc2qt.py astrolog.rc resource.h
+	python3 tools/rc2qt.py astrolog.rc resource.h rcqt.inc
+
+.PHONY: qt rcqt clean
 #

@@ -580,7 +580,7 @@ extern void DisplayArabic P((void));
 #ifdef GRAPH
 extern void DisplayKeysX P((void));
 extern void DisplaySwitchesX P((void));
-#ifdef WIN
+#ifdef WINUI
 extern void DisplaySwitchesW P((void));
 #endif
 #endif // GRAPH
@@ -727,7 +727,7 @@ extern char xkey[];
 extern KV rgbind[cColor2];
 extern KV fg, bg;
 #endif
-#ifdef WIN
+#ifdef WINUI
 extern CONST int ikPalette[cColor];
 extern CONST int rgcmdMode[gMax];
 #endif
@@ -806,7 +806,7 @@ extern CONST char *szDrawObject[objMaxG], *szDrawObject2[objMaxG],
 
 extern void DrawColor P((KI));
 extern void DrawThick P((flag));
-#ifdef WIN
+#ifdef WINUI
 extern void AdjustCoordinates P((int *, int *));
 #else
 #define AdjustCoordinates(px, py)
@@ -1047,7 +1047,7 @@ extern flag FActionX P((void));
 #endif // GRAPH
 
 
-#ifdef WIN
+#ifdef WINUI
 // From wdriver.cpp
 
 extern WI wi;
@@ -1092,6 +1092,8 @@ extern LRESULT API WndProc P((HWND, UINT, WPARAM, LPARAM));
 extern int NProcessSwitchesW P((int, char **, int, flag, flag, flag));
 extern void BootExternal P((CONST char *, CONST char *));
 extern WORD WCmdFromRc P((int));
+extern int CmdFromRc P((int));
+extern void DoPopup P((int, HWND, LPARAM));
 extern void SetRel P((int));
 extern void ProcessState P((void));
 extern int NWmCommand P((WORD));

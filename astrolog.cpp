@@ -241,7 +241,7 @@ LNextLine:
   // Here either do a normal chart or some kind of relationship chart.
 
   if (!us.nRel) {
-#ifndef WIN
+#ifndef WINUI
     // If chart info not in memory yet, then prompt the user for it.
     if (!is.fHaveInfo && !FInputData(szTtyCore))
       return;
@@ -258,7 +258,7 @@ LNextLine:
     ciMain = ciCore;
     CastRelation();
   }
-#ifndef WIN
+#ifndef WINUI
   ciSave = ciMain;
 #endif
 
@@ -338,7 +338,7 @@ LDone:
 }
 
 
-#ifndef WIN
+#ifndef WINUI
 // Reset a few variables to their default values they have upon startup of the
 // program. We don't reset all variables, just the most volatile ones. This is
 // called when in the -Q loop to reset things like which charts to display,
@@ -446,7 +446,7 @@ int NParseCommandLine(char *szLine, char **argv)
 }
 
 
-#ifndef WIN
+#ifndef WINUI
 // This routine is called by the main program to interactively prompt the user
 // for command switches and parameters, entered in the same format as they
 // would be on a command line. This needs to be called with certain systems
@@ -1191,7 +1191,7 @@ int NProcessSwitchesRare(int argc, char **argv, int pos,
 #endif
 
   case 'B':
-#ifndef WIN
+#ifndef WINUI
     putchar(chBell);
 #else
     MessageBeep((UINT)-1);
@@ -2459,7 +2459,7 @@ flag FProcessSwitches(int argc, char **argv)
         SwitchF(us.fHouse3D);
         break;
       }
-#ifdef WIN
+#ifdef WINUI
       if (argc <= 1 && wi.fSaverCfg)
         return fTrue;
 #endif
@@ -2874,7 +2874,7 @@ flag FProcessSwitches(int argc, char **argv)
       argc -= i; argv += i;
       break;
 
-#ifdef WIN
+#ifdef WINUI
     case 'W':
       i = NProcessSwitchesW(argc, argv, ich, fOr, fAnd, fNot);
       if (i < 0)
@@ -3093,7 +3093,7 @@ void InitRestrictions(flag fStore)
 
 void InitProgram()
 {
-#ifdef WIN
+#ifdef WINUI
   char sz[cchSzMax], *pch;
 #endif
   int i;
@@ -3144,7 +3144,7 @@ void InitProgram()
     szDrawAspect2[i] = szDrawAspectDef2[i];
   }
 #endif
-#ifdef WIN
+#ifdef WINUI
   GetModuleFileName(wi.hinst, sz, cchSzMax);
   for (pch = sz; *pch; pch++)
     ;
@@ -3376,7 +3376,7 @@ void FinalizeProgram(flag fSkip)
 #ifdef WINANY
   DeallocatePIf(wi.bmpWin.rgb);
 #endif
-#ifdef WIN
+#ifdef WINUI
   DeallocatePIf(wi.bmpSmooth.rgb);
   if (ofn.lpstrFile != szFileName)
     DeallocatePIf(ofn.lpstrFile);
@@ -3398,7 +3398,7 @@ void FinalizeProgram(flag fSkip)
 }
 
 
-#ifndef WIN
+#ifndef WINUI
 // The main program, the starting point for Astrolog, follows. This routine
 // basically consists of a loop, inside which we read a command line, and go
 // process it, before actually calling a routine to display astrology.

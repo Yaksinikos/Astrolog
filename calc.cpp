@@ -2462,7 +2462,7 @@ void SwissEnsurePath()
     return;
 
   // Get directory containing Astrolog executable.
-#ifdef WIN
+#ifdef WINUI
   GetModuleFileName(wi.hinst, szExe, cchSzMax);
 #else
   sprintf(szExe, "%s", is.szProgName != NULL ? is.szProgName : "");
@@ -2736,7 +2736,7 @@ flag FSwissPlanet(int ind, real jd, int indCent,
   if (nRet < 0) {
     if (!is.fNoEphFile) {
       is.fNoEphFile = fTrue;
-#ifdef WIN
+#ifdef WINUI
       sprintf(szErr, "Swiss Ephemeris returned the following error:\n\n%s",
         serr);
 #else

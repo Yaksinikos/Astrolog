@@ -66,8 +66,14 @@
 //#define PC /* Comment out this #define if you have a Unix, Mac, or other */
            /* system that isn't a generic PC running DOS or MS Windows.  */
 
+#if !defined(QT) && !defined(NOX11)
 #define X11 /* Comment out this #define if you don't have X windows, or */
             /* else have them and don't wish to compile in X graphics.  */
+#endif
+
+//#define QT /* Define this (e.g. with -DQT on the compiler command line) */
+             /* to compile the Qt 6 GUI version with Windows style menus */
+             /* and dialogs, for Linux (Wayland or X11) and other Unix.  */
 
 //#define WIN /* Comment out this #define if you don't have MS Windows, or */
             /* else have them but want a command line version instead.   */
@@ -353,6 +359,14 @@
 #define WINANY
 #include <windows.h>
 #endif
+#ifdef QT
+#define ISG
+#include "wqt.h"      // Win32 subset emulated on top of Qt.
+#include "resource.h"
+#endif
+#if defined(WIN) || defined(QT)
+#define WINUI         // Has the Windows style menu and dialog interface.
+#endif
 #ifdef PC
 #ifdef _WIN64
 #define szArchCore "64 bit"
@@ -434,6 +448,24 @@
 #error "If 'WSETUP' is defined 'WIN' must be too"
 #endif
 #endif // WSETUP
+
+#ifdef QT
+#ifndef GRAPH
+#error "If 'QT' is defined 'GRAPH' must be too"
+#endif
+#ifdef X11
+#error "If 'QT' is defined 'X11' must not be as well"
+#endif
+#ifdef WIN
+#error "If 'QT' is defined 'WIN' must not be as well"
+#endif
+#ifdef WCLI
+#error "If 'QT' is defined 'WCLI' must not be as well"
+#endif
+#ifdef PC
+#error "If 'QT' is defined 'PC' must not be as well"
+#endif
+#endif // QT
 
 #ifdef WCLI
 #ifndef GRAPH
@@ -988,7 +1020,7 @@ enum _graphicschart {
   gPolar      = 22,
   gTelescope  = 23,
   gBiorhythm  = 24,
-#ifdef WIN
+#ifdef WINUI
   gAspect     = 25,
   gArabic     = 26,
   gTraTraTim  = 27,
@@ -1404,7 +1436,7 @@ enum _terminationcode {
 #endif // PC
 
 #ifdef GRAPH
-#ifdef WINANY
+#if defined(WINANY) || defined(QT)
 #define API FAR PASCAL
 #define hdcNil ((HDC)NULL)
 #define SetWindowOrg(hdc, x, y) SetWindowOrgEx(hdc, x, y, NULL)
@@ -2247,7 +2279,7 @@ typedef struct _OrbitalElements {
 
 #define szFileJPLCore  "astrolog.jpl"
 #define szFileExoCore  "astexo.csv"
-#ifdef WIN
+#ifdef WINUI
 #define szFileTempCore "astrolog.tmp"
 #define szFileAutoCore "astrolog.bmp"
 #define nScrollDiv 24

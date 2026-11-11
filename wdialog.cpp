@@ -54,7 +54,7 @@
 #include "astrolog.h"
 
 
-#ifdef WIN
+#ifdef WINUI
 /*
 ******************************************************************************
 ** Dialog Utility Functions.
@@ -621,6 +621,7 @@ flag API DlgOpenDir()
 #endif
 
 
+#ifdef WIN
 // Bring up the Windows standard print dialog, receive any printing settings
 // from the user, and proceed to print the current graphics or text chart as
 // displayed in the window. Called from the File / Print command.
@@ -779,6 +780,8 @@ BOOL API DlgAbort(HWND hdlg, uint message, WPARAM wParam, LPARAM lParam)
   return fFalse;
 }
 
+
+#endif // WIN (DlgPrint, DlgAbortProc, DlgAbort)
 
 // Processing function for the file settings dialog, as brought up with the
 // File / File Settings menu command.

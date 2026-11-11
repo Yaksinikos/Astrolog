@@ -125,14 +125,14 @@ void DrawColor(KI ki)
 
 void DrawThick(flag fThick)
 {
-#ifdef WIN
+#ifdef WINUI
   int kvCur;
 #endif
 
   if (fThick == gs.fThick)
     return;
   gs.fThick = fThick;
-#ifdef WIN
+#ifdef WINUI
   if (!gi.fFile && wi.nScaleWin > 1) {
     // For Windows, reset pen width to reflect new thickness.
     kvCur = gi.kvCur;
@@ -143,7 +143,7 @@ void DrawThick(flag fThick)
 }
 
 
-#ifdef WIN
+#ifdef WINUI
 // Adjust coordinates on a Windows bitmap for antialiasing, such that when
 // wide lines are zoomed down, they will align with and overlap the final
 // pixels (which looks better) instead of straddling them and looking fuzzy.
@@ -311,7 +311,7 @@ void DrawSpot(int x, int y)
     }
 #endif
   }
-#ifdef WIN
+#ifdef WINUI
   else if (wi.nScaleWin > 1) {
     n = gi.nScaleT + gs.fThick*(gi.nScaleT >> 2);
     DrawCircle(x, y, n, n);
@@ -580,7 +580,7 @@ void DrawClearScreen()
 
   // Don't actually erase the screen if the -Xj switch is in effect.
   if (gs.fJetTrail
-#ifdef WIN
+#ifdef WINUI
     && !wi.fSmoothZoom
 #endif
     )
@@ -653,7 +653,7 @@ void DrawDash(int x1, int y1, int x2, int y2, int skip)
 #endif
       return;
     }
-#ifdef WIN
+#ifdef WINUI
     if (skip && wi.nScaleWin > 1)
       skip = (skip + 2)*wi.nScaleWin + gs.nThickAdjust - 1;
 #endif
@@ -1291,7 +1291,7 @@ void DrawSz(CONST char *sz, int x, int y, int dt)
     nSav = SetBkMode(wi.hdc, TRANSPARENT);
   }
 #endif
-#ifdef WIN
+#ifdef WINUI
   if (nFont == 0)
     AdjustCoordinates(&x, &y);
 #endif
@@ -2065,7 +2065,7 @@ int KiCity(int iae)
   KI ki = kOrangeB;
   int i;
   CI ci;
-#ifdef WIN
+#ifdef WINUI
   flag fSav;
 #endif
 
@@ -2081,14 +2081,14 @@ int KiCity(int iae)
           return ~0;
       }
       ci = ciMain;
-#ifdef WIN
+#ifdef WINUI
       fSav = wi.fNoPopup; wi.fNoPopup = fTrue;
 #endif
       for (i = 0; i < iznMax; i++) {
         DisplayTimezoneChanges(i, 0, &ci);
         is.rgzonCol[i] = ci.zon - ci.dst;
       }
-#ifdef WIN
+#ifdef WINUI
       wi.fNoPopup = fSav;
 #endif
     }

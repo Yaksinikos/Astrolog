@@ -152,7 +152,7 @@ void InitColorsX()
   }
 #endif
 
-#ifdef WIN
+#ifdef WINUI
   // Don't print on a black background unless user really wants that.
   if (wi.hdcPrint != NULL && us.fSmartSave)
     fInverse = fTrue;
@@ -515,7 +515,7 @@ LNotNow:
 }
 
 
-#ifndef WIN
+#ifndef WINUI
 // This routine exits graphics mode, prompts the user for a set of command
 // switches, processes them, and returns to the previous graphics with the
 // new settings in effect, allowing one to change most any setting without
@@ -614,7 +614,7 @@ void ResizeWindowToChart()
 #endif
 
 
-#ifndef WIN
+#ifndef WINUI
 // This routine gets called after graphics are brought up and displayed on
 // the screen. It loops, processing key presses, mouse clicks, etc, that the
 // window receives, until the user specifies they want to exit the program.
@@ -2188,10 +2188,20 @@ flag FActionX()
 {
   int i, n, nScaleAdjust = 1, nScaleSav, yAdd;
   flag fAutoScaled = fFalse;
-#ifdef WIN
+#ifdef WINUI
   HDC hdcWin, hdcMem;
   HBITMAP hbmp, hbmpOld;
   int x, y, nScaleWin = 1;
+#endif
+#ifdef QT
+  // The Qt version draws screen charts into the 24 bit memory bitmap gi.bmp,
+  // using the same code path as bitmap files, then displays that bitmap.
+  flag fQtScreen = (gs.ft == ftNone && !gs.fRoot), fBmpSav = gi.fBmp;
+
+  if (fQtScreen) {
+    gs.ft = ftBmp;
+    gi.fBmp = fTrue;
+  }
 #endif
 
   gi.fFile = (gs.ft != ftNone);
@@ -2200,7 +2210,7 @@ flag FActionX()
 
   gi.nScaleT = gs.ft == ftPS ? PSMUL : (gs.ft == ftWmf ? METAMUL :
     (gs.ft == ftSVG ? SVGMUL : (gs.ft == ftWire ? WIREMUL : 1)));
-#ifdef WIN
+#ifdef WINUI
   if (wi.hdcPrint != hdcNil)
     wi.nScaleWin = gi.nScaleT = nScaleAdjust = METAMUL;
   else if (wi.fSmoothZoom && (!gi.fFile ||
@@ -2240,7 +2250,7 @@ flag FActionX()
       for (gi.nGridCell = i = 0; i <= is.nObj; i++)
         gi.nGridCell += FProper(i);
     yAdd = (yFont2*gi.nScaleText + 2)*gi.nScaleT;
-#ifdef WIN
+#ifdef WINUI
     if (gs.fAutoScale) {
       // For aspect grids, scale chart/glyphs based on size of window.
       n = nScaleAdjust;
@@ -2263,21 +2273,21 @@ flag FActionX()
     if (gs.fText)
       gs.yWin += yAdd;
   } else if (gs.fKeepSquare && fSquare) {
-#ifdef WIN
+#ifdef WINUI
     if (wi.hdcPrint == hdcNil) {
       if (fSidebar)
         gs.xWin -= (SIDESIZE * gi.nScaleText * wi.nScaleWin) >> 1;
 #endif
       n = Min(gs.xWin, gs.yWin);
       gs.xWin = gs.yWin = n;
-#ifdef WIN
+#ifdef WINUI
       if (fSidebar)
         gs.xWin += (SIDESIZE * gi.nScaleText * wi.nScaleWin) >> 1;
     }
 #endif
   } else if (fMap) {
     yAdd = (yFont2*gi.nScaleText + 2)*gi.nScaleT;
-#ifdef WIN
+#ifdef WINUI
     if (gs.fAutoScale) {
       // For maps, scale chart/glyphs based on size of window.
       n = nScaleAdjust;
@@ -2300,12 +2310,15 @@ flag FActionX()
     if (gs.fText)
       gs.yWin += yAdd;
   }
-#ifdef WIN
+#ifdef WINUI
   if (fSidebar)
     gs.xWin -= (SIDESIZE * gi.nScaleText) >> 1;
 #endif
 
   if (gi.fFile) {
+#ifdef QT
+    if (!fQtScreen)
+#endif
     if (!BeginFileX())
       if (gs.ft == ftPS || gs.ft == ftSVG) {
         gs.ft = ftNone; gi.fFile = fFalse;
@@ -2417,6 +2430,13 @@ flag FActionX()
 #endif
       DrawChartX();
   }
+#ifdef QT
+  if (fQtScreen) {   // Leave bitmap in gi.bmp for the window to display.
+    gs.ft = ftNone;
+    gi.fFile = fFalse;
+    gi.fBmp = fBmpSav;
+  } else
+#endif
   if (gi.fFile) {    // Write bitmap to file if in that mode.
     EndFileX();
     if ((gs.ft == ftBmp && !gi.fBmp) || gs.ft == ftWmf || gs.ft == ftWire) {
@@ -2443,7 +2463,7 @@ flag FActionX()
       }
     } else
 #endif
-#ifndef WIN
+#ifndef WINUI
       InteractX();    // Window's up; process commands given to window now.
     EndX();
 #else

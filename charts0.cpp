@@ -105,7 +105,7 @@ void DisplayCredits(void)
   *szT = chNull;
 #endif
   sprintf(sz, "** %s version %s%s **", szAppName, szVersionCore, szT);
-#ifdef WIN
+#ifdef WINUI
   PrintW(sz, gs.fInverse ? kBlackA : kWhiteA);
 #else
   PrintW(sz, kWhiteA);
@@ -566,7 +566,7 @@ void DisplaySwitches(void)
 
 #ifdef GRAPH
   DisplaySwitchesX();
-#ifdef WIN
+#ifdef WINUI
   DisplaySwitchesW();  // Windows version has its own set of switches too.
 #endif
 #endif // GRAPH
@@ -833,7 +833,7 @@ void DisplaySwitchesRare(void)
 #ifdef ISG
   PrintS(" _~XQ <string>: Set adjustment for key press in window.");
 #endif
-#ifdef WIN
+#ifdef WINUI
   PrintS(" _~WQ <string>: Set adjustment for Windows menu command selection.");
 #endif
 #endif // GRAPH
@@ -1723,7 +1723,7 @@ void DisplayKeysX(void)
 #ifdef X11
   PrintS(" Press 'B' to save current window contents to root background.");
 #endif
-#ifdef WIN
+#ifdef WINUI
   PrintS(" Press 'B' to resize chart display to full size of window.");
 #endif
   PrintS(" Press 'Q' to resize chart display to a square.");
@@ -1889,7 +1889,7 @@ void DisplaySwitchesX(void)
 }
 
 
-#ifdef WIN
+#ifdef WINUI
 // Print a list of every command switch dealing with the Windows features
 // that can be passed to the program, and a description of what it does.
 // This is part of what the -H switch prints in the MS Windows version.
@@ -1929,7 +1929,7 @@ void DisplaySwitchesW(void)
 
 flag FPrintTables(void)
 {
-#ifdef WIN
+#ifdef WINUI
   if (us.fGraphics)
     return fFalse;
 #endif
@@ -2008,7 +2008,7 @@ flag FPrintTables(void)
   // on and do so, else exit. (So things like "-H -i file" will work, but
   // things like just "-H" will print and exit right away.)
 
-#ifndef WIN
+#ifndef WINUI
   return is.fMult && !is.fHaveInfo;
 #else
   return is.fMult;

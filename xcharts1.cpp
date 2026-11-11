@@ -3320,7 +3320,7 @@ void XChartDispositor()
 }
 
 
-#ifdef WIN
+#ifdef WINUI
 // Like DrawTurtle() except adjust coordinates for antialiasing first.
 
 void DrawTurtle2(CONST char *sz, int x, int y)
