@@ -38,8 +38,9 @@ clean:
 
 # Qt 6 GUI version, with the same menus and dialogs as the Windows version.
 # Runs natively on Wayland and X11 (e.g. KDE Plasma). Build with "make qt".
-# Requires the Qt 6 development package, e.g. "qt6-base-dev" on Debian and
-# Ubuntu, or "qt6-qtbase-devel" on Fedora, plus pkg-config. Objects go in
+# Requires the Qt 6 development package, e.g. "qt6-base-devel" on Void
+# Linux, "qt6-base-dev" on Debian and Ubuntu, or "qt6-qtbase-devel" on
+# Fedora, plus pkg-config. See README.md for details. Objects go in
 # their own directory so they don't mix with the X11 version's objects.
 # "make rcqt" regenerates rcqt.inc from astrolog.rc (needs python3).
 QTNAME = astrolog-qt
