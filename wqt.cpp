@@ -23,19 +23,29 @@
 // macros (e.g. loop, inv, neg, P, S, min, max) that would clash with them.
 #include <QAction>
 #include <QApplication>
+#include <QButtonGroup>
+#include <QCheckBox>
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QColorDialog>
+#include <QComboBox>
 #include <QCursor>
 #include <QDesktopServices>
+#include <QDialog>
 #include <QDir>
 #include <QFile>
+#include <QFileDialog>
 #include <QFileInfo>
 #include <QFontDatabase>
 #include <QFontMetrics>
 #include <QGridLayout>
+#include <QGroupBox>
+#include <QIcon>
 #include <QImage>
-#include <QInputDialog>
 #include <QKeyEvent>
+#include <QLabel>
+#include <QLineEdit>
+#include <QListWidget>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
@@ -43,6 +53,8 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPushButton>
+#include <QRadioButton>
 #include <QScreen>
 #include <QScrollBar>
 #include <QTimer>
@@ -69,8 +81,22 @@
 
 // The objects behind the opaque Win32 style handles declared in wqt.h.
 
+struct QtDlgState;
+
 struct QtWnd {
   QWidget *widget;
+  QtDlgState *pds;  // The dialog this window is or is in, if any.
+};
+
+// A dialog being run with DialogBox().
+class AstroDialog;
+struct QtDlgState {
+  AstroDialog *dlg;   // The dialog window.
+  QtWnd wnd;          // The handle for the dialog itself.
+  DLGPROC pfn;        // The dialog procedure in wdialog.cpp.
+  std::map<int, QtWnd *> mapCtl;  // Handles for the controls by id.
+  flag fEnded;        // Has EndDialog() been called?
+  intptr_t nResult;   // The value passed to EndDialog().
 };
 
 // A menu or submenu. Each menu resource loaded (the main menu bar, or a
@@ -120,6 +146,40 @@ struct QtMenuEntry {
 #define QTMENU_POPUP 2
 #define QTMENU_END   3
 
+// Dialog table entry, generated into rcqt.inc. Positions are dialog units.
+struct QtDlgEntry {
+  int idDlg;   // Dialog resource id, e.g. dlgInfo.
+  int nKind;   // QTDLG_* kind below.
+  int id;      // Control id (-1 for IDC_STATIC).
+  int x, y, cx, cy;
+  int nFlags;  // QTDLG_F* flags below.
+  CONST char *sz;  // Text (UTF-8), the caption, or icon file name.
+};
+#define QTDLG_DIALOG    0
+#define QTDLG_LTEXT     1
+#define QTDLG_RTEXT     2
+#define QTDLG_CTEXT     3
+#define QTDLG_EDIT      4
+#define QTDLG_COMBO     5
+#define QTDLG_LIST      6
+#define QTDLG_BUTTON    7
+#define QTDLG_DEFBUTTON 8
+#define QTDLG_GROUPBOX  9
+#define QTDLG_ICON      10
+#define QTDLG_CHECK     11
+#define QTDLG_RADIO     12
+#define QTDLG_STATIC    13
+#define QTDLG_FGROUP     0x001
+#define QTDLG_FTABSTOP   0x002
+#define QTDLG_FSORT      0x004
+#define QTDLG_FDISABLED  0x008
+#define QTDLG_FHIDDEN    0x010
+#define QTDLG_FDROPLIST  0x020
+#define QTDLG_FREADONLY  0x040
+#define QTDLG_FMULTILINE 0x080
+#define QTDLG_FNUMBER    0x100
+#define QTDLG_FPASSWORD  0x200
+
 #include "rcqt.inc"
 
 class AstroChartView;
@@ -136,7 +196,7 @@ static flag g_fRedrawPending = fFalse;
 static flag g_fClosing = fFalse;
 static int g_cWait = 0;          // Nesting count of hourglass cursor.
 
-static QtWnd g_wndMain = {NULL};
+static QtWnd g_wndMain = {NULL, NULL};
 static QtMenu *g_pmenuMain = NULL;  // The main menu bar's tree.
 static QtDC g_dcWin = {NULL, NULL, 0xffffff, OPAQUE};
 
@@ -1224,7 +1284,7 @@ BOOL GetCursorPos(LPPOINT ppt)
 
 HWND GetDesktopWindow(void)
 {
-  static QtWnd wndDesktop = {NULL};
+  static QtWnd wndDesktop = {NULL, NULL};
   return &wndDesktop;
 }
 
@@ -1363,7 +1423,7 @@ BOOL KillTimer(HWND hwnd, uintptr_t id)
 int MessageBox(HWND hwnd, LPCSTR sz, LPCSTR szTitle, UINT uType)
 {
   QMessageBox::Icon qicon = QMessageBox::NoIcon;
-  QWidget *parent = (hwnd != NULL ? hwnd->widget : NULL);
+  QWidget *parent = QApplication::activeModalWidget();
   QMessageBox::StandardButtons sb = QMessageBox::Ok;
   int n;
 
@@ -1381,6 +1441,8 @@ int MessageBox(HWND hwnd, LPCSTR sz, LPCSTR szTitle, UINT uType)
     fprintf(stderr, "%s: %s\n", szTitle, sz);
     return IDOK;
   }
+  if (parent == NULL && hwnd != NULL)
+    parent = hwnd->widget;
   QMessageBox mb(qicon, QsFromSz(szTitle), QsFromSz(sz), sb, parent);
   n = mb.exec();
   return n == QMessageBox::Cancel ? IDCANCEL : (n == QMessageBox::Yes ? IDYES :
@@ -1764,79 +1826,552 @@ static void CreateMainMenu(void)
 ******************************************************************************
 */
 
-// The dialogs are built from astrolog.rc in phase 3. Until then, the Enter
-// Command dialog is provided with a simple input box, since it can be used
-// to change any setting, and the other dialogs show a notice.
+// Dialogs are built from the DIALOG resources in astrolog.rc, via the
+// rgQtDlg table generated into rcqt.inc, then run with the unchanged dialog
+// procedures in wdialog.cpp, which get WM_INITDIALOG and WM_COMMAND messages
+// like on Windows. Controls are placed at the same positions, converting
+// dialog units to pixels from the dialog font, like Win32 MapDialogRect().
+// Like the Windows version, dialog text is in the Latin-1 character set.
+
+// The dialog window, which sends Escape and the close box to the dialog
+// procedure as IDCANCEL, like Windows does.
+
+class AstroDialog : public QDialog
+{
+public:
+  QtDlgState *pds;
+
+  AstroDialog(QWidget *parent) : QDialog(parent), pds(NULL) {}
+
+protected:
+  void reject() override;
+};
+
+
+// Find a file that comes with the program, such as an icon, returning its
+// full path, or an empty string if it can't be found.
+
+static QString QsFindProgramFile(CONST char *szFile)
+{
+  char szPath[cchSzMax];
+  FILE *file;
+  QString qs;
+
+  if (szFile == NULL || !*szFile)
+    return QString();
+  qs = QDir(QCoreApplication::applicationDirPath()).filePath(
+    QString::fromLatin1(szFile));
+  if (QFileInfo::exists(qs))
+    return qs;
+  file = FileOpen(szFile, 2, szPath);
+  if (file == NULL)
+    return QString();
+  fclose(file);
+  return QString::fromLocal8Bit(szPath);
+}
+
+
+// Send a WM_COMMAND message to a dialog's procedure.
+
+static void SendDlgCommand(QtDlgState *pds, int id)
+{
+  if (pds == NULL || pds->fEnded || pds->pfn == NULL)
+    return;
+  (*pds->pfn)(&pds->wnd, WM_COMMAND, (WORD)id, 0);
+}
+
+void AstroDialog::reject()
+{
+  if (pds != NULL && !pds->fEnded)
+    SendDlgCommand(pds, IDCANCEL);
+}
+
+
+// Remove the '&' mnemonic markers from a string, leaving any "&&" as "&".
+
+static QString QsStripMnemonic(const QString &qs)
+{
+  QString qsOut;
+  int i;
+
+  for (i = 0; i < qs.size(); i++) {
+    if (qs[i] == '&') {
+      if (i+1 < qs.size() && qs[i+1] == '&')
+        qsOut += '&';
+      else
+        continue;
+      i++;
+    } else
+      qsOut += qs[i];
+  }
+  return qsOut;
+}
+
+
+// Create the dialog window and all its controls from the resource table.
+// Return fFalse if the dialog isn't in the table.
+
+static flag FBuildDialog(QtDlgState *pds, int idDlg)
+{
+  CONST QtDlgEntry *pde, *pdeDlg = NULL;
+  AstroDialog *dlg;
+  QWidget *w;
+  QLabel *label;
+  QComboBox *combo;
+  QPushButton *button;
+  QButtonGroup *group = NULL;
+  QtWnd *pwnd;
+  QString qs, qsFile;
+  std::vector<std::pair<QLabel *, size_t> > rgLabel;
+  std::vector<QWidget *> rgInput;
+  real bx, by;
+  int x, y, cx, cy, nGroup = 0, nGroupRadio = -1, id;
+  size_t i;
+
+  for (pde = rgQtDlg; pde->idDlg != 0; pde++)
+    if (pde->idDlg == idDlg && pde->nKind == QTDLG_DIALOG) {
+      pdeDlg = pde;
+      break;
+    }
+  if (pdeDlg == NULL)
+    return fFalse;
+
+  dlg = new AstroDialog(QApplication::activeModalWidget() != NULL ?
+    QApplication::activeModalWidget() : (QWidget *)g_win);
+  dlg->pds = pds;
+  pds->dlg = dlg;
+  pds->wnd.widget = dlg;
+  pds->wnd.pds = pds;
+  dlg->setWindowTitle(QString::fromUtf8(pdeDlg->sz));
+
+  // Dialog base units, as Windows computes them from the dialog font.
+  {
+    QFontMetrics fm(dlg->font());
+    bx = (real)fm.horizontalAdvance(QString(
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")) / 52.0;
+    by = (real)fm.height();
+  }
+#define XDlg(n) ((int)((real)(n) * bx / 4.0 + 0.5))
+#define YDlg(n) ((int)((real)(n) * by / 8.0 + 0.5))
+  dlg->setFixedSize(XDlg(pdeDlg->cx), YDlg(pdeDlg->cy));
+
+  for (pde = pdeDlg + 1; pde->idDlg == idDlg && pde->nKind != QTDLG_DIALOG;
+    pde++) {
+    x = XDlg(pde->x); y = YDlg(pde->y);
+    cx = XDlg(pde->cx); cy = YDlg(pde->cy);
+    qs = QString::fromUtf8(pde->sz);
+    if (pde->nFlags & QTDLG_FGROUP)
+      nGroup++;
+    w = NULL;
+    switch (pde->nKind) {
+    case QTDLG_LTEXT:
+    case QTDLG_RTEXT:
+    case QTDLG_CTEXT:
+    case QTDLG_STATIC:
+      label = new QLabel(dlg);
+      label->setText(qs);
+      label->setWordWrap(fTrue);
+      label->setAlignment(Qt::AlignTop | (pde->nKind == QTDLG_RTEXT ?
+        Qt::AlignRight : (pde->nKind == QTDLG_CTEXT ? Qt::AlignHCenter :
+        Qt::AlignLeft)));
+      rgLabel.push_back(std::make_pair(label, rgInput.size()));
+      w = label;
+      break;
+    case QTDLG_EDIT:
+      w = new QLineEdit(dlg);
+      if (pde->nFlags & QTDLG_FREADONLY)
+        ((QLineEdit *)w)->setReadOnly(fTrue);
+      if (pde->nFlags & QTDLG_FPASSWORD)
+        ((QLineEdit *)w)->setEchoMode(QLineEdit::Password);
+      rgInput.push_back(w);
+      break;
+    case QTDLG_COMBO:
+      combo = new QComboBox(dlg);
+      combo->setEditable(!(pde->nFlags & QTDLG_FDROPLIST));
+      combo->setInsertPolicy(QComboBox::NoInsert);
+      combo->setMaxVisibleItems(20);
+      // The resource height is that of the dropdown list. The control
+      // itself is as tall as a normal edit field.
+      cy = combo->sizeHint().height();
+      w = combo;
+      rgInput.push_back(w);
+      break;
+    case QTDLG_LIST:
+      w = new QListWidget(dlg);
+      if (pde->nFlags & QTDLG_FSORT)
+        ((QListWidget *)w)->setSortingEnabled(fTrue);
+      rgInput.push_back(w);
+      break;
+    case QTDLG_BUTTON:
+    case QTDLG_DEFBUTTON:
+      button = new QPushButton(qs, dlg);
+      button->setAutoDefault(fFalse);
+      if (pde->nKind == QTDLG_DEFBUTTON) {
+        button->setAutoDefault(fTrue);
+        button->setDefault(fTrue);
+      }
+      w = button;
+      break;
+    case QTDLG_GROUPBOX:
+      w = new QGroupBox(qs, dlg);
+      break;
+    case QTDLG_ICON:
+      label = new QLabel(dlg);
+      qsFile = QsFindProgramFile(pde->sz);
+      if (!qsFile.isEmpty())
+        label->setPixmap(QIcon(qsFile).pixmap(32, 32));
+      cx = cy = 32;
+      w = label;
+      break;
+    case QTDLG_CHECK:
+      w = new QCheckBox(qs, dlg);
+      break;
+    case QTDLG_RADIO:
+      // Like Windows, radio buttons are exclusive within a group that starts
+      // at a control with the WS_GROUP style.
+      if (group == NULL || nGroupRadio != nGroup) {
+        group = new QButtonGroup(dlg);
+        group->setExclusive(fTrue);
+        nGroupRadio = nGroup;
+      }
+      w = new QRadioButton(qs, dlg);
+      group->addButton((QRadioButton *)w);
+      break;
+    }
+    if (w == NULL)
+      continue;
+    w->setGeometry(x, y, cx, cy);
+    if (pde->nFlags & QTDLG_FDISABLED)
+      w->setEnabled(fFalse);
+    if (pde->nFlags & QTDLG_FHIDDEN)
+      w->setVisible(fFalse);
+    if (pde->nKind == QTDLG_GROUPBOX)
+      w->lower();  // Group boxes go behind the controls within them.
+
+    // Buttons, checkboxes, and radio buttons send WM_COMMAND when clicked.
+    id = pde->id;
+    if (pde->nKind == QTDLG_BUTTON || pde->nKind == QTDLG_DEFBUTTON ||
+      pde->nKind == QTDLG_CHECK || pde->nKind == QTDLG_RADIO)
+      QObject::connect((QAbstractButton *)w, &QAbstractButton::clicked,
+        [pds, id](bool) { SendDlgCommand(pds, id); });
+
+    // Remember the control by id. Static text with no id isn't remembered.
+    if (id != -1 && pds->mapCtl.find(id) == pds->mapCtl.end()) {
+      pwnd = new QtWnd;
+      pwnd->widget = w;
+      pwnd->pds = pds;
+      pds->mapCtl[id] = pwnd;
+    }
+  }
+
+  // A label with a mnemonic gives focus to the next input control, like on
+  // Windows. Otherwise the '&' marker is removed from the label text.
+  for (i = 0; i < rgLabel.size(); i++) {
+    qs = rgLabel[i].first->text();
+    if (QsStripMnemonic(qs) == qs)
+      continue;
+    if (rgLabel[i].second < rgInput.size())
+      rgLabel[i].first->setBuddy(rgInput[rgLabel[i].second]);
+    else
+      rgLabel[i].first->setText(QsStripMnemonic(qs));
+  }
+#undef XDlg
+#undef YDlg
+  return fTrue;
+}
+
+
+// Free the dialog window and the control handles.
+
+static void FreeDialog(QtDlgState *pds)
+{
+  std::map<int, QtWnd *>::iterator it;
+
+  for (it = pds->mapCtl.begin(); it != pds->mapCtl.end(); it++)
+    delete it->second;
+  pds->mapCtl.clear();
+  if (pds->dlg != NULL) {
+    pds->dlg->pds = NULL;
+    delete pds->dlg;
+    pds->dlg = NULL;
+  }
+}
+
+
+// Run a modal dialog with the given resource id and dialog procedure, and
+// return the value the procedure passed to EndDialog().
 
 intptr_t DialogBox(HINSTANCE hinst, LPCSTR id, HWND hwndParent,
   DLGPROC pfn)
 {
-  QWidget *parent = (g_win != NULL ? (QWidget *)g_win : NULL);
-  QString qs;
-  char sz[cchSzLine];
-  bool fOk = false;
+  QtDlgState ds;
+  intptr_t nResult;
 
-  if ((intptr_t)id == dlgCommand) {
-    qs = QInputDialog::getText(parent, QString("Enter Command"),
-      QString("Command line switches:"), QLineEdit::Normal, QString(), &fOk);
-    if (fOk) {
-      CopyQsToSz(qs, sz, cchSzLine);
-      FProcessCommandLine(sz);
-      wi.fCast = wi.fMenuAll = fTrue;
-    }
-    return fOk ? IDOK : IDCANCEL;
+  ds.dlg = NULL;
+  ds.pfn = pfn;
+  ds.fEnded = fFalse;
+  ds.nResult = 0;
+  ds.wnd.widget = NULL;
+  ds.wnd.pds = &ds;
+  if (!FBuildDialog(&ds, (int)(intptr_t)id)) {
+    PrintWarning("This dialog isn't available in the Qt version.");
+    return -1;
   }
-  QMessageBox::information(parent, QString(szAppName),
-    QString("This dialog is not yet available in the Qt version.\n"
-    "Use Edit / Enter Command (the switch equivalent) instead."));
-  return IDCANCEL;
+
+  // Let the dialog procedure fill in the controls. If it returns true, then
+  // focus goes on the first control (Qt does that when the dialog is shown),
+  // otherwise the procedure set the focus itself.
+  (*pfn)(&ds.wnd, WM_INITDIALOG, 0, 0);
+  if (!ds.fEnded)
+    ds.dlg->exec();
+  nResult = ds.nResult;
+  FreeDialog(&ds);
+  return nResult;
 }
 
 BOOL EndDialog(HWND hdlg, intptr_t nResult)
 {
+  QtDlgState *pds;
+
+  if (hdlg == NULL || (pds = hdlg->pds) == NULL || pds->dlg == NULL)
+    return fFalse;
+  pds->fEnded = fTrue;
+  pds->nResult = nResult;
+  pds->dlg->done((int)nResult);
   return fTrue;
 }
 
 HWND GetDlgItem(HWND hdlg, int id)
 {
-  return NULL;
+  std::map<int, QtWnd *>::iterator it;
+
+  if (hdlg == NULL || hdlg->pds == NULL)
+    return NULL;
+  it = hdlg->pds->mapCtl.find(id);
+  return it != hdlg->pds->mapCtl.end() ? it->second : NULL;
+}
+
+// Return a dialog's control as the given Qt widget class, or NULL.
+
+template <class T> static T *PctlFromId(HWND hdlg, int id)
+{
+  HWND hwnd = GetDlgItem(hdlg, id);
+
+  return hwnd != NULL ? dynamic_cast<T *>(hwnd->widget) : NULL;
 }
 
 BOOL SetDlgItemText(HWND hdlg, int id, LPCSTR sz)
 {
-  return fFalse;
+  QWidget *w;
+  QString qs = QString::fromLatin1(sz != NULL ? sz : "");
+
+  if (GetDlgItem(hdlg, id) == NULL)
+    return fFalse;
+  w = GetDlgItem(hdlg, id)->widget;
+  if (QLineEdit *e = dynamic_cast<QLineEdit *>(w))
+    e->setText(qs);
+  else if (QComboBox *c = dynamic_cast<QComboBox *>(w)) {
+    if (c->isEditable())
+      c->setEditText(qs);
+    else
+      c->setCurrentIndex(c->findText(qs));
+  } else if (QLabel *l = dynamic_cast<QLabel *>(w))
+    l->setText(qs);
+  else if (QAbstractButton *b = dynamic_cast<QAbstractButton *>(w))
+    b->setText(qs);
+  else if (QGroupBox *g = dynamic_cast<QGroupBox *>(w))
+    g->setTitle(qs);
+  else
+    return fFalse;
+  return fTrue;
 }
 
 UINT GetDlgItemText(HWND hdlg, int id, LPSTR sz, int cchMax)
 {
-  if (cchMax > 0)
-    *sz = chNull;
-  return 0;
+  QWidget *w;
+  QString qs;
+  QByteArray ba;
+  int cch;
+
+  if (cchMax <= 0)
+    return 0;
+  *sz = chNull;
+  if (GetDlgItem(hdlg, id) == NULL)
+    return 0;
+  w = GetDlgItem(hdlg, id)->widget;
+  if (QLineEdit *e = dynamic_cast<QLineEdit *>(w))
+    qs = e->text();
+  else if (QComboBox *c = dynamic_cast<QComboBox *>(w))
+    qs = c->currentText();
+  else if (QLabel *l = dynamic_cast<QLabel *>(w))
+    qs = l->text();
+  else if (QAbstractButton *b = dynamic_cast<QAbstractButton *>(w))
+    qs = b->text();
+  else if (QGroupBox *g = dynamic_cast<QGroupBox *>(w))
+    qs = g->title();
+  ba = qs.toLatin1();
+  cch = (int)ba.size();
+  if (cch > cchMax-1)
+    cch = cchMax-1;
+  memcpy(sz, ba.constData(), cch);
+  sz[cch] = chNull;
+  return (UINT)cch;
 }
 
 BOOL SetDlgItemInt(HWND hdlg, int id, UINT n, BOOL fSigned)
 {
-  return fFalse;
+  char sz[cchSzDef];
+
+  if (fSigned)
+    sprintf(sz, "%d", (int)n);
+  else
+    sprintf(sz, "%u", n);
+  return SetDlgItemText(hdlg, id, sz);
 }
 
 BOOL CheckDlgButton(HWND hdlg, int id, UINT uCheck)
 {
-  return fFalse;
+  QAbstractButton *b = PctlFromId<QAbstractButton>(hdlg, id);
+  QButtonGroup *group;
+  flag fExclusive = fFalse;
+
+  if (b == NULL)
+    return fFalse;
+  // An exclusive radio group can't have its checked button unchecked
+  // directly, so allow that temporarily, like Windows does.
+  group = b->group();
+  if (group != NULL && uCheck == BST_UNCHECKED && b->isChecked()) {
+    fExclusive = group->exclusive();
+    group->setExclusive(fFalse);
+  }
+  b->setChecked(uCheck != BST_UNCHECKED);
+  if (fExclusive)
+    group->setExclusive(fTrue);
+  return fTrue;
 }
 
 UINT IsDlgButtonChecked(HWND hdlg, int id)
 {
-  return BST_UNCHECKED;
+  QAbstractButton *b = PctlFromId<QAbstractButton>(hdlg, id);
+
+  return b != NULL && b->isChecked() ? BST_CHECKED : BST_UNCHECKED;
 }
 
 BOOL CheckRadioButton(HWND hdlg, int idFirst, int idLast, int idCheck)
 {
-  return fFalse;
+  int id;
+
+  for (id = idFirst; id <= idLast; id++)
+    if (id != idCheck)
+      CheckDlgButton(hdlg, id, BST_UNCHECKED);
+  return CheckDlgButton(hdlg, idCheck, BST_CHECKED);
 }
+
+// Process the combobox and listbox messages Astrolog's dialogs use.
 
 LRESULT SendDlgItemMessage(HWND hdlg, int id, UINT wMsg, WPARAM wParam,
   LPARAM lParam)
 {
+  QComboBox *c = PctlFromId<QComboBox>(hdlg, id);
+  QListWidget *l = PctlFromId<QListWidget>(hdlg, id);
+  QListWidgetItem *item;
+  QString qs;
+  int i;
+
+  if (c != NULL) {
+    switch (wMsg) {
+    case CB_ADDSTRING:
+    case CB_INSERTSTRING:
+      // Adding the first item to a combobox would replace its edit text, so
+      // keep the text, like Windows.
+      qs = c->currentText();
+      c->blockSignals(fTrue);
+      i = (wMsg == CB_ADDSTRING ? c->count() :
+        ((int)wParam < 0 ? c->count() : (int)wParam));
+      c->insertItem(i, QString::fromLatin1((CONST char *)lParam));
+      if (c->isEditable())
+        c->setEditText(qs);
+      c->blockSignals(fFalse);
+      return i;
+    case CB_DELETESTRING:
+      c->removeItem((int)wParam);
+      return c->count();
+    case CB_RESETCONTENT:
+      c->clear();
+      return 0;
+    case CB_GETCOUNT:
+      return c->count();
+    case CB_GETCURSEL:
+      return c->currentIndex();
+    case CB_SETCURSEL:
+      c->setCurrentIndex((int)wParam);
+      return c->currentIndex();
+    case CB_FINDSTRING:
+      return c->findText(QString::fromLatin1((CONST char *)lParam),
+        Qt::MatchStartsWith);
+    case CB_SELECTSTRING:
+      i = c->findText(QString::fromLatin1((CONST char *)lParam),
+        Qt::MatchStartsWith);
+      if (i >= 0)
+        c->setCurrentIndex(i);
+      return i;
+    case CB_GETLBTEXT:
+      if ((int)wParam < 0 || (int)wParam >= c->count())
+        return CB_ERR;
+      qs = c->itemText((int)wParam);
+      strcpy((char *)lParam, qs.toLatin1().constData());
+      return qs.size();
+    }
+    return 0;
+  }
+  if (l != NULL) {
+    switch (wMsg) {
+    case LB_ADDSTRING:
+    case LB_INSERTSTRING:
+      i = (wMsg == LB_ADDSTRING ? l->count() :
+        ((int)wParam < 0 ? l->count() : (int)wParam));
+      l->insertItem(i, QString::fromLatin1((CONST char *)lParam));
+      return l->row(l->item(i));
+    case LB_DELETESTRING:
+      delete l->takeItem((int)wParam);
+      return l->count();
+    case LB_RESETCONTENT:
+      l->clear();
+      return 0;
+    case LB_GETCOUNT:
+      return l->count();
+    case LB_GETCURSEL:
+      return l->currentItem() != NULL && l->currentItem()->isSelected() ?
+        l->currentRow() : LB_ERR;
+    case LB_SETCURSEL:
+      if ((int)wParam < 0) {
+        l->clearSelection();
+        return LB_ERR;
+      }
+      l->setCurrentRow((int)wParam);
+      if (l->currentItem() != NULL)
+        l->scrollToItem(l->currentItem());
+      return l->currentRow();
+    case LB_GETITEMDATA:
+      item = l->item((int)wParam);
+      return item != NULL ? (LRESULT)item->data(Qt::UserRole).toLongLong() :
+        LB_ERR;
+    case LB_SETITEMDATA:
+      item = l->item((int)wParam);
+      if (item == NULL)
+        return LB_ERR;
+      item->setData(Qt::UserRole, (qlonglong)lParam);
+      return 0;
+    case LB_GETTEXT:
+      item = l->item((int)wParam);
+      if (item == NULL)
+        return LB_ERR;
+      strcpy((char *)lParam, item->text().toLatin1().constData());
+      return item->text().size();
+    case LB_INITSTORAGE:
+      return 0;
+    }
+  }
   return 0;
 }
 
@@ -1847,8 +2382,6 @@ LRESULT SendDlgItemMessage(HWND hdlg, int id, UINT wMsg, WPARAM wParam,
 ******************************************************************************
 */
 
-#include <QFileDialog>
-#include <QColorDialog>
 
 // Convert a Win32 filter string ("Desc\0*.ext\0Desc2\0*.ext2\0\0") to a Qt
 // one ("Desc (*.ext);;Desc2 (*.ext2)"), returning the selected entry too.
@@ -2273,6 +2806,7 @@ int main(int argc, char **argv)
     gs.yWin = DEFAULTY;
   g_win->resize(gs.xWin + g_sbVert->sizeHint().width(),
     gs.yWin + g_sbHorz->sizeHint().height());
+  g_win->setWindowIcon(QIcon(QsFindProgramFile("astrlog1.ico")));
   g_win->show();
   g_view->setFocus();
   ResizeWindowToChart();

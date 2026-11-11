@@ -1293,3 +1293,1715 @@ static const QtMenuEntry rgQtMenu[] = {
   {163, QTMENU_ITEM, 40084, "&View Graphic Biorhythm\tv"},  // cmdGraphics
   {163, QTMENU_END, 0, NULL},
   {0, 0, 0, NULL}};
+
+// Dialogs: {dialog id, kind, control id, x, y, cx, cy, flags, text},
+// in dialog units. Each dialog starts with a QTDLG_DIALOG entry with
+// its size and caption, followed by its controls in tab order. The
+// table ends with id 0. For icons, the text is the .ico file name.
+
+static const QtDlgEntry rgQtDlg[] = {
+  // dlgInfo
+  {205, QTDLG_DIALOG, 0, 0, 0, 415, 158, 0, "Set Chart Info"},
+  {205, QTDLG_DEFBUTTON, 1, 125, 105, 50, 14, 0, "OK"},  // IDOK
+  {205, QTDLG_BUTTON, 2, 125, 85, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {205, QTDLG_COMBO, 1103, 45, 5, 75, 115, 2, ""},  // dcInMon
+  {205, QTDLG_COMBO, 1096, 45, 20, 75, 70, 2, ""},  // dcInDay
+  {205, QTDLG_COMBO, 1105, 45, 35, 75, 115, 2, ""},  // dcInYea
+  {205, QTDLG_COMBO, 1104, 45, 50, 75, 50, 2, ""},  // dcInTim
+  {205, QTDLG_COMBO, 1097, 45, 65, 75, 35, 2, ""},  // dcInDst
+  {205, QTDLG_COMBO, 1106, 45, 80, 75, 115, 2, ""},  // dcInZon
+  {205, QTDLG_COMBO, 1102, 45, 95, 75, 35, 2, ""},  // dcInLon
+  {205, QTDLG_COMBO, 1101, 45, 110, 75, 35, 2, ""},  // dcInLat
+  {205, QTDLG_EDIT, 1310, 45, 125, 130, 13, 0, ""},  // deInNam
+  {205, QTDLG_EDIT, 1309, 45, 140, 130, 13, 0, ""},  // deInLoc
+  {205, QTDLG_BUTTON, 1021, 125, 5, 50, 14, 0, "&Now"},  // dbInNow
+  {205, QTDLG_BUTTON, 1022, 125, 25, 50, 14, 0, "&Recall"},  // dbInSet
+  {205, QTDLG_BUTTON, 1019, 195, 10, 44, 14, 0, "Lookup &City"},  // dbInCity
+  {205, QTDLG_BUTTON, 1020, 245, 10, 48, 14, 0, "Near&by Cities"},  // dbInCoor
+  {205, QTDLG_BUTTON, 1018, 300, 10, 52, 14, 0, "&Time Changes"},  // dbInChan
+  {205, QTDLG_BUTTON, 1017, 364, 10, 41, 14, 0, "&Apply Info"},  // dbInAppl
+  {205, QTDLG_LIST, 1402, 195, 30, 210, 118, 2, ""},  // dlIn
+  {205, QTDLG_LTEXT, -1, 5, 5, 35, 8, 1, "Month:"},  // IDC_STATIC
+  {205, QTDLG_LTEXT, -1, 5, 20, 35, 8, 1, "Day:"},  // IDC_STATIC
+  {205, QTDLG_LTEXT, -1, 5, 35, 35, 8, 1, "Year:"},  // IDC_STATIC
+  {205, QTDLG_LTEXT, -1, 5, 50, 35, 8, 1, "Time:"},  // IDC_STATIC
+  {205, QTDLG_LTEXT, -1, 5, 63, 35, 20, 1, "Daylight Saving:"},  // IDC_STATIC
+  {205, QTDLG_LTEXT, -1, 5, 85, 37, 8, 1, "Time Zone:"},  // IDC_STATIC
+  {205, QTDLG_LTEXT, -1, 5, 100, 35, 8, 1, "Longitude:"},  // IDC_STATIC
+  {205, QTDLG_LTEXT, -1, 5, 115, 35, 8, 1, "Latitude:"},  // IDC_STATIC
+  {205, QTDLG_LTEXT, -1, 5, 130, 35, 8, 1, "Name:"},  // IDC_STATIC
+  {205, QTDLG_LTEXT, -1, 5, 145, 35, 8, 1, "Location:"},  // IDC_STATIC
+  {205, QTDLG_GROUPBOX, -1, 189, 1, 221, 153, 0, "Atlas Lookups"},  // IDC_STATIC
+  {205, QTDLG_ICON, -1, 140, 55, 20, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgAbout
+  {224, QTDLG_DIALOG, 0, 0, 0, 268, 238, 0, "About Astrolog"},
+  {224, QTDLG_DEFBUTTON, 1, 208, 218, 50, 14, 0, "OK"},  // IDOK
+  {224, QTDLG_LTEXT, 1431, 32, 4, 132, 8, 1, ""},  // ds01
+  {224, QTDLG_LTEXT, 1432, 32, 12, 132, 8, 1, ""},  // ds02
+  {224, QTDLG_LTEXT, -1, 32, 24, 132, 8, 1, "By Walter D. Pullen (Astara@msn.com)"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 32, 240, 8, 1, "Astrolog Website: http://www.astrolog.org/astrolog.htm"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 40, 240, 8, 1, "Astrolog Website mirror: http://www.magitech.com/astrolog/astrolog.htm"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 52, 240, 8, 1, "Main ephemeris databases and calculation routines are from the library"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 60, 240, 8, 1, "'Swiss Ephemeris' by Astrodienst AG, subject to license for Swiss"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 68, 240, 8, 1, "Ephemeris Free Edition at http://www.astro.com/swisseph. Old 'Placalc'"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 76, 240, 8, 1, "library and formulas are by Alois Treindl, also from Astrodienst AG."},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 88, 240, 8, 1, "Original planetary calculation formulas were converted from"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 96, 230, 9, 1, "routines by James Neely, as listed in 'Manual of Computer Programming"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 104, 240, 8, 1, "for Astrologers' by Michael Erlewine, available from Matrix Software."},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 116, 240, 8, 1, "Atlas list of city locations from GeoNames: https://www.geonames.org/"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 124, 240, 8, 1, "Timezone and Daylight Saving Time date changes converted from"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 132, 240, 8, 1, "TZ database: https://data.iana.org/time-zones/tz-link.html"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 144, 240, 8, 1, "PostScript graphics routines by Brian D. Willoughby."},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 156, 240, 8, 1, "IMPORTANT: Astrolog is free software. You can distribute and/or modify"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 164, 240, 8, 1, "it under the terms of the GNU General Public License, as described at"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 172, 240, 8, 1, "http://www.gnu.org and in the license.htm file included with the"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 180, 240, 8, 1, "program. Astrolog is distributed without any warranty expressed or"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 188, 240, 8, 1, "implied of any kind. These license and copyright notices must not be"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 196, 240, 8, 1, "changed or removed by any user or editor of the program."},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 208, 170, 8, 1, "Special thanks to all those unmentioned, seen and"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 216, 170, 8, 1, "unseen, who have pointed out problems, suggested"},  // IDC_STATIC
+  {224, QTDLG_LTEXT, -1, 32, 224, 170, 8, 1, "features, and sent many positive vibes! :-)"},  // IDC_STATIC
+  {224, QTDLG_ICON, -1, 5, 5, 18, 20, 0, "astrlog1.ico"},  // IDC_STATIC
+  {224, QTDLG_ICON, -1, 175, 5, 18, 20, 0, "astrlog2.ico"},  // IDC_STATIC
+  {224, QTDLG_ICON, -1, 205, 5, 18, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  {224, QTDLG_ICON, -1, 235, 5, 18, 20, 0, "astrlog4.ico"},  // IDC_STATIC
+  // dlgCommand
+  {203, QTDLG_DIALOG, 0, 0, 0, 143, 62, 0, "Enter Command Line"},
+  {203, QTDLG_DEFBUTTON, 1, 90, 42, 50, 14, 0, "OK"},  // IDOK
+  {203, QTDLG_BUTTON, 2, 36, 42, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {203, QTDLG_EDIT, 1204, 30, 15, 110, 13, 0, ""},  // deCo
+  {203, QTDLG_CHECK, 1533, 30, 30, 108, 10, 2, "Enable Astro&Expression hooks"},  // dxCo_e
+  {203, QTDLG_LTEXT, -1, 30, 5, 110, 8, 1, "Enter command switches below:"},  // IDC_STATIC
+  {203, QTDLG_ICON, -1, 5, 15, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgAspect
+  {209, QTDLG_DIALOG, 0, 0, 0, 431, 213, 0, "Aspect Settings"},
+  {209, QTDLG_DEFBUTTON, 1, 375, 195, 50, 14, 0, "OK"},  // IDOK
+  {209, QTDLG_BUTTON, 2, 320, 195, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {209, QTDLG_CHECK, 1495, 5, 15, 60, 10, 2, "&Conjunction"},  // dxa01
+  {209, QTDLG_CHECK, 1496, 5, 30, 60, 10, 2, "&Opposition"},  // dxa02
+  {209, QTDLG_CHECK, 1497, 5, 45, 60, 10, 2, "&Square"},  // dxa03
+  {209, QTDLG_CHECK, 1498, 5, 60, 60, 10, 2, "&Trine"},  // dxa04
+  {209, QTDLG_CHECK, 1499, 5, 75, 60, 10, 2, "Se&xtile"},  // dxa05
+  {209, QTDLG_CHECK, 1500, 5, 90, 60, 10, 2, "&Inconjunct"},  // dxa06
+  {209, QTDLG_CHECK, 1501, 5, 105, 60, 10, 2, "S&emiSextile"},  // dxa07
+  {209, QTDLG_CHECK, 1502, 5, 120, 60, 10, 2, "SemiSquare"},  // dxa08
+  {209, QTDLG_CHECK, 1503, 5, 135, 63, 10, 2, "SesquiQuadrate"},  // dxa09
+  {209, QTDLG_CHECK, 1504, 5, 150, 60, 10, 2, "&Quintile"},  // dxa10
+  {209, QTDLG_CHECK, 1505, 5, 165, 60, 10, 2, "&BiQuintile"},  // dxa11
+  {209, QTDLG_CHECK, 1506, 5, 180, 60, 10, 2, "SemiQuintile"},  // dxa12
+  {209, QTDLG_CHECK, 1507, 220, 15, 55, 10, 2, "Se&ptile"},  // dxa13
+  {209, QTDLG_CHECK, 1508, 220, 30, 55, 10, 2, "&Novile"},  // dxa14
+  {209, QTDLG_CHECK, 1509, 220, 45, 55, 10, 2, "BiNovile"},  // dxa15
+  {209, QTDLG_CHECK, 1510, 220, 60, 55, 10, 2, "BiSeptile"},  // dxa16
+  {209, QTDLG_CHECK, 1511, 220, 75, 55, 10, 2, "TriSeptile"},  // dxa17
+  {209, QTDLG_CHECK, 1512, 220, 90, 55, 10, 2, "QuatroNovile"},  // dxa18
+  {209, QTDLG_CHECK, 1513, 220, 105, 55, 10, 2, "TriDecile"},  // dxa19
+  {209, QTDLG_CHECK, 1514, 220, 120, 55, 10, 2, "Undecile"},  // dxa20
+  {209, QTDLG_CHECK, 1515, 220, 135, 55, 10, 2, "BiUndecile"},  // dxa21
+  {209, QTDLG_CHECK, 1516, 220, 150, 55, 10, 2, "TriUndecile"},  // dxa22
+  {209, QTDLG_CHECK, 1517, 220, 165, 60, 10, 2, "QuadUndecile"},  // dxa23
+  {209, QTDLG_CHECK, 1518, 220, 180, 55, 10, 2, "QuinUndecile"},  // dxa24
+  {209, QTDLG_EDIT, 1363, 70, 15, 25, 12, 0, ""},  // deo01
+  {209, QTDLG_EDIT, 1364, 70, 30, 25, 12, 0, ""},  // deo02
+  {209, QTDLG_EDIT, 1365, 70, 45, 25, 12, 0, ""},  // deo03
+  {209, QTDLG_EDIT, 1366, 70, 60, 25, 12, 0, ""},  // deo04
+  {209, QTDLG_EDIT, 1367, 70, 75, 25, 12, 0, ""},  // deo05
+  {209, QTDLG_EDIT, 1368, 70, 90, 25, 12, 0, ""},  // deo06
+  {209, QTDLG_EDIT, 1369, 70, 105, 25, 12, 0, ""},  // deo07
+  {209, QTDLG_EDIT, 1370, 70, 120, 25, 12, 0, ""},  // deo08
+  {209, QTDLG_EDIT, 1371, 70, 135, 25, 12, 0, ""},  // deo09
+  {209, QTDLG_EDIT, 1372, 70, 150, 25, 12, 0, ""},  // deo10
+  {209, QTDLG_EDIT, 1373, 70, 165, 25, 12, 0, ""},  // deo11
+  {209, QTDLG_EDIT, 1374, 70, 180, 25, 12, 0, ""},  // deo12
+  {209, QTDLG_EDIT, 1375, 280, 15, 25, 12, 0, ""},  // deo13
+  {209, QTDLG_EDIT, 1376, 280, 30, 25, 12, 0, ""},  // deo14
+  {209, QTDLG_EDIT, 1377, 280, 44, 25, 12, 0, ""},  // deo15
+  {209, QTDLG_EDIT, 1378, 280, 60, 25, 12, 0, ""},  // deo16
+  {209, QTDLG_EDIT, 1379, 280, 75, 25, 12, 0, ""},  // deo17
+  {209, QTDLG_EDIT, 1380, 280, 90, 25, 12, 0, ""},  // deo18
+  {209, QTDLG_EDIT, 1381, 280, 105, 25, 12, 0, ""},  // deo19
+  {209, QTDLG_EDIT, 1382, 280, 120, 25, 12, 0, ""},  // deo20
+  {209, QTDLG_EDIT, 1383, 280, 135, 25, 12, 0, ""},  // deo21
+  {209, QTDLG_EDIT, 1384, 280, 150, 25, 12, 0, ""},  // deo22
+  {209, QTDLG_EDIT, 1385, 280, 165, 25, 12, 0, ""},  // deo23
+  {209, QTDLG_EDIT, 1386, 280, 180, 25, 12, 0, ""},  // deo24
+  {209, QTDLG_EDIT, 1163, 100, 15, 30, 12, 0, ""},  // dea01
+  {209, QTDLG_EDIT, 1164, 100, 30, 30, 12, 0, ""},  // dea02
+  {209, QTDLG_EDIT, 1165, 100, 45, 30, 12, 0, ""},  // dea03
+  {209, QTDLG_EDIT, 1166, 100, 60, 30, 12, 0, ""},  // dea04
+  {209, QTDLG_EDIT, 1167, 100, 75, 30, 12, 0, ""},  // dea05
+  {209, QTDLG_EDIT, 1168, 100, 90, 30, 12, 0, ""},  // dea06
+  {209, QTDLG_EDIT, 1169, 100, 105, 30, 12, 0, ""},  // dea07
+  {209, QTDLG_EDIT, 1170, 100, 120, 30, 12, 0, ""},  // dea08
+  {209, QTDLG_EDIT, 1171, 100, 135, 30, 12, 0, ""},  // dea09
+  {209, QTDLG_EDIT, 1172, 100, 150, 30, 12, 0, ""},  // dea10
+  {209, QTDLG_EDIT, 1173, 100, 165, 30, 12, 0, ""},  // dea11
+  {209, QTDLG_EDIT, 1174, 100, 180, 30, 12, 0, ""},  // dea12
+  {209, QTDLG_EDIT, 1175, 310, 15, 30, 12, 0, ""},  // dea13
+  {209, QTDLG_EDIT, 1176, 310, 30, 30, 12, 0, ""},  // dea14
+  {209, QTDLG_EDIT, 1177, 310, 44, 30, 12, 0, ""},  // dea15
+  {209, QTDLG_EDIT, 1178, 310, 60, 30, 12, 0, ""},  // dea16
+  {209, QTDLG_EDIT, 1179, 310, 75, 30, 12, 0, ""},  // dea17
+  {209, QTDLG_EDIT, 1180, 310, 90, 30, 12, 0, ""},  // dea18
+  {209, QTDLG_EDIT, 1181, 310, 105, 30, 12, 0, ""},  // dea19
+  {209, QTDLG_EDIT, 1182, 310, 120, 30, 12, 0, ""},  // dea20
+  {209, QTDLG_EDIT, 1183, 310, 135, 30, 12, 0, ""},  // dea21
+  {209, QTDLG_EDIT, 1184, 310, 150, 30, 12, 0, ""},  // dea22
+  {209, QTDLG_EDIT, 1185, 310, 165, 30, 12, 0, ""},  // dea23
+  {209, QTDLG_EDIT, 1186, 310, 180, 30, 12, 0, ""},  // dea24
+  {209, QTDLG_EDIT, 1277, 135, 15, 25, 12, 0, ""},  // dei01
+  {209, QTDLG_EDIT, 1278, 135, 30, 25, 12, 0, ""},  // dei02
+  {209, QTDLG_EDIT, 1279, 135, 45, 25, 12, 0, ""},  // dei03
+  {209, QTDLG_EDIT, 1280, 135, 60, 25, 12, 0, ""},  // dei04
+  {209, QTDLG_EDIT, 1281, 135, 75, 25, 12, 0, ""},  // dei05
+  {209, QTDLG_EDIT, 1282, 135, 90, 25, 12, 0, ""},  // dei06
+  {209, QTDLG_EDIT, 1283, 135, 105, 25, 12, 0, ""},  // dei07
+  {209, QTDLG_EDIT, 1284, 135, 120, 25, 12, 0, ""},  // dei08
+  {209, QTDLG_EDIT, 1285, 135, 135, 25, 12, 0, ""},  // dei09
+  {209, QTDLG_EDIT, 1286, 135, 150, 25, 12, 0, ""},  // dei10
+  {209, QTDLG_EDIT, 1287, 135, 165, 25, 12, 0, ""},  // dei11
+  {209, QTDLG_EDIT, 1288, 135, 180, 25, 12, 0, ""},  // dei12
+  {209, QTDLG_EDIT, 1289, 345, 15, 25, 12, 0, ""},  // dei13
+  {209, QTDLG_EDIT, 1290, 345, 30, 25, 12, 0, ""},  // dei14
+  {209, QTDLG_EDIT, 1291, 345, 45, 25, 12, 0, ""},  // dei15
+  {209, QTDLG_EDIT, 1292, 345, 60, 25, 12, 0, ""},  // dei16
+  {209, QTDLG_EDIT, 1293, 345, 75, 25, 12, 0, ""},  // dei17
+  {209, QTDLG_EDIT, 1294, 345, 90, 25, 12, 0, ""},  // dei18
+  {209, QTDLG_EDIT, 1295, 345, 105, 25, 12, 0, ""},  // dei19
+  {209, QTDLG_EDIT, 1296, 345, 120, 25, 12, 0, ""},  // dei20
+  {209, QTDLG_EDIT, 1297, 345, 135, 25, 12, 0, ""},  // dei21
+  {209, QTDLG_EDIT, 1298, 345, 150, 25, 12, 0, ""},  // dei22
+  {209, QTDLG_EDIT, 1299, 345, 165, 25, 12, 0, ""},  // dei23
+  {209, QTDLG_EDIT, 1300, 345, 180, 25, 12, 0, ""},  // dei24
+  {209, QTDLG_COMBO, 1108, 165, 15, 50, 160, 2, ""},  // dck01
+  {209, QTDLG_COMBO, 1109, 165, 30, 50, 160, 2, ""},  // dck02
+  {209, QTDLG_COMBO, 1110, 165, 45, 50, 160, 2, ""},  // dck03
+  {209, QTDLG_COMBO, 1111, 165, 60, 50, 160, 2, ""},  // dck04
+  {209, QTDLG_COMBO, 1112, 165, 75, 50, 160, 2, ""},  // dck05
+  {209, QTDLG_COMBO, 1113, 165, 90, 50, 160, 2, ""},  // dck06
+  {209, QTDLG_COMBO, 1114, 165, 105, 50, 160, 2, ""},  // dck07
+  {209, QTDLG_COMBO, 1115, 165, 120, 50, 160, 2, ""},  // dck08
+  {209, QTDLG_COMBO, 1116, 165, 135, 50, 160, 2, ""},  // dck09
+  {209, QTDLG_COMBO, 1117, 165, 150, 50, 160, 2, ""},  // dck10
+  {209, QTDLG_COMBO, 1118, 165, 165, 50, 160, 2, ""},  // dck11
+  {209, QTDLG_COMBO, 1119, 165, 180, 50, 160, 2, ""},  // dck12
+  {209, QTDLG_COMBO, 1120, 375, 15, 50, 160, 2, ""},  // dck13
+  {209, QTDLG_COMBO, 1121, 375, 30, 50, 160, 2, ""},  // dck14
+  {209, QTDLG_COMBO, 1122, 375, 45, 50, 160, 2, ""},  // dck15
+  {209, QTDLG_COMBO, 1123, 375, 60, 50, 160, 2, ""},  // dck16
+  {209, QTDLG_COMBO, 1124, 375, 75, 50, 160, 2, ""},  // dck17
+  {209, QTDLG_COMBO, 1125, 375, 90, 50, 160, 2, ""},  // dck18
+  {209, QTDLG_COMBO, 1126, 375, 105, 50, 160, 2, ""},  // dck19
+  {209, QTDLG_COMBO, 1127, 375, 120, 50, 160, 2, ""},  // dck20
+  {209, QTDLG_COMBO, 1128, 375, 135, 50, 160, 2, ""},  // dck21
+  {209, QTDLG_COMBO, 1129, 375, 150, 50, 160, 2, ""},  // dck22
+  {209, QTDLG_COMBO, 1130, 375, 165, 50, 160, 2, ""},  // dck23
+  {209, QTDLG_COMBO, 1131, 375, 180, 50, 160, 2, ""},  // dck24
+  {209, QTDLG_BUTTON, 1002, 5, 195, 50, 14, 0, "&Restrict All"},  // dbAs_RA0
+  {209, QTDLG_BUTTON, 1003, 60, 195, 50, 14, 0, "&Unrestrict All"},  // dbAs_RA1
+  {209, QTDLG_BUTTON, 1001, 115, 195, 50, 14, 0, "Toggle &Majors"},  // dbAs_RA
+  {209, QTDLG_LTEXT, -1, 101, 5, 24, 8, 1, "Angle"},  // IDC_STATIC
+  {209, QTDLG_LTEXT, -1, 70, 5, 25, 8, 1, "Orb"},  // IDC_STATIC
+  {209, QTDLG_LTEXT, -1, 130, 5, 35, 8, 1, "Influence"},  // IDC_STATIC
+  {209, QTDLG_LTEXT, -1, 165, 5, 35, 8, 1, "Color"},  // IDC_STATIC
+  {209, QTDLG_LTEXT, -1, 312, 5, 23, 8, 1, "Angle"},  // IDC_STATIC
+  {209, QTDLG_LTEXT, -1, 280, 5, 25, 8, 1, "Orb"},  // IDC_STATIC
+  {209, QTDLG_LTEXT, -1, 340, 5, 35, 8, 1, "Influence"},  // IDC_STATIC
+  {209, QTDLG_LTEXT, -1, 375, 5, 35, 8, 1, "Color"},  // IDC_STATIC
+  {209, QTDLG_ICON, -1, 235, 190, 20, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgColor
+  {204, QTDLG_DIALOG, 0, 0, 0, 351, 162, 0, "Set Colors"},
+  {204, QTDLG_DEFBUTTON, 1, 295, 142, 50, 14, 0, "OK"},  // IDOK
+  {204, QTDLG_BUTTON, 2, 240, 142, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {204, QTDLG_COMBO, 1107, 40, 15, 50, 160, 2, ""},  // dck00
+  {204, QTDLG_COMBO, 1108, 40, 30, 50, 160, 2, ""},  // dck01
+  {204, QTDLG_COMBO, 1109, 40, 45, 50, 160, 2, ""},  // dck02
+  {204, QTDLG_COMBO, 1110, 40, 60, 50, 160, 2, ""},  // dck03
+  {204, QTDLG_COMBO, 1111, 40, 75, 50, 160, 2, ""},  // dck04
+  {204, QTDLG_COMBO, 1112, 40, 90, 50, 160, 2, ""},  // dck05
+  {204, QTDLG_COMBO, 1113, 40, 105, 50, 160, 2, ""},  // dck06
+  {204, QTDLG_COMBO, 1114, 40, 120, 50, 160, 2, ""},  // dck07
+  {204, QTDLG_COMBO, 1115, 130, 15, 50, 160, 2, ""},  // dck08
+  {204, QTDLG_COMBO, 1116, 130, 30, 50, 160, 2, ""},  // dck09
+  {204, QTDLG_COMBO, 1117, 130, 45, 50, 160, 2, ""},  // dck10
+  {204, QTDLG_COMBO, 1118, 130, 60, 50, 160, 2, ""},  // dck11
+  {204, QTDLG_COMBO, 1119, 130, 75, 50, 160, 2, ""},  // dck12
+  {204, QTDLG_COMBO, 1120, 130, 90, 50, 160, 2, ""},  // dck13
+  {204, QTDLG_COMBO, 1121, 130, 105, 50, 160, 2, ""},  // dck14
+  {204, QTDLG_COMBO, 1122, 130, 120, 50, 160, 2, ""},  // dck15
+  {204, QTDLG_COMBO, 1080, 215, 15, 50, 160, 2, ""},  // dce0
+  {204, QTDLG_COMBO, 1081, 215, 30, 50, 160, 2, ""},  // dce1
+  {204, QTDLG_COMBO, 1082, 295, 15, 50, 160, 2, ""},  // dce2
+  {204, QTDLG_COMBO, 1083, 295, 30, 50, 160, 2, ""},  // dce3
+  {204, QTDLG_COMBO, 1147, 215, 65, 50, 160, 2, ""},  // dcr1
+  {204, QTDLG_COMBO, 1148, 215, 80, 50, 160, 2, ""},  // dcr2
+  {204, QTDLG_COMBO, 1149, 215, 95, 50, 160, 2, ""},  // dcr3
+  {204, QTDLG_COMBO, 1150, 295, 65, 50, 160, 2, ""},  // dcr4
+  {204, QTDLG_COMBO, 1151, 295, 80, 50, 160, 2, ""},  // dcr5
+  {204, QTDLG_COMBO, 1152, 295, 95, 50, 160, 2, ""},  // dcr6
+  {204, QTDLG_COMBO, 1153, 295, 110, 50, 160, 2, ""},  // dcr7
+  {204, QTDLG_COMBO, 1053, 40, 144, 50, 160, 2, ""},  // dca01
+  {204, QTDLG_COMBO, 1054, 130, 144, 50, 160, 2, ""},  // dca02
+  {204, QTDLG_LTEXT, -1, 10, 15, 25, 8, 1, "Black"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 10, 30, 25, 8, 1, "White"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 10, 45, 25, 8, 1, "Red"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 10, 60, 25, 8, 1, "Green"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 10, 75, 25, 8, 1, "Blue"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 10, 90, 25, 8, 1, "Yellow"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 10, 105, 30, 8, 1, "Magenta"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 10, 120, 25, 8, 1, "Cyan"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 95, 15, 25, 8, 1, "Gray"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 95, 30, 30, 8, 1, "Lt. Gray"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 95, 45, 25, 8, 1, "Maroon"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 95, 60, 33, 8, 1, "Dk. Green"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 95, 75, 30, 8, 1, "Dk. Blue"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 95, 90, 25, 8, 1, "Maize"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 95, 105, 25, 8, 1, "Purple"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 95, 120, 30, 8, 1, "Dk. Cyan"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 195, 15, 20, 8, 1, "Fire"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 195, 30, 20, 8, 1, "Earth"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 270, 15, 20, 8, 1, "Air"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 270, 30, 20, 8, 1, "Water"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 195, 65, 20, 8, 1, "1st"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 195, 80, 20, 8, 1, "2nd"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 195, 95, 20, 8, 1, "3rd"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 275, 65, 15, 8, 1, "4th"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 275, 80, 15, 8, 1, "5th"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 275, 95, 15, 8, 1, "6th"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 275, 110, 15, 8, 1, "7th"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 10, 145, 25, 8, 1, "Scribble"},  // IDC_STATIC
+  {204, QTDLG_LTEXT, -1, 95, 145, 30, 8, 1, "Corners"},  // IDC_STATIC
+  {204, QTDLG_GROUPBOX, -1, 5, 5, 180, 135, 0, "Standard Color Palette"},  // IDC_STATIC
+  {204, QTDLG_GROUPBOX, -1, 190, 5, 160, 45, 0, "Elements"},  // IDC_STATIC
+  {204, QTDLG_GROUPBOX, -1, 190, 55, 160, 75, 0, "Seven Rays"},  // IDC_STATIC
+  {204, QTDLG_ICON, -1, 200, 135, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgRestrict
+  {212, QTDLG_DIALOG, 0, 0, 0, 371, 148, 0, "Object Restrictions"},
+  {212, QTDLG_DEFBUTTON, 1, 315, 130, 50, 14, 0, "OK"},  // IDOK
+  {212, QTDLG_BUTTON, 2, 315, 114, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {212, QTDLG_CHECK, 1443, 10, 10, 40, 10, 2, "&Earth"},  // dx01
+  {212, QTDLG_CHECK, 1444, 10, 20, 40, 10, 2, "&Sun"},  // dx02
+  {212, QTDLG_CHECK, 1445, 10, 30, 40, 10, 2, "M&oon"},  // dx03
+  {212, QTDLG_CHECK, 1446, 10, 40, 40, 10, 2, "Mercur&y"},  // dx04
+  {212, QTDLG_CHECK, 1447, 10, 50, 40, 10, 2, "&Venus"},  // dx05
+  {212, QTDLG_CHECK, 1448, 10, 60, 40, 10, 2, "&Mars"},  // dx06
+  {212, QTDLG_CHECK, 1449, 10, 70, 40, 10, 2, "&Jupiter"},  // dx07
+  {212, QTDLG_CHECK, 1450, 10, 80, 40, 10, 2, "Sa&turn"},  // dx08
+  {212, QTDLG_CHECK, 1451, 10, 90, 40, 10, 2, "Ur&anus"},  // dx09
+  {212, QTDLG_CHECK, 1452, 10, 100, 40, 10, 2, "&Neptune"},  // dx10
+  {212, QTDLG_CHECK, 1453, 10, 110, 40, 10, 2, "&Pluto"},  // dx11
+  {212, QTDLG_CHECK, 1454, 65, 10, 60, 10, 2, "&Chiron"},  // dx12
+  {212, QTDLG_CHECK, 1455, 65, 20, 60, 10, 2, "Ceres"},  // dx13
+  {212, QTDLG_CHECK, 1456, 65, 30, 60, 10, 2, "Pallas Athena"},  // dx14
+  {212, QTDLG_CHECK, 1457, 65, 40, 60, 10, 2, "Juno"},  // dx15
+  {212, QTDLG_CHECK, 1458, 65, 50, 60, 10, 2, "Vesta"},  // dx16
+  {212, QTDLG_CHECK, 1459, 65, 60, 60, 10, 2, "North Node"},  // dx17
+  {212, QTDLG_CHECK, 1460, 65, 70, 60, 10, 2, "South Node"},  // dx18
+  {212, QTDLG_CHECK, 1461, 65, 80, 60, 10, 2, "Lilith"},  // dx19
+  {212, QTDLG_CHECK, 1462, 65, 90, 60, 10, 2, "Part of Fortune"},  // dx20
+  {212, QTDLG_CHECK, 1463, 65, 100, 60, 10, 2, "Vertex"},  // dx21
+  {212, QTDLG_CHECK, 1464, 65, 110, 60, 10, 2, "East Point"},  // dx22
+  {212, QTDLG_CHECK, 1465, 141, 10, 52, 10, 2, "Ascendant"},  // dx23
+  {212, QTDLG_CHECK, 1466, 141, 20, 52, 10, 2, "&2nd Cusp"},  // dx24
+  {212, QTDLG_CHECK, 1467, 141, 30, 52, 10, 2, "&3rd Cusp"},  // dx25
+  {212, QTDLG_CHECK, 1468, 141, 40, 52, 10, 2, "Nadir"},  // dx26
+  {212, QTDLG_CHECK, 1469, 141, 50, 52, 10, 2, "&5th Cusp"},  // dx27
+  {212, QTDLG_CHECK, 1470, 141, 60, 52, 10, 2, "&6th Cusp"},  // dx28
+  {212, QTDLG_CHECK, 1471, 141, 70, 52, 10, 2, "&Descendant"},  // dx29
+  {212, QTDLG_CHECK, 1472, 141, 80, 52, 10, 2, "&8th Cusp"},  // dx30
+  {212, QTDLG_CHECK, 1473, 141, 90, 52, 10, 2, "&9th Cusp"},  // dx31
+  {212, QTDLG_CHECK, 1474, 141, 100, 52, 10, 2, "Mid&heaven"},  // dx32
+  {212, QTDLG_CHECK, 1475, 141, 110, 52, 10, 2, "&11th Cusp"},  // dx33
+  {212, QTDLG_CHECK, 1476, 141, 120, 52, 10, 2, "12th Cusp"},  // dx34
+  {212, QTDLG_CHECK, 1477, 205, 10, 42, 10, 2, "Vu&lcan"},  // dx35
+  {212, QTDLG_CHECK, 1478, 205, 25, 42, 10, 2, "Cupido"},  // dx36
+  {212, QTDLG_CHECK, 1479, 205, 35, 42, 10, 2, "Hades"},  // dx37
+  {212, QTDLG_CHECK, 1480, 205, 45, 42, 10, 2, "Zeus"},  // dx38
+  {212, QTDLG_CHECK, 1481, 205, 55, 42, 10, 2, "Kronos"},  // dx39
+  {212, QTDLG_CHECK, 1482, 205, 65, 42, 10, 2, "Apollon"},  // dx40
+  {212, QTDLG_CHECK, 1483, 205, 75, 42, 10, 2, "Admetos"},  // dx41
+  {212, QTDLG_CHECK, 1484, 205, 85, 42, 10, 2, "Vulkanus"},  // dx42
+  {212, QTDLG_CHECK, 1485, 205, 95, 42, 10, 2, "Poseidon"},  // dx43
+  {212, QTDLG_CHECK, 1486, 260, 10, 45, 10, 2, "Hygiea"},  // dx44
+  {212, QTDLG_CHECK, 1487, 260, 20, 45, 10, 2, "Pholus"},  // dx45
+  {212, QTDLG_CHECK, 1488, 260, 35, 45, 10, 2, "Eris"},  // dx46
+  {212, QTDLG_CHECK, 1489, 260, 45, 45, 10, 2, "Haumea"},  // dx47
+  {212, QTDLG_CHECK, 1490, 260, 55, 47, 10, 2, "Makemake"},  // dx48
+  {212, QTDLG_CHECK, 1491, 260, 65, 45, 10, 2, "Gonggong"},  // dx49
+  {212, QTDLG_CHECK, 1492, 260, 75, 45, 10, 2, "Quaoar"},  // dx50
+  {212, QTDLG_CHECK, 1493, 260, 85, 45, 10, 2, "Sedna"},  // dx51
+  {212, QTDLG_CHECK, 1494, 260, 95, 45, 10, 2, "Orcus"},  // dx52
+  {212, QTDLG_BUTTON, 1043, 315, 5, 50, 14, 0, "&Restrict All"},  // dbRe_R0
+  {212, QTDLG_BUTTON, 1044, 315, 21, 50, 14, 0, "&Unrestrict All"},  // dbRe_R1
+  {212, QTDLG_BUTTON, 1042, 315, 43, 50, 14, 0, "Toggle Minors"},  // dbRe_R
+  {212, QTDLG_BUTTON, 1045, 315, 59, 50, 14, 0, "Toggle Cusps"},  // dbRe_RC
+  {212, QTDLG_BUTTON, 1046, 315, 75, 50, 14, 0, "Toggle Uran."},  // dbRe_Ru
+  {212, QTDLG_BUTTON, 1047, 315, 91, 50, 14, 0, "Toggle Dwarfs"},  // dbRe_Ry
+  {212, QTDLG_BUTTON, 1049, 5, 130, 125, 14, 0, "Copy &from Transit Restriction Set"},  // dbRT
+  {212, QTDLG_BUTTON, 1048, 200, 130, 50, 14, 0, "Recall"},  // dbRe_YRi
+  {212, QTDLG_GROUPBOX, -1, 5, 0, 50, 125, 0, "Planets"},  // IDC_STATIC
+  {212, QTDLG_GROUPBOX, -1, 60, 0, 70, 125, 0, "Minor Objects"},  // IDC_STATIC
+  {212, QTDLG_GROUPBOX, -1, 135, 0, 60, 135, 0, "House Cusps"},  // IDC_STATIC
+  {212, QTDLG_GROUPBOX, -1, 200, 0, 50, 110, 0, "Uranians"},  // IDC_STATIC
+  {212, QTDLG_GROUPBOX, -1, 255, 0, 55, 110, 0, "Dwarfs"},  // IDC_STATIC
+  {212, QTDLG_ICON, -1, 270, 120, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgDefault
+  {206, QTDLG_DIALOG, 0, 0, 0, 415, 142, 0, "Default Chart Info"},
+  {206, QTDLG_DEFBUTTON, 1, 125, 90, 50, 14, 0, "OK"},  // IDOK
+  {206, QTDLG_BUTTON, 2, 125, 70, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {206, QTDLG_COMBO, 1074, 45, 5, 75, 50, 2, ""},  // dcDeDst
+  {206, QTDLG_COMBO, 1079, 45, 20, 75, 115, 2, ""},  // dcDeZon
+  {206, QTDLG_COMBO, 1073, 45, 35, 75, 50, 2, ""},  // dcDeCor
+  {206, QTDLG_COMBO, 1077, 45, 50, 75, 35, 2, ""},  // dcDeLon
+  {206, QTDLG_COMBO, 1076, 45, 65, 75, 35, 2, ""},  // dcDeLat
+  {206, QTDLG_COMBO, 1075, 45, 80, 75, 35, 2, ""},  // dcDeElv
+  {206, QTDLG_COMBO, 1078, 45, 95, 75, 35, 2, ""},  // dcDeTmp
+  {206, QTDLG_EDIT, 1256, 45, 110, 130, 13, 0, ""},  // deDeNam
+  {206, QTDLG_EDIT, 1255, 45, 126, 130, 13, 0, ""},  // deDeLoc
+  {206, QTDLG_BUTTON, 1019, 195, 10, 44, 14, 0, "Lookup &City"},  // dbInCity
+  {206, QTDLG_BUTTON, 1020, 245, 10, 48, 14, 0, "Near&by Cities"},  // dbInCoor
+  {206, QTDLG_BUTTON, 1018, 300, 10, 52, 14, 0, "&Time Changes"},  // dbInChan
+  {206, QTDLG_BUTTON, 1017, 364, 10, 41, 14, 0, "&Apply Info"},  // dbInAppl
+  {206, QTDLG_LIST, 1402, 195, 29, 210, 101, 2, ""},  // dlIn
+  {206, QTDLG_LTEXT, -1, 5, 5, 35, 8, 1, "Daylight:"},  // IDC_STATIC
+  {206, QTDLG_LTEXT, -1, 5, 20, 37, 8, 1, "Time Zone:"},  // IDC_STATIC
+  {206, QTDLG_LTEXT, -1, 5, 33, 35, 20, 1, "Correction for Now:"},  // IDC_STATIC
+  {206, QTDLG_LTEXT, -1, 5, 55, 35, 8, 1, "Longitude:"},  // IDC_STATIC
+  {206, QTDLG_LTEXT, -1, 5, 70, 35, 8, 1, "Latitude:"},  // IDC_STATIC
+  {206, QTDLG_LTEXT, -1, 5, 85, 35, 8, 1, "Elevation:"},  // IDC_STATIC
+  {206, QTDLG_LTEXT, -1, 5, 100, 35, 8, 1, "Temperat.:"},  // IDC_STATIC
+  {206, QTDLG_LTEXT, -1, 5, 116, 35, 8, 1, "Name:"},  // IDC_STATIC
+  {206, QTDLG_LTEXT, -1, 5, 130, 35, 8, 1, "Location:"},  // IDC_STATIC
+  {206, QTDLG_GROUPBOX, -1, 189, 0, 221, 136, 0, "Atlas Lookups"},  // IDC_STATIC
+  {206, QTDLG_ICON, -1, 140, 25, 20, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgProgress
+  {221, QTDLG_DIALOG, 0, 0, 0, 281, 132, 0, "Progressions"},
+  {221, QTDLG_DEFBUTTON, 1, 225, 115, 50, 14, 0, "OK"},  // IDOK
+  {221, QTDLG_BUTTON, 2, 170, 115, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {221, QTDLG_BUTTON, 1041, 115, 5, 50, 14, 0, "&Now"},  // dbPr_pn
+  {221, QTDLG_CHECK, 1583, 5, 5, 85, 10, 2, "Do &Progression"},  // dxPr_p
+  {221, QTDLG_RADIO, 1404, 10, 35, 110, 10, 1, "&Secondary (Calculated Cusps)"},  // dr01
+  {221, QTDLG_RADIO, 1405, 10, 45, 110, 10, 0, "Secondary (Solar Arc &Cusps)"},  // dr02
+  {221, QTDLG_RADIO, 1406, 10, 55, 115, 10, 0, "Solar &Arc"},  // dr03
+  {221, QTDLG_COMBO, 1140, 70, 65, 90, 50, 2, ""},  // dcPr_pd
+  {221, QTDLG_COMBO, 1139, 70, 80, 90, 50, 2, ""},  // dcPr_pC
+  {221, QTDLG_EDIT, 1395, 120, 95, 40, 13, 0, ""},  // dePr_pO
+  {221, QTDLG_CHECK, 1584, 10, 110, 150, 10, 2, "Solar Arc Cusps &Recalculated with New MC"},  // dxPr_pc
+  {221, QTDLG_COMBO, 1143, 215, 15, 55, 115, 2, ""},  // dcPrMon
+  {221, QTDLG_COMBO, 1141, 215, 30, 55, 65, 2, ""},  // dcPrDay
+  {221, QTDLG_COMBO, 1145, 215, 45, 55, 110, 2, ""},  // dcPrYea
+  {221, QTDLG_COMBO, 1144, 215, 60, 55, 50, 2, ""},  // dcPrTim
+  {221, QTDLG_COMBO, 1142, 215, 75, 55, 50, 2, ""},  // dcPrDst
+  {221, QTDLG_COMBO, 1146, 215, 90, 55, 115, 2, ""},  // dcPrZon
+  {221, QTDLG_LTEXT, -1, 10, 65, 57, 8, 1, "Degrees Per Day:"},  // IDC_STATIC
+  {221, QTDLG_LTEXT, -1, 10, 80, 57, 8, 1, "Cusp Move Ratio:"},  // IDC_STATIC
+  {221, QTDLG_LTEXT, -1, 10, 95, 100, 8, 1, "Solar Arc Based on This Planet:"},  // IDC_STATIC
+  {221, QTDLG_LTEXT, -1, 175, 15, 35, 8, 1, "Month:"},  // IDC_STATIC
+  {221, QTDLG_LTEXT, -1, 175, 30, 35, 8, 1, "Day:"},  // IDC_STATIC
+  {221, QTDLG_LTEXT, -1, 175, 45, 35, 8, 1, "Year:"},  // IDC_STATIC
+  {221, QTDLG_LTEXT, -1, 175, 60, 35, 8, 1, "Time:"},  // IDC_STATIC
+  {221, QTDLG_LTEXT, -1, 175, 75, 35, 8, 1, "Daylight:"},  // IDC_STATIC
+  {221, QTDLG_LTEXT, -1, 175, 90, 35, 8, 1, "Zone:"},  // IDC_STATIC
+  {221, QTDLG_GROUPBOX, -1, 5, 25, 160, 100, 0, "Progression Type"},  // IDC_STATIC
+  {221, QTDLG_GROUPBOX, -1, 170, 5, 105, 105, 0, "Progressed Chart Info"},  // IDC_STATIC
+  {221, QTDLG_ICON, -1, 135, 35, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgTransit
+  {220, QTDLG_DIALOG, 0, 0, 0, 225, 232, 0, "Transits"},
+  {220, QTDLG_DEFBUTTON, 1, 170, 215, 50, 14, 0, "OK"},  // IDOK
+  {220, QTDLG_BUTTON, 2, 115, 215, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {220, QTDLG_BUTTON, 1052, 60, 215, 50, 14, 0, "&Now"},  // dbTr_tn
+  {220, QTDLG_RADIO, 1404, 10, 15, 104, 10, 1, "N&one"},  // dr01
+  {220, QTDLG_RADIO, 1405, 10, 27, 104, 10, 0, "Transit to Transit &Times"},  // dr02
+  {220, QTDLG_RADIO, 1406, 10, 37, 104, 10, 0, "Transit to Transit &Influence"},  // dr03
+  {220, QTDLG_RADIO, 1407, 10, 47, 104, 10, 0, "Transit to Transit &Graph"},  // dr04
+  {220, QTDLG_RADIO, 1408, 10, 60, 104, 10, 0, "Transit to N&atal Times"},  // dr05
+  {220, QTDLG_RADIO, 1409, 10, 70, 104, 10, 0, "Transit to Natal In&fluence"},  // dr06
+  {220, QTDLG_RADIO, 1410, 10, 80, 104, 10, 0, "Transit to Nata&l Graph"},  // dr07
+  {220, QTDLG_COMBO, 1159, 50, 114, 55, 115, 2, ""},  // dcTrMon
+  {220, QTDLG_COMBO, 1157, 50, 129, 55, 65, 2, ""},  // dcTrDay
+  {220, QTDLG_COMBO, 1161, 50, 144, 55, 110, 2, ""},  // dcTrYea
+  {220, QTDLG_COMBO, 1160, 50, 159, 55, 50, 2, ""},  // dcTrTim
+  {220, QTDLG_COMBO, 1158, 50, 174, 55, 50, 2, ""},  // dcTrDst
+  {220, QTDLG_COMBO, 1162, 50, 189, 55, 115, 2, ""},  // dcTrZon
+  {220, QTDLG_RADIO, 1411, 131, 15, 65, 10, 1, "Given &Day"},  // dr08
+  {220, QTDLG_RADIO, 1412, 131, 25, 65, 10, 0, "Given &Month"},  // dr09
+  {220, QTDLG_RADIO, 1413, 131, 35, 65, 10, 0, "Given &Year"},  // dr10
+  {220, QTDLG_RADIO, 1414, 131, 45, 65, 10, 0, "&Range of Years"},  // dr11
+  {220, QTDLG_EDIT, 1401, 185, 55, 30, 13, 0, ""},  // deTr_tY
+  {220, QTDLG_CHECK, 1605, 130, 85, 85, 10, 2, "&Sign Changes"},  // dxTr_YR0_s
+  {220, QTDLG_CHECK, 1604, 130, 95, 85, 10, 2, "Direction Changes"},  // dxTr_YR0_d
+  {220, QTDLG_CHECK, 1607, 130, 105, 85, 10, 2, "Latitude Dir. Changes"},  // dxTr_YR1_l
+  {220, QTDLG_CHECK, 1606, 130, 115, 85, 10, 2, "Distance Dir. Changes"},  // dxTr_YR1_d
+  {220, QTDLG_CHECK, 1608, 130, 125, 85, 10, 2, "Latitude &Zero Crossing"},  // dxTr_YR2_0
+  {220, QTDLG_CHECK, 1609, 130, 135, 85, 10, 2, "Distances E&qual"},  // dxTr_YR2_d
+  {220, QTDLG_CHECK, 1602, 120, 155, 100, 10, 2, "&Progress Instead of Transit"},  // dxTr_p
+  {220, QTDLG_CHECK, 1603, 120, 165, 102, 10, 2, "Display Transit R&eturns Only"},  // dxTr_r
+  {220, QTDLG_CHECK, 1600, 120, 175, 100, 10, 2, "Times Populate &Chart List"},  // dxTr_5
+  {220, QTDLG_CHECK, 1601, 120, 185, 100, 10, 2, "Grap&hs Include All Objects"},  // dxTr_g
+  {220, QTDLG_EDIT, 1400, 190, 195, 30, 13, 0, ""},  // deTr_d
+  {220, QTDLG_LTEXT, -1, 10, 114, 35, 8, 1, "Month:"},  // IDC_STATIC
+  {220, QTDLG_LTEXT, -1, 10, 129, 35, 8, 1, "Day:"},  // IDC_STATIC
+  {220, QTDLG_LTEXT, -1, 10, 144, 35, 8, 1, "Year:"},  // IDC_STATIC
+  {220, QTDLG_LTEXT, -1, 10, 159, 35, 8, 1, "Time:"},  // IDC_STATIC
+  {220, QTDLG_LTEXT, -1, 10, 174, 35, 8, 1, "Daylight:"},  // IDC_STATIC
+  {220, QTDLG_LTEXT, -1, 10, 189, 35, 8, 1, "Zone:"},  // IDC_STATIC
+  {220, QTDLG_LTEXT, -1, 131, 55, 50, 8, 1, "Years to Span:"},  // IDC_STATIC
+  {220, QTDLG_LTEXT, -1, 120, 195, 70, 8, 1, "Searching Divisions:"},  // IDC_STATIC
+  {220, QTDLG_GROUPBOX, -1, 5, 5, 110, 90, 0, "Transit Chart Type"},  // IDC_STATIC
+  {220, QTDLG_GROUPBOX, -1, 5, 100, 105, 105, 0, "Transit to Natal Info"},  // IDC_STATIC
+  {220, QTDLG_GROUPBOX, -1, 125, 5, 95, 67, 0, "Times and Graph Cover"},  // IDC_STATIC
+  {220, QTDLG_GROUPBOX, -1, 125, 75, 95, 75, 0, "Transit Time Restrictions"},  // IDC_STATIC
+  {220, QTDLG_ICON, -1, 20, 210, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgCalc
+  {218, QTDLG_DIALOG, 0, 0, 0, 203, 242, 0, "Calculation Settings"},
+  {218, QTDLG_DEFBUTTON, 1, 145, 224, 50, 14, 0, "OK"},  // IDOK
+  {218, QTDLG_BUTTON, 2, 145, 206, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {218, QTDLG_COMBO, 1154, 95, 5, 100, 75, 2, ""},  // dcSe_b
+  {218, QTDLG_COMBO, 1156, 95, 20, 100, 100, 2, ""},  // dcSe_s
+  {218, QTDLG_COMBO, 1155, 60, 35, 75, 205, 2, ""},  // dcSe_c
+  {218, QTDLG_EDIT, 1398, 60, 50, 45, 13, 0, ""},  // deSe_h
+  {218, QTDLG_EDIT, 1399, 81, 65, 24, 13, 0, ""},  // deSe_x
+  {218, QTDLG_EDIT, 1397, 81, 80, 24, 13, 0, ""},  // deSe_4
+  {218, QTDLG_CHECK, 1590, 115, 51, 80, 10, 2, "&Equatorial Latitudes"},  // dxSe_sr0
+  {218, QTDLG_CHECK, 1589, 115, 61, 80, 10, 2, "E&quatorial Longitudes"},  // dxSe_sr
+  {218, QTDLG_CHECK, 1597, 115, 74, 80, 10, 2, "&True Space Positions"},  // dxSe_yt
+  {218, QTDLG_CHECK, 1598, 115, 84, 80, 10, 2, "To&pocentric Positions"},  // dxSe_yv
+  {218, QTDLG_CHECK, 1593, 5, 95, 180, 10, 2, "Compute Solar System Bar&ycenter Instead of Sun"},  // dxSe_Yh
+  {218, QTDLG_CHECK, 1594, 5, 105, 180, 10, 2, "Compute True Instead of Mean N&odes and Lilith"},  // dxSe_Yn
+  {218, QTDLG_CHECK, 1591, 5, 115, 180, 10, 2, "&Cusp Objects Are House Positions Instead of Angles"},  // dxSe_Yc0
+  {218, QTDLG_CHECK, 1592, 5, 125, 184, 10, 2, "Local Horizon Positions Apply Atmospheric &Refraction"},  // dxSe_Yf
+  {218, QTDLG_CHECK, 1596, 5, 135, 180, 10, 2, "Sidereal Zodiac in Invariable Plane of So&lar System"},  // dxSe_ys
+  {218, QTDLG_CHECK, 1595, 5, 145, 105, 10, 2, "Tropical &Zodiac No Nutation"},  // dxSe_Yn0
+  {218, QTDLG_CHECK, 1586, 5, 155, 55, 10, 2, "3&D Aspects"},  // dxSe_A3
+  {218, QTDLG_CHECK, 1587, 65, 155, 45, 10, 2, "3D Or&bs"},  // dxSe_Ap
+  {218, QTDLG_CHECK, 1588, 130, 150, 50, 10, 2, "&3D Houses"},  // dxSe_c3
+  {218, QTDLG_RADIO, 1407, 120, 169, 70, 10, 1, "Prime &Vertical"},  // dr04
+  {218, QTDLG_RADIO, 1408, 120, 179, 70, 10, 0, "Local &Horizon"},  // dr05
+  {218, QTDLG_RADIO, 1409, 120, 189, 70, 10, 0, "Celestial Eq&uator"},  // dr06
+  {218, QTDLG_RADIO, 1404, 10, 175, 35, 10, 1, "&None"},  // dr01
+  {218, QTDLG_RADIO, 1405, 10, 185, 90, 10, 0, "Object on &Ascendant"},  // dr02
+  {218, QTDLG_RADIO, 1406, 10, 195, 90, 10, 0, "Object on &Midheaven"},  // dr03
+  {218, QTDLG_EDIT, 1396, 65, 205, 40, 13, 0, ""},  // deSe_1
+  {218, QTDLG_CHECK, 1585, 10, 220, 95, 10, 2, "Use &Start of Planet's Sign"},  // dxSe_10
+  {218, QTDLG_LTEXT, -1, 5, 5, 86, 8, 1, "Calculation Method:"},  // IDC_STATIC
+  {218, QTDLG_LTEXT, -1, 5, 20, 86, 8, 1, "Zodiac Offset / Ayanamsa:"},  // IDC_STATIC
+  {218, QTDLG_LTEXT, -1, 5, 35, 50, 8, 1, "House System:"},  // IDC_STATIC
+  {218, QTDLG_LTEXT, -1, 5, 50, 50, 8, 1, "Central Planet:"},  // IDC_STATIC
+  {218, QTDLG_LTEXT, -1, 5, 65, 75, 8, 1, "Harmonic Chart Factor:"},  // IDC_STATIC
+  {218, QTDLG_LTEXT, -1, 5, 80, 75, 8, 1, "Dwad Nesting Level:"},  // IDC_STATIC
+  {218, QTDLG_LTEXT, -1, 10, 205, 55, 8, 1, "Use This Planet:"},  // IDC_STATIC
+  {218, QTDLG_GROUPBOX, -1, 5, 165, 105, 70, 0, "Solar Chart Setting"},  // IDC_STATIC
+  {218, QTDLG_GROUPBOX, -1, 115, 160, 80, 44, 0, "3D Houses Plane"},  // IDC_STATIC
+  {218, QTDLG_ICON, -1, 115, 212, 20, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgChart
+  {222, QTDLG_DIALOG, 0, 0, 0, 261, 247, 0, "Chart Settings"},
+  {222, QTDLG_DEFBUTTON, 1, 205, 230, 50, 14, 0, "OK"},  // IDOK
+  {222, QTDLG_BUTTON, 2, 205, 210, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {222, QTDLG_CHECK, 1530, 5, 5, 170, 10, 2, "Text Listing &Velocities Relative to Average Speed"},  // dxCh_v0
+  {222, QTDLG_COMBO, 1072, 105, 15, 70, 110, 2, ""},  // dcCh_v3
+  {222, QTDLG_EDIT, 1201, 90, 30, 25, 13, 0, ""},  // deCh_w
+  {222, QTDLG_CHECK, 1531, 5, 45, 170, 10, 2, "Text House &Wheel Reverses Object Order"},  // dxCh_w0
+  {222, QTDLG_CHECK, 1521, 5, 55, 170, 10, 2, "Text Aspect &Grid Shows Aspect Configurations"},  // dxCh_g0
+  {222, QTDLG_CHECK, 1522, 5, 65, 170, 10, 2, "&Relationship Aspect Grid Shows Midpoints Instead"},  // dxCh_gm
+  {222, QTDLG_CHECK, 1519, 5, 75, 170, 10, 2, "Text &Aspect List Shows Aspect Summary"},  // dxCh_a0
+  {222, QTDLG_CHECK, 1527, 5, 85, 170, 10, 2, "Text &Midpoint List Shows Midpoint Summary"},  // dxCh_m0
+  {222, QTDLG_CHECK, 1528, 5, 95, 170, 10, 2, "Text Midpoint List Includes Aspects &to Midpoints"},  // dxCh_ma
+  {222, QTDLG_CHECK, 1532, 5, 105, 170, 10, 2, "Hori&zon Chart Displays with Polar Center"},  // dxCh_Z0
+  {222, QTDLG_CHECK, 1525, 5, 115, 170, 10, 2, "&Sector Chart Approximated with Placidus Cusps"},  // dxCh_l
+  {222, QTDLG_CHECK, 1524, 5, 125, 170, 10, 2, "&Calendar Is for Entire Year"},  // dxCh_Ky
+  {222, QTDLG_CHECK, 1523, 5, 135, 170, 10, 2, "Text &Influence Chart Shows Sign Influences Too"},  // dxCh_j0
+  {222, QTDLG_EDIT, 1195, 145, 145, 25, 13, 0, ""},  // deCh_L
+  {222, QTDLG_CHECK, 1526, 5, 159, 170, 10, 2, "Text Astrocartography Shows &Latitude Crossings"},  // dxCh_L0
+  {222, QTDLG_EDIT, 1196, 135, 170, 35, 13, 0, ""},  // deCh_L2
+  {222, QTDLG_CHECK, 1520, 5, 180, 115, 10, 2, "Ephemeris Is for Entire Year"},  // dxCh_Ey
+  {222, QTDLG_EDIT, 1198, 125, 191, 25, 13, 0, ""},  // deCh_P
+  {222, QTDLG_CHECK, 1529, 5, 204, 175, 10, 2, "Display Arabic &Part Formulas with Terms Reversed"},  // dxCh_P0
+  {222, QTDLG_EDIT, 1197, 125, 215, 25, 13, 0, ""},  // deCh_Nl
+  {222, QTDLG_EDIT, 1202, 145, 230, 25, 13, 0, ""},  // deCh_Yb
+  {222, QTDLG_RADIO, 1404, 185, 15, 60, 10, 1, "Object Index"},  // dr01
+  {222, QTDLG_RADIO, 1405, 185, 25, 60, 10, 0, "Longitude"},  // dr02
+  {222, QTDLG_RADIO, 1406, 185, 35, 60, 10, 0, "Latitude"},  // dr03
+  {222, QTDLG_RADIO, 1407, 185, 45, 60, 10, 0, "Name"},  // dr04
+  {222, QTDLG_RADIO, 1408, 185, 55, 60, 10, 0, "Brightness"},  // dr05
+  {222, QTDLG_RADIO, 1409, 185, 65, 60, 10, 0, "Distance"},  // dr06
+  {222, QTDLG_RADIO, 1410, 185, 75, 60, 10, 0, "Velocity"},  // dr07
+  {222, QTDLG_RADIO, 1411, 185, 105, 65, 10, 1, "Category Index"},  // dr08
+  {222, QTDLG_RADIO, 1412, 185, 115, 60, 10, 0, "Position"},  // dr09
+  {222, QTDLG_RADIO, 1413, 185, 125, 60, 10, 0, "Name"},  // dr10
+  {222, QTDLG_RADIO, 1414, 185, 135, 60, 10, 0, "Formula"},  // dr11
+  {222, QTDLG_COMBO, 1071, 180, 165, 75, 100, 2, ""},  // dcCh_a
+  {222, QTDLG_EDIT, 1200, 180, 190, 40, 13, 0, ""},  // deCh_rc0
+  {222, QTDLG_LTEXT, -1, 5, 15, 95, 8, 1, "Wheel Sign Subdivision Type:"},  // IDC_STATIC
+  {222, QTDLG_LTEXT, -1, 5, 30, 82, 8, 1, "Text House Wheel Rows:"},  // IDC_STATIC
+  {222, QTDLG_LTEXT, -1, 5, 145, 135, 8, 1, "Text Astrocartography Degree Step Rate:"},  // IDC_STATIC
+  {222, QTDLG_LTEXT, -1, 5, 170, 125, 8, 1, "Latitude Crossings Show Cities Within:"},  // IDC_STATIC
+  {222, QTDLG_LTEXT, -1, 5, 190, 115, 8, 1, "Number of Arabic Parts to Display:"},  // IDC_STATIC
+  {222, QTDLG_LTEXT, -1, 5, 215, 120, 8, 1, "Nearest Cities Lists This Many Cities:"},  // IDC_STATIC
+  {222, QTDLG_LTEXT, -1, 5, 230, 135, 8, 1, "Number of Days Biorhythm Chart Covers:"},  // IDC_STATIC
+  {222, QTDLG_LTEXT, -1, 180, 155, 75, 8, 1, "Aspect List Sort By:"},  // IDC_STATIC
+  {222, QTDLG_LTEXT, -1, 180, 180, 80, 8, 1, "Midpoint Proportion:"},  // IDC_STATIC
+  {222, QTDLG_GROUPBOX, -1, 180, 5, 75, 85, 0, "Fixed Stars Sort By"},  // IDC_STATIC
+  {222, QTDLG_GROUPBOX, -1, 180, 95, 75, 55, 0, "Arabic Parts Sort By"},  // IDC_STATIC
+  {222, QTDLG_ICON, -1, 176, 220, 20, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgDisplay
+  {219, QTDLG_DIALOG, 0, 0, 0, 275, 257, 0, "Display Settings"},
+  {219, QTDLG_DEFBUTTON, 1, 220, 235, 50, 14, 0, "OK"},  // IDOK
+  {219, QTDLG_BUTTON, 2, 165, 235, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {219, QTDLG_CHECK, 1548, 5, 5, 175, 10, 2, "Format &Dates as D-M-Y Instead of M/D/Y"},  // dxDi_Yd
+  {219, QTDLG_CHECK, 1551, 5, 15, 175, 10, 2, "Format &Times as 24 Hour Instead of am/pm"},  // dxDi_Yt
+  {219, QTDLG_CHECK, 1555, 5, 25, 175, 10, 2, "Display Daylight and Time Zone as Single Offset"},  // dxDi_Yz1
+  {219, QTDLG_CHECK, 1554, 5, 35, 175, 10, 2, "Display &Lengths in Metric Instead of Imperial Units"},  // dxDi_Yv
+  {219, QTDLG_CHECK, 1550, 5, 45, 175, 10, 2, "Round Positions to &Nearest Unit Instead of Crop"},  // dxDi_Yr
+  {219, QTDLG_CHECK, 1535, 5, 55, 130, 10, 2, "Display Positions to Nearest Second"},  // dxDi_b0
+  {219, QTDLG_CHECK, 1536, 5, 65, 175, 10, 2, "Display Nearest Second to 1/1000th of a Second"},  // dxDi_b1
+  {219, QTDLG_CHECK, 1537, 5, 75, 175, 10, 2, "Don't Display Seconds If They're Exactly :00"},  // dxDi_b2
+  {219, QTDLG_EDIT, 1257, 105, 85, 20, 13, 0, ""},  // deDi_A
+  {219, QTDLG_CHECK, 1547, 5, 100, 145, 10, 2, "Ignore Insignificant House &Cusp Aspects"},  // dxDi_YC
+  {219, QTDLG_EDIT, 1259, 105, 110, 45, 13, 0, ""},  // deDi_RO
+  {219, QTDLG_CHECK, 1534, 5, 125, 170, 10, 2, "Parallel Aspects Based on Ecliptic Not E&quator"},  // dxDi_AP
+  {219, QTDLG_CHECK, 1538, 5, 135, 170, 10, 2, "Aspects &Measure Along Distance Axis"},  // dxDi_gd
+  {219, QTDLG_EDIT, 1258, 60, 145, 20, 13, 0, ""},  // deDi_I
+  {219, QTDLG_CHECK, 1545, 5, 160, 170, 10, 2, "Clip Text Charts at Rightmost (e.g. &80th) Column"},  // dxDi_Y8
+  {219, QTDLG_CHECK, 1539, 5, 170, 170, 10, 2, "Interpretations Show Sa&bian Symbols"},  // dxDi_I0
+  {219, QTDLG_EDIT, 1260, 130, 180, 30, 13, 0, ""},  // deDi_Yw
+  {219, QTDLG_CHECK, 1552, 5, 191, 96, 10, 2, "Sho&w Eclipse Information"},  // dxDi_Yu
+  {219, QTDLG_CHECK, 1553, 5, 201, 174, 10, 2, "Eclipses Onl&y at Location (Not Anywhere in World)"},  // dxDi_Yu0
+  {219, QTDLG_CHECK, 1556, 10, 225, 35, 10, 2, "Rising"},  // dxDi_z0
+  {219, QTDLG_CHECK, 1558, 10, 236, 35, 10, 2, "Setting"},  // dxDi_z2
+  {219, QTDLG_CHECK, 1557, 50, 225, 61, 10, 2, "Zenith Crossing"},  // dxDi_z1
+  {219, QTDLG_CHECK, 1559, 50, 236, 60, 10, 2, "Nadir Crossing"},  // dxDi_z3
+  {219, QTDLG_CHECK, 1560, 115, 225, 40, 10, 2, "Vertex"},  // dxDi_z4
+  {219, QTDLG_CHECK, 1561, 115, 235, 40, 10, 2, "Antivert"},  // dxDi_z5
+  {219, QTDLG_RADIO, 1407, 191, 10, 65, 10, 1, "&Zodiac Position"},  // dr04
+  {219, QTDLG_RADIO, 1408, 191, 20, 65, 10, 0, "&Hours && Minutes"},  // dr05
+  {219, QTDLG_RADIO, 1410, 191, 30, 65, 10, 0, "&27 Nakshatras"},  // dr07
+  {219, QTDLG_RADIO, 1409, 191, 40, 65, 10, 0, "&360 Degrees"},  // dr06
+  {219, QTDLG_RADIO, 1411, 190, 68, 70, 10, 1, "Default"},  // dr08
+  {219, QTDLG_RADIO, 1412, 190, 78, 70, 10, 0, "&IBM / DOS"},  // dr09
+  {219, QTDLG_RADIO, 1413, 190, 88, 70, 10, 0, "Latin-&1"},  // dr10
+  {219, QTDLG_RADIO, 1414, 190, 98, 70, 10, 0, "&UTF8 Unicode"},  // dr11
+  {219, QTDLG_CHECK, 1540, 190, 126, 65, 10, 2, "Standard"},  // dxDi_r0
+  {219, QTDLG_CHECK, 1541, 190, 136, 65, 10, 2, "Esoteric"},  // dxDi_r1
+  {219, QTDLG_CHECK, 1542, 190, 146, 65, 10, 2, "Hierarchical"},  // dxDi_r2
+  {219, QTDLG_CHECK, 1543, 190, 156, 65, 10, 2, "Exaltations"},  // dxDi_r3
+  {219, QTDLG_CHECK, 1544, 190, 166, 65, 10, 2, "Ray Rulerships"},  // dxDi_r4
+  {219, QTDLG_RADIO, 1415, 190, 195, 78, 10, 1, "Positive/Negative"},  // dr12
+  {219, QTDLG_RADIO, 1416, 190, 205, 78, 10, 0, "Applying/Separating"},  // dr13
+  {219, QTDLG_RADIO, 1417, 190, 215, 78, 10, 0, "Waxing/Waning"},  // dr14
+  {219, QTDLG_LTEXT, -1, 5, 85, 97, 8, 1, "Number of Aspects to Include:"},  // IDC_STATIC
+  {219, QTDLG_LTEXT, -1, 5, 110, 97, 8, 1, "Required Object for Aspects:"},  // IDC_STATIC
+  {219, QTDLG_LTEXT, -1, 5, 145, 50, 8, 1, "Text Columns:"},  // IDC_STATIC
+  {219, QTDLG_LTEXT, -1, 5, 180, 120, 8, 1, "Stationary If Less Than This Velocity:"},  // IDC_STATIC
+  {219, QTDLG_GROUPBOX, -1, 5, 215, 155, 35, 0, "Rising and Setting Restrictions"},  // IDC_STATIC
+  {219, QTDLG_GROUPBOX, -1, 185, 0, 85, 55, 0, "Display Format"},  // IDC_STATIC
+  {219, QTDLG_GROUPBOX, -1, 185, 58, 85, 55, 0, "Character Encoding"},  // IDC_STATIC
+  {219, QTDLG_GROUPBOX, -1, 185, 116, 85, 65, 0, "Rulership Restrictions"},  // IDC_STATIC
+  {219, QTDLG_GROUPBOX, -1, 185, 185, 85, 45, 0, "Aspect Orb Type"},  // IDC_STATIC
+  {219, QTDLG_ICON, -1, 158, 95, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgGraphics
+  {223, QTDLG_DIALOG, 0, 0, 0, 355, 262, 0, "Graphics Settings"},
+  {223, QTDLG_DEFBUTTON, 1, 300, 241, 50, 14, 0, "OK"},  // IDOK
+  {223, QTDLG_BUTTON, 2, 300, 224, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {223, QTDLG_EDIT, 1270, 80, 5, 30, 13, 0, ""},  // deGr_Xw_x
+  {223, QTDLG_EDIT, 1271, 80, 20, 30, 13, 0, ""},  // deGr_Xw_y
+  {223, QTDLG_CHECK, 1574, 5, 35, 135, 10, 2, "Ensure S&quare Charts Remain Square"},  // dxGr_XQ
+  {223, QTDLG_COMBO, 1092, 60, 47, 35, 50, 6, ""},  // dcGr_Xs
+  {223, QTDLG_COMBO, 1093, 140, 47, 35, 90, 6, ""},  // dcGr_XSS
+  {223, QTDLG_CHECK, 1575, 5, 61, 135, 10, 2, "Character Autoscale to &Fit Window"},  // dxGr_XQ0
+  {223, QTDLG_EDIT, 1273, 145, 75, 30, 13, 0, ""},  // deGr_YXg
+  {223, QTDLG_EDIT, 1274, 145, 90, 30, 13, 0, ""},  // deGr_YXj
+  {223, QTDLG_EDIT, 1272, 135, 105, 40, 13, 0, ""},  // deGr_XZ
+  {223, QTDLG_EDIT, 1275, 135, 121, 40, 13, 0, ""},  // deGr_YXS
+  {223, QTDLG_EDIT, 1269, 120, 146, 35, 13, 0, ""},  // deGr_XW
+  {223, QTDLG_EDIT, 1268, 120, 162, 35, 13, 0, ""},  // deGr_XG
+  {223, QTDLG_CHECK, 1573, 10, 175, 149, 10, 2, "Globe Halves Focus on &South Hemisphere"},  // dxGr_XP0
+  {223, QTDLG_CHECK, 1579, 10, 186, 125, 10, 2, "&World Map in Mollweide Projection"},  // dxGr_XW0
+  {223, QTDLG_EDIT, 1266, 105, 215, 30, 13, 0, ""},  // deGr_WN
+  {223, QTDLG_CHECK, 1572, 10, 230, 125, 10, 2, "Animate &Map Instead of Time"},  // dxGr_XN
+  {223, QTDLG_CHECK, 1571, 10, 241, 125, 10, 2, "Don't &Automatically Redraw Screen"},  // dxGr_Wn
+  {223, QTDLG_COMBO, 1091, 145, 205, 65, 90, 2, ""},  // dcGr_XL
+  {223, QTDLG_CHECK, 1577, 151, 231, 70, 10, 2, "Show Bi&g Dots"},  // dxGr_XU1
+  {223, QTDLG_CHECK, 1578, 151, 241, 70, 10, 2, "La&bel with Name"},  // dxGr_XU2
+  {223, QTDLG_COMBO, 1085, 220, 9, 60, 135, 2, ""},  // dcGr_Xf0
+  {223, QTDLG_COMBO, 1086, 220, 24, 60, 135, 2, ""},  // dcGr_Xf1
+  {223, QTDLG_COMBO, 1087, 220, 39, 60, 135, 2, ""},  // dcGr_Xf2
+  {223, QTDLG_COMBO, 1088, 220, 54, 60, 135, 2, ""},  // dcGr_Xf3
+  {223, QTDLG_COMBO, 1089, 220, 69, 60, 135, 2, ""},  // dcGr_Xf4
+  {223, QTDLG_COMBO, 1090, 220, 84, 60, 135, 2, ""},  // dcGr_Xf5
+  {223, QTDLG_RADIO, 1404, 185, 111, 35, 10, 1, "&None"},  // dr01
+  {223, QTDLG_RADIO, 1405, 185, 121, 85, 10, 0, "Object at &Left Edge"},  // dr02
+  {223, QTDLG_RADIO, 1406, 185, 131, 85, 10, 0, "Object at &Top Edge"},  // dr03
+  {223, QTDLG_EDIT, 1267, 245, 141, 35, 13, 0, ""},  // deGr_X1
+  {223, QTDLG_COMBO, 1095, 220, 170, 60, 90, 2, ""},  // dcGr_YXv
+  {223, QTDLG_EDIT, 1276, 255, 185, 25, 13, 0, ""},  // deGr_YXv
+  {223, QTDLG_COMBO, 1094, 230, 231, 60, 90, 2, ""},  // dcGr_Xv
+  {223, QTDLG_RADIO, 1418, 296, 10, 50, 10, 1, "American"},  // drg01
+  {223, QTDLG_RADIO, 1419, 296, 20, 50, 10, 0, "European"},  // drg02
+  {223, QTDLG_RADIO, 1420, 296, 45, 50, 10, 1, "Herschel's"},  // drg03
+  {223, QTDLG_RADIO, 1421, 296, 55, 49, 10, 0, "Astronomy"},  // drg04
+  {223, QTDLG_RADIO, 1422, 296, 80, 50, 10, 1, "Astrology"},  // drg05
+  {223, QTDLG_RADIO, 1423, 296, 90, 49, 10, 0, "Astronomy"},  // drg06
+  {223, QTDLG_RADIO, 1424, 296, 100, 49, 10, 0, "Esoteric"},  // drg07
+  {223, QTDLG_RADIO, 1425, 296, 125, 50, 10, 1, "Classic"},  // drg08
+  {223, QTDLG_RADIO, 1426, 296, 135, 50, 10, 0, "Standard"},  // drg09
+  {223, QTDLG_RADIO, 1427, 296, 160, 49, 10, 1, "Classic"},  // drg10
+  {223, QTDLG_RADIO, 1428, 296, 170, 49, 10, 0, "Standard"},  // drg11
+  {223, QTDLG_RADIO, 1429, 296, 195, 49, 10, 1, "Form One"},  // drg12
+  {223, QTDLG_RADIO, 1430, 296, 205, 49, 10, 0, "Form Two"},  // drg13
+  {223, QTDLG_LTEXT, -1, 5, 5, 70, 8, 1, "Horizontal Chart Size:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 5, 20, 70, 8, 1, "Vertical Chart Size:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 5, 47, 53, 8, 1, "Character Scale:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 100, 47, 40, 8, 1, "Text Scale:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 5, 75, 130, 8, 1, "Number of Cells in Graphics Aspect Grid:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 5, 90, 120, 8, 1, "Solar System Orbit Trail Length:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 10, 146, 108, 8, 1, "Horizontal Map Degree Rotation:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 10, 162, 105, 8, 1, "Vertical Globe Degree Tilt:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 10, 215, 95, 8, 1, "Update Delay in Milliseconds:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 5, 105, 120, 8, 1, "Telescope Focuses on This Object:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 5, 121, 120, 8, 1, "Telescope and Orbit Zoom Scale:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 185, 140, 54, 8, 1, "Use This Planet:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 175, 185, 35, 19, 1, "Atlas City Coloring:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 220, 185, 33, 8, 1, "Coverage:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 230, 220, 55, 8, 1, "Wheel Fill:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 185, 10, 30, 8, 1, "Text:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 185, 25, 30, 8, 1, "Signs:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 185, 40, 30, 8, 1, "Houses:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 185, 55, 30, 8, 1, "Objects:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 185, 70, 30, 8, 1, "Aspects:"},  // IDC_STATIC
+  {223, QTDLG_LTEXT, -1, 185, 85, 30, 8, 1, "Nakshat.:"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 5, 205, 135, 51, 0, "Animation"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 5, 135, 155, 65, 0, "Map and Globe"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 145, 221, 80, 35, 0, "Full Star List"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 180, 101, 105, 58, 0, "Wheel Chart Rotation"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 215, 160, 70, 45, 0, "Wheel Corners"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 180, 0, 105, 100, 0, "Fonts"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 290, 0, 60, 35, 0, "Capricorn Glyph"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 290, 35, 60, 35, 0, "Uranus Glyph"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 290, 70, 60, 45, 0, "Pluto Glyph"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 290, 115, 60, 35, 0, "Lilith Glyph"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 290, 150, 60, 35, 0, "Vertex Glyph"},  // IDC_STATIC
+  {223, QTDLG_GROUPBOX, -1, 290, 185, 60, 35, 0, "Eris Glyph"},  // IDC_STATIC
+  {223, QTDLG_ICON, -1, 135, 10, 20, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgStar
+  {213, QTDLG_DIALOG, 0, 0, 0, 311, 137, 0, "Fixed Star Restrictions"},
+  {213, QTDLG_DEFBUTTON, 1, 255, 120, 50, 14, 0, "OK"},  // IDOK
+  {213, QTDLG_BUTTON, 2, 255, 100, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {213, QTDLG_CHECK, 1443, 5, 5, 55, 10, 2, "&Sirius"},  // dx01
+  {213, QTDLG_CHECK, 1444, 5, 15, 55, 10, 2, "Canopus"},  // dx02
+  {213, QTDLG_CHECK, 1445, 5, 25, 60, 10, 2, "Rigil &Kentaurus"},  // dx03
+  {213, QTDLG_CHECK, 1446, 5, 35, 55, 10, 2, "Arcturus"},  // dx04
+  {213, QTDLG_CHECK, 1447, 5, 45, 55, 10, 2, "&Vega"},  // dx05
+  {213, QTDLG_CHECK, 1448, 5, 55, 55, 10, 2, "Capella"},  // dx06
+  {213, QTDLG_CHECK, 1449, 5, 65, 55, 10, 2, "Rigel"},  // dx07
+  {213, QTDLG_CHECK, 1450, 5, 75, 55, 10, 2, "Procyon"},  // dx08
+  {213, QTDLG_CHECK, 1451, 5, 85, 55, 10, 2, "&Betelgeuse"},  // dx09
+  {213, QTDLG_CHECK, 1452, 5, 95, 55, 10, 2, "Achernar"},  // dx10
+  {213, QTDLG_CHECK, 1453, 5, 105, 55, 10, 2, "Agena"},  // dx11
+  {213, QTDLG_CHECK, 1454, 5, 115, 55, 10, 2, "Altair"},  // dx12
+  {213, QTDLG_CHECK, 1455, 5, 125, 55, 10, 2, "Acrux"},  // dx13
+  {213, QTDLG_CHECK, 1456, 70, 5, 50, 10, 2, "Aldebaran"},  // dx14
+  {213, QTDLG_CHECK, 1457, 70, 15, 50, 10, 2, "Antares"},  // dx15
+  {213, QTDLG_CHECK, 1458, 70, 25, 50, 10, 2, "Spica"},  // dx16
+  {213, QTDLG_CHECK, 1459, 70, 35, 50, 10, 2, "Pollux"},  // dx17
+  {213, QTDLG_CHECK, 1460, 70, 45, 50, 10, 2, "Fomalhaut"},  // dx18
+  {213, QTDLG_CHECK, 1461, 70, 55, 50, 10, 2, "Deneb"},  // dx19
+  {213, QTDLG_CHECK, 1462, 70, 65, 50, 10, 2, "Becrux"},  // dx20
+  {213, QTDLG_CHECK, 1463, 70, 75, 50, 10, 2, "Regulus"},  // dx21
+  {213, QTDLG_CHECK, 1464, 70, 85, 50, 10, 2, "Adara"},  // dx22
+  {213, QTDLG_CHECK, 1465, 70, 95, 50, 10, 2, "Castor"},  // dx23
+  {213, QTDLG_CHECK, 1466, 70, 105, 50, 10, 2, "Shaula"},  // dx24
+  {213, QTDLG_CHECK, 1467, 70, 115, 50, 10, 2, "Bellatrix"},  // dx25
+  {213, QTDLG_CHECK, 1468, 70, 125, 50, 10, 2, "Gacrux"},  // dx26
+  {213, QTDLG_CHECK, 1469, 125, 5, 55, 10, 2, "Alnath"},  // dx27
+  {213, QTDLG_CHECK, 1470, 125, 15, 55, 10, 2, "Alnilam"},  // dx28
+  {213, QTDLG_CHECK, 1471, 125, 25, 55, 10, 2, "Miaplacidus"},  // dx29
+  {213, QTDLG_CHECK, 1472, 125, 35, 55, 10, 2, "Alnair"},  // dx30
+  {213, QTDLG_CHECK, 1473, 125, 45, 55, 10, 2, "Alioth"},  // dx31
+  {213, QTDLG_CHECK, 1474, 125, 55, 55, 10, 2, "Dubhe"},  // dx32
+  {213, QTDLG_CHECK, 1475, 125, 65, 55, 10, 2, "Wezen"},  // dx33
+  {213, QTDLG_CHECK, 1476, 125, 75, 60, 10, 2, "Kaus Australis"},  // dx34
+  {213, QTDLG_CHECK, 1477, 125, 85, 55, 10, 2, "Alkaid"},  // dx35
+  {213, QTDLG_CHECK, 1478, 125, 95, 55, 10, 2, "Sargas"},  // dx36
+  {213, QTDLG_CHECK, 1479, 125, 105, 55, 10, 2, "Menkalinan"},  // dx37
+  {213, QTDLG_CHECK, 1480, 125, 115, 55, 10, 2, "Peacock"},  // dx38
+  {213, QTDLG_CHECK, 1481, 125, 125, 55, 10, 2, "Alhena"},  // dx39
+  {213, QTDLG_CHECK, 1482, 190, 5, 55, 10, 2, "Avior"},  // dx40
+  {213, QTDLG_CHECK, 1483, 190, 15, 55, 10, 2, "Murzim"},  // dx41
+  {213, QTDLG_CHECK, 1484, 190, 25, 55, 10, 2, "Alphard"},  // dx42
+  {213, QTDLG_CHECK, 1485, 190, 35, 55, 10, 2, "Polaris"},  // dx43
+  {213, QTDLG_CHECK, 1486, 190, 45, 55, 10, 2, "Algol"},  // dx44
+  {213, QTDLG_CHECK, 1487, 190, 55, 55, 10, 2, "Suhail"},  // dx45
+  {213, QTDLG_CHECK, 1488, 190, 65, 55, 10, 2, "Alcyone"},  // dx46
+  {213, QTDLG_CHECK, 1489, 190, 75, 55, 10, 2, "&Andromeda"},  // dx47
+  {213, QTDLG_CHECK, 1490, 190, 85, 55, 10, 2, "&Zeta Reticuli"},  // dx48
+  {213, QTDLG_CHECK, 1491, 190, 95, 60, 10, 2, "Galactic &Center"},  // dx49
+  {213, QTDLG_CHECK, 1492, 190, 105, 65, 10, 2, "&Great Attractor"},  // dx50
+  {213, QTDLG_BUTTON, 1050, 255, 5, 50, 14, 0, "&Restrict All"},  // dbSt_RU0
+  {213, QTDLG_BUTTON, 1051, 255, 25, 50, 14, 0, "&Unrestrict All"},  // dbSt_RU1
+  {213, QTDLG_ICON, -1, 270, 60, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgMoons
+  {214, QTDLG_DIALOG, 0, 0, 0, 231, 191, 0, "Planetary Moon Restrictions"},
+  {214, QTDLG_DEFBUTTON, 1, 175, 170, 50, 14, 0, "OK"},  // IDOK
+  {214, QTDLG_BUTTON, 2, 120, 170, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {214, QTDLG_CHECK, 1443, 10, 10, 40, 10, 2, "P&hobos"},  // dx01
+  {214, QTDLG_CHECK, 1444, 10, 20, 40, 10, 2, "&Deimos"},  // dx02
+  {214, QTDLG_CHECK, 1445, 10, 45, 50, 10, 2, "&Ganymede"},  // dx03
+  {214, QTDLG_CHECK, 1446, 10, 55, 44, 10, 2, "&Callisto"},  // dx04
+  {214, QTDLG_CHECK, 1447, 10, 65, 44, 10, 2, "&Io"},  // dx05
+  {214, QTDLG_CHECK, 1448, 10, 75, 44, 10, 2, "&Europa"},  // dx06
+  {214, QTDLG_CHECK, 1449, 10, 100, 45, 10, 2, "&Titan"},  // dx07
+  {214, QTDLG_CHECK, 1450, 10, 110, 45, 10, 2, "Rhea"},  // dx08
+  {214, QTDLG_CHECK, 1451, 10, 120, 45, 10, 2, "Iapetus"},  // dx09
+  {214, QTDLG_CHECK, 1452, 10, 130, 45, 10, 2, "Dione"},  // dx10
+  {214, QTDLG_CHECK, 1453, 10, 140, 45, 10, 2, "Tethys"},  // dx11
+  {214, QTDLG_CHECK, 1454, 10, 150, 45, 10, 2, "Enceladus"},  // dx12
+  {214, QTDLG_CHECK, 1455, 10, 160, 45, 10, 2, "Mimas"},  // dx13
+  {214, QTDLG_CHECK, 1456, 10, 170, 45, 10, 2, "Hyperion"},  // dx14
+  {214, QTDLG_CHECK, 1457, 70, 10, 40, 10, 2, "Titania"},  // dx15
+  {214, QTDLG_CHECK, 1458, 70, 20, 40, 10, 2, "Oberon"},  // dx16
+  {214, QTDLG_CHECK, 1459, 70, 30, 40, 10, 2, "Umbriel"},  // dx17
+  {214, QTDLG_CHECK, 1460, 70, 40, 40, 10, 2, "Ariel"},  // dx18
+  {214, QTDLG_CHECK, 1461, 70, 50, 40, 10, 2, "Miranda"},  // dx19
+  {214, QTDLG_CHECK, 1462, 70, 75, 40, 10, 2, "Triton"},  // dx20
+  {214, QTDLG_CHECK, 1463, 70, 85, 40, 10, 2, "Proteus"},  // dx21
+  {214, QTDLG_CHECK, 1464, 70, 95, 40, 10, 2, "Nereid"},  // dx22
+  {214, QTDLG_CHECK, 1465, 70, 120, 40, 10, 2, "Char&on"},  // dx23
+  {214, QTDLG_CHECK, 1466, 70, 130, 40, 10, 2, "Hydra"},  // dx24
+  {214, QTDLG_CHECK, 1467, 70, 140, 40, 10, 2, "Nix"},  // dx25
+  {214, QTDLG_CHECK, 1468, 70, 150, 40, 10, 2, "Kerberos"},  // dx26
+  {214, QTDLG_CHECK, 1469, 70, 160, 40, 10, 2, "Styx"},  // dx27
+  {214, QTDLG_CHECK, 1470, 125, 10, 55, 10, 2, "Jupiter COB"},  // dx28
+  {214, QTDLG_CHECK, 1471, 125, 20, 55, 10, 2, "Saturn COB"},  // dx29
+  {214, QTDLG_CHECK, 1472, 125, 30, 55, 10, 2, "Uranus COB"},  // dx30
+  {214, QTDLG_CHECK, 1473, 125, 40, 55, 10, 2, "Neptune COB"},  // dx31
+  {214, QTDLG_CHECK, 1474, 125, 50, 55, 10, 2, "Pluto COB"},  // dx32
+  {214, QTDLG_BUTTON, 1037, 120, 70, 50, 14, 0, "&Restrict All"},  // dbMo_Rm0
+  {214, QTDLG_BUTTON, 1038, 175, 70, 50, 14, 0, "&Unrestrict All"},  // dbMo_Rm1
+  {214, QTDLG_BUTTON, 1034, 120, 95, 50, 14, 0, "Toggle &Mars"},  // dbMo_Mar
+  {214, QTDLG_BUTTON, 1033, 120, 110, 50, 14, 0, "Toggle &Jupiter"},  // dbMo_Jup
+  {214, QTDLG_BUTTON, 1039, 120, 125, 50, 14, 0, "Toggle &Saturn"},  // dbMo_Sat
+  {214, QTDLG_BUTTON, 1040, 175, 95, 50, 14, 0, "Toggle Ur&anus"},  // dbMo_Ura
+  {214, QTDLG_BUTTON, 1035, 175, 110, 50, 14, 0, "Tog. &Neptune"},  // dbMo_Nep
+  {214, QTDLG_BUTTON, 1036, 175, 125, 50, 14, 0, "Toggle &Pluto"},  // dbMo_Plu
+  {214, QTDLG_BUTTON, 1032, 175, 140, 50, 14, 0, "Toggle CO&B"},  // dbMo_COB
+  {214, QTDLG_GROUPBOX, -1, 5, 0, 55, 35, 0, "Mars"},  // IDC_STATIC
+  {214, QTDLG_GROUPBOX, -1, 5, 35, 55, 55, 0, "Jupiter"},  // IDC_STATIC
+  {214, QTDLG_GROUPBOX, -1, 5, 90, 55, 95, 0, "Saturn"},  // IDC_STATIC
+  {214, QTDLG_GROUPBOX, -1, 65, 0, 50, 65, 0, "Uranus"},  // IDC_STATIC
+  {214, QTDLG_GROUPBOX, -1, 65, 65, 50, 45, 0, "Neptune"},  // IDC_STATIC
+  {214, QTDLG_GROUPBOX, -1, 65, 110, 50, 65, 0, "Pluto"},  // IDC_STATIC
+  {214, QTDLG_GROUPBOX, -1, 120, 0, 80, 65, 0, "Center of Body (COB)"},  // IDC_STATIC
+  {214, QTDLG_ICON, -1, 135, 145, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgObject
+  {210, QTDLG_DIALOG, 0, 0, 0, 388, 202, 0, "Object Settings"},
+  {210, QTDLG_DEFBUTTON, 1, 335, 183, 50, 14, 0, "OK"},  // IDOK
+  {210, QTDLG_BUTTON, 2, 280, 183, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {210, QTDLG_EDIT, 1363, 40, 15, 30, 13, 0, ""},  // deo01
+  {210, QTDLG_EDIT, 1364, 40, 30, 30, 13, 0, ""},  // deo02
+  {210, QTDLG_EDIT, 1365, 40, 45, 30, 13, 0, ""},  // deo03
+  {210, QTDLG_EDIT, 1366, 40, 60, 30, 13, 0, ""},  // deo04
+  {210, QTDLG_EDIT, 1367, 40, 75, 30, 13, 0, ""},  // deo05
+  {210, QTDLG_EDIT, 1368, 40, 90, 30, 13, 0, ""},  // deo06
+  {210, QTDLG_EDIT, 1369, 40, 105, 30, 13, 0, ""},  // deo07
+  {210, QTDLG_EDIT, 1370, 40, 120, 30, 13, 0, ""},  // deo08
+  {210, QTDLG_EDIT, 1371, 40, 135, 30, 13, 0, ""},  // deo09
+  {210, QTDLG_EDIT, 1372, 40, 150, 30, 13, 0, ""},  // deo10
+  {210, QTDLG_EDIT, 1373, 40, 165, 30, 13, 0, ""},  // deo11
+  {210, QTDLG_EDIT, 1374, 240, 15, 30, 13, 0, ""},  // deo12
+  {210, QTDLG_EDIT, 1375, 240, 30, 30, 13, 0, ""},  // deo13
+  {210, QTDLG_EDIT, 1376, 240, 45, 30, 13, 0, ""},  // deo14
+  {210, QTDLG_EDIT, 1377, 240, 60, 30, 13, 0, ""},  // deo15
+  {210, QTDLG_EDIT, 1378, 240, 75, 30, 13, 0, ""},  // deo16
+  {210, QTDLG_EDIT, 1379, 240, 90, 30, 13, 0, ""},  // deo17
+  {210, QTDLG_EDIT, 1380, 240, 105, 30, 13, 0, ""},  // deo18
+  {210, QTDLG_EDIT, 1381, 240, 120, 30, 13, 0, ""},  // deo19
+  {210, QTDLG_EDIT, 1382, 240, 135, 30, 13, 0, ""},  // deo20
+  {210, QTDLG_EDIT, 1383, 240, 150, 30, 13, 0, ""},  // deo21
+  {210, QTDLG_EDIT, 1384, 240, 165, 30, 13, 0, ""},  // deo22
+  {210, QTDLG_EDIT, 1163, 75, 15, 20, 13, 0, ""},  // dea01
+  {210, QTDLG_EDIT, 1164, 75, 30, 20, 13, 0, ""},  // dea02
+  {210, QTDLG_EDIT, 1165, 75, 45, 20, 13, 0, ""},  // dea03
+  {210, QTDLG_EDIT, 1166, 75, 60, 20, 13, 0, ""},  // dea04
+  {210, QTDLG_EDIT, 1167, 75, 75, 20, 13, 0, ""},  // dea05
+  {210, QTDLG_EDIT, 1168, 75, 90, 20, 13, 0, ""},  // dea06
+  {210, QTDLG_EDIT, 1169, 75, 105, 20, 13, 0, ""},  // dea07
+  {210, QTDLG_EDIT, 1170, 75, 120, 20, 13, 0, ""},  // dea08
+  {210, QTDLG_EDIT, 1171, 75, 135, 20, 13, 0, ""},  // dea09
+  {210, QTDLG_EDIT, 1172, 75, 150, 20, 13, 0, ""},  // dea10
+  {210, QTDLG_EDIT, 1173, 75, 165, 20, 13, 0, ""},  // dea11
+  {210, QTDLG_EDIT, 1174, 275, 15, 20, 13, 0, ""},  // dea12
+  {210, QTDLG_EDIT, 1175, 275, 30, 20, 13, 0, ""},  // dea13
+  {210, QTDLG_EDIT, 1176, 275, 45, 20, 13, 0, ""},  // dea14
+  {210, QTDLG_EDIT, 1177, 275, 60, 20, 13, 0, ""},  // dea15
+  {210, QTDLG_EDIT, 1178, 275, 75, 20, 13, 0, ""},  // dea16
+  {210, QTDLG_EDIT, 1179, 275, 90, 20, 13, 0, ""},  // dea17
+  {210, QTDLG_EDIT, 1180, 275, 105, 20, 13, 0, ""},  // dea18
+  {210, QTDLG_EDIT, 1181, 275, 120, 20, 13, 0, ""},  // dea19
+  {210, QTDLG_EDIT, 1182, 275, 135, 20, 13, 0, ""},  // dea20
+  {210, QTDLG_EDIT, 1183, 275, 150, 20, 13, 0, ""},  // dea21
+  {210, QTDLG_EDIT, 1184, 275, 165, 20, 13, 0, ""},  // dea22
+  {210, QTDLG_EDIT, 1277, 100, 15, 30, 13, 0, ""},  // dei01
+  {210, QTDLG_EDIT, 1278, 100, 30, 30, 13, 0, ""},  // dei02
+  {210, QTDLG_EDIT, 1279, 100, 45, 30, 13, 0, ""},  // dei03
+  {210, QTDLG_EDIT, 1280, 100, 60, 30, 13, 0, ""},  // dei04
+  {210, QTDLG_EDIT, 1281, 100, 75, 30, 13, 0, ""},  // dei05
+  {210, QTDLG_EDIT, 1282, 100, 90, 30, 13, 0, ""},  // dei06
+  {210, QTDLG_EDIT, 1283, 100, 105, 30, 13, 0, ""},  // dei07
+  {210, QTDLG_EDIT, 1284, 100, 120, 30, 13, 0, ""},  // dei08
+  {210, QTDLG_EDIT, 1285, 100, 135, 30, 13, 0, ""},  // dei09
+  {210, QTDLG_EDIT, 1286, 100, 150, 30, 13, 0, ""},  // dei10
+  {210, QTDLG_EDIT, 1287, 100, 165, 30, 13, 0, ""},  // dei11
+  {210, QTDLG_EDIT, 1288, 300, 15, 30, 13, 0, ""},  // dei12
+  {210, QTDLG_EDIT, 1289, 300, 30, 30, 13, 0, ""},  // dei13
+  {210, QTDLG_EDIT, 1290, 300, 45, 30, 13, 0, ""},  // dei14
+  {210, QTDLG_EDIT, 1291, 300, 60, 30, 13, 0, ""},  // dei15
+  {210, QTDLG_EDIT, 1292, 300, 75, 30, 13, 0, ""},  // dei16
+  {210, QTDLG_EDIT, 1293, 300, 90, 30, 13, 0, ""},  // dei17
+  {210, QTDLG_EDIT, 1294, 300, 105, 30, 13, 0, ""},  // dei18
+  {210, QTDLG_EDIT, 1295, 300, 120, 30, 13, 0, ""},  // dei19
+  {210, QTDLG_EDIT, 1296, 300, 135, 30, 13, 0, ""},  // dei20
+  {210, QTDLG_EDIT, 1297, 300, 150, 30, 13, 0, ""},  // dei21
+  {210, QTDLG_EDIT, 1298, 300, 165, 30, 13, 0, ""},  // dei22
+  {210, QTDLG_COMBO, 1107, 135, 15, 50, 160, 2, ""},  // dck00
+  {210, QTDLG_COMBO, 1108, 135, 30, 50, 160, 2, ""},  // dck01
+  {210, QTDLG_COMBO, 1109, 135, 45, 50, 160, 2, ""},  // dck02
+  {210, QTDLG_COMBO, 1110, 135, 60, 50, 160, 2, ""},  // dck03
+  {210, QTDLG_COMBO, 1111, 135, 75, 50, 160, 2, ""},  // dck04
+  {210, QTDLG_COMBO, 1112, 135, 90, 50, 160, 2, ""},  // dck05
+  {210, QTDLG_COMBO, 1113, 135, 105, 50, 160, 2, ""},  // dck06
+  {210, QTDLG_COMBO, 1114, 135, 120, 50, 160, 2, ""},  // dck07
+  {210, QTDLG_COMBO, 1115, 135, 135, 50, 160, 2, ""},  // dck08
+  {210, QTDLG_COMBO, 1116, 135, 150, 50, 160, 2, ""},  // dck09
+  {210, QTDLG_COMBO, 1117, 135, 165, 50, 160, 2, ""},  // dck10
+  {210, QTDLG_COMBO, 1118, 335, 15, 50, 160, 2, ""},  // dck11
+  {210, QTDLG_COMBO, 1119, 335, 30, 50, 160, 2, ""},  // dck12
+  {210, QTDLG_COMBO, 1120, 335, 45, 50, 160, 2, ""},  // dck13
+  {210, QTDLG_COMBO, 1121, 335, 60, 50, 160, 2, ""},  // dck14
+  {210, QTDLG_COMBO, 1122, 335, 75, 50, 160, 2, ""},  // dck15
+  {210, QTDLG_COMBO, 1123, 335, 90, 50, 160, 2, ""},  // dck16
+  {210, QTDLG_COMBO, 1124, 335, 105, 50, 160, 2, ""},  // dck17
+  {210, QTDLG_COMBO, 1125, 335, 120, 50, 160, 2, ""},  // dck18
+  {210, QTDLG_COMBO, 1126, 335, 135, 50, 160, 2, ""},  // dck19
+  {210, QTDLG_COMBO, 1127, 335, 150, 50, 160, 2, ""},  // dck20
+  {210, QTDLG_COMBO, 1128, 335, 165, 50, 160, 2, ""},  // dck21
+  {210, QTDLG_LTEXT, -1, 5, 15, 30, 8, 1, "Earth"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 30, 30, 8, 1, "Sun"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 45, 30, 8, 1, "Moon"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 60, 30, 8, 1, "Mercury"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 75, 30, 8, 1, "Venus"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 90, 30, 8, 1, "Mars"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 105, 30, 8, 1, "Jupiter"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 120, 30, 8, 1, "Saturn"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 135, 30, 8, 1, "Uranus"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 150, 30, 8, 1, "Neptune"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 5, 165, 30, 8, 1, "Pluto"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 15, 50, 8, 1, "Chiron"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 30, 50, 8, 1, "Ceres"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 45, 50, 8, 1, "Pallas Athena"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 60, 50, 8, 1, "Juno"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 75, 50, 8, 1, "Vesta"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 90, 50, 8, 1, "North Node"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 105, 50, 8, 1, "South Node"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 120, 50, 8, 1, "Lilith"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 135, 50, 8, 1, "Part of Fortune"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 150, 50, 8, 1, "Vertex"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 190, 165, 50, 8, 1, "East Point"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 40, 5, 30, 8, 1, "Max Orb"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 75, 5, 20, 8, 1, "Add"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 100, 5, 30, 8, 1, "Influence"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 135, 5, 30, 8, 1, "Color"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 240, 5, 30, 8, 1, "Max Orb"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 275, 5, 20, 8, 1, "Add"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 300, 5, 30, 8, 1, "Influence"},  // IDC_STATIC
+  {210, QTDLG_LTEXT, -1, 335, 5, 30, 8, 1, "Color"},  // IDC_STATIC
+  {210, QTDLG_ICON, -1, 200, 178, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgObject2
+  {211, QTDLG_DIALOG, 0, 0, 0, 501, 197, 0, "More Object Settings"},
+  {211, QTDLG_DEFBUTTON, 1, 451, 175, 45, 14, 0, "OK"},  // IDOK
+  {211, QTDLG_BUTTON, 2, 401, 175, 45, 14, 0, "Cancel"},  // IDCANCEL
+  {211, QTDLG_EDIT, 1363, 50, 15, 20, 13, 0, ""},  // deo01
+  {211, QTDLG_EDIT, 1364, 50, 30, 20, 13, 0, ""},  // deo02
+  {211, QTDLG_EDIT, 1365, 50, 45, 20, 13, 0, ""},  // deo03
+  {211, QTDLG_EDIT, 1366, 50, 60, 20, 13, 0, ""},  // deo04
+  {211, QTDLG_EDIT, 1367, 50, 75, 20, 13, 0, ""},  // deo05
+  {211, QTDLG_EDIT, 1368, 50, 90, 20, 13, 0, ""},  // deo06
+  {211, QTDLG_EDIT, 1369, 50, 105, 20, 13, 0, ""},  // deo07
+  {211, QTDLG_EDIT, 1370, 50, 120, 20, 13, 0, ""},  // deo08
+  {211, QTDLG_EDIT, 1371, 50, 135, 20, 13, 0, ""},  // deo09
+  {211, QTDLG_EDIT, 1372, 50, 150, 20, 13, 0, ""},  // deo10
+  {211, QTDLG_EDIT, 1373, 50, 165, 20, 13, 0, ""},  // deo11
+  {211, QTDLG_EDIT, 1374, 50, 180, 20, 13, 0, ""},  // deo12
+  {211, QTDLG_EDIT, 1375, 211, 15, 19, 13, 0, ""},  // deo13
+  {211, QTDLG_EDIT, 1376, 211, 30, 19, 13, 0, ""},  // deo14
+  {211, QTDLG_EDIT, 1377, 211, 45, 19, 13, 0, ""},  // deo15
+  {211, QTDLG_EDIT, 1378, 211, 60, 19, 13, 0, ""},  // deo16
+  {211, QTDLG_EDIT, 1379, 211, 75, 19, 13, 0, ""},  // deo17
+  {211, QTDLG_EDIT, 1380, 211, 90, 19, 13, 0, ""},  // deo18
+  {211, QTDLG_EDIT, 1381, 211, 105, 19, 13, 0, ""},  // deo19
+  {211, QTDLG_EDIT, 1382, 211, 120, 19, 13, 0, ""},  // deo20
+  {211, QTDLG_EDIT, 1383, 211, 135, 19, 13, 0, ""},  // deo21
+  {211, QTDLG_EDIT, 1384, 376, 15, 19, 13, 0, ""},  // deo22
+  {211, QTDLG_EDIT, 1385, 376, 30, 19, 13, 0, ""},  // deo23
+  {211, QTDLG_EDIT, 1386, 376, 45, 19, 13, 0, ""},  // deo24
+  {211, QTDLG_EDIT, 1387, 376, 60, 19, 13, 0, ""},  // deo25
+  {211, QTDLG_EDIT, 1388, 376, 75, 19, 13, 0, ""},  // deo26
+  {211, QTDLG_EDIT, 1389, 376, 90, 19, 13, 0, ""},  // deo27
+  {211, QTDLG_EDIT, 1390, 376, 105, 19, 13, 0, ""},  // deo28
+  {211, QTDLG_EDIT, 1391, 376, 120, 19, 13, 0, ""},  // deo29
+  {211, QTDLG_EDIT, 1392, 376, 135, 19, 13, 0, ""},  // deo30
+  {211, QTDLG_EDIT, 1393, 376, 150, 19, 13, 0, ""},  // deo31
+  {211, QTDLG_EDIT, 1163, 75, 15, 20, 13, 0, ""},  // dea01
+  {211, QTDLG_EDIT, 1164, 75, 30, 20, 13, 0, ""},  // dea02
+  {211, QTDLG_EDIT, 1165, 75, 45, 20, 13, 0, ""},  // dea03
+  {211, QTDLG_EDIT, 1166, 75, 60, 20, 13, 0, ""},  // dea04
+  {211, QTDLG_EDIT, 1167, 75, 75, 20, 13, 0, ""},  // dea05
+  {211, QTDLG_EDIT, 1168, 75, 90, 20, 13, 0, ""},  // dea06
+  {211, QTDLG_EDIT, 1169, 75, 105, 20, 13, 0, ""},  // dea07
+  {211, QTDLG_EDIT, 1170, 75, 120, 20, 13, 0, ""},  // dea08
+  {211, QTDLG_EDIT, 1171, 75, 135, 20, 13, 0, ""},  // dea09
+  {211, QTDLG_EDIT, 1172, 75, 150, 20, 13, 0, ""},  // dea10
+  {211, QTDLG_EDIT, 1173, 75, 165, 20, 13, 0, ""},  // dea11
+  {211, QTDLG_EDIT, 1174, 75, 180, 20, 13, 0, ""},  // dea12
+  {211, QTDLG_EDIT, 1175, 235, 15, 20, 13, 0, ""},  // dea13
+  {211, QTDLG_EDIT, 1176, 235, 30, 20, 13, 0, ""},  // dea14
+  {211, QTDLG_EDIT, 1177, 235, 45, 20, 13, 0, ""},  // dea15
+  {211, QTDLG_EDIT, 1178, 235, 60, 20, 13, 0, ""},  // dea16
+  {211, QTDLG_EDIT, 1179, 235, 75, 20, 13, 0, ""},  // dea17
+  {211, QTDLG_EDIT, 1180, 235, 90, 20, 13, 0, ""},  // dea18
+  {211, QTDLG_EDIT, 1181, 235, 105, 20, 13, 0, ""},  // dea19
+  {211, QTDLG_EDIT, 1182, 235, 120, 20, 13, 0, ""},  // dea20
+  {211, QTDLG_EDIT, 1183, 235, 135, 20, 13, 0, ""},  // dea21
+  {211, QTDLG_EDIT, 1184, 400, 15, 20, 13, 0, ""},  // dea22
+  {211, QTDLG_EDIT, 1185, 400, 30, 20, 13, 0, ""},  // dea23
+  {211, QTDLG_EDIT, 1186, 400, 45, 20, 13, 0, ""},  // dea24
+  {211, QTDLG_EDIT, 1187, 400, 60, 20, 13, 0, ""},  // dea25
+  {211, QTDLG_EDIT, 1188, 400, 75, 20, 13, 0, ""},  // dea26
+  {211, QTDLG_EDIT, 1189, 400, 90, 20, 13, 0, ""},  // dea27
+  {211, QTDLG_EDIT, 1190, 400, 105, 20, 13, 0, ""},  // dea28
+  {211, QTDLG_EDIT, 1191, 400, 120, 20, 13, 0, ""},  // dea29
+  {211, QTDLG_EDIT, 1192, 400, 135, 20, 13, 0, ""},  // dea30
+  {211, QTDLG_EDIT, 1193, 400, 150, 20, 13, 0, ""},  // dea31
+  {211, QTDLG_EDIT, 1277, 100, 15, 20, 13, 0, ""},  // dei01
+  {211, QTDLG_EDIT, 1278, 100, 30, 20, 13, 0, ""},  // dei02
+  {211, QTDLG_EDIT, 1279, 100, 45, 20, 13, 0, ""},  // dei03
+  {211, QTDLG_EDIT, 1280, 100, 60, 20, 13, 0, ""},  // dei04
+  {211, QTDLG_EDIT, 1281, 100, 75, 20, 13, 0, ""},  // dei05
+  {211, QTDLG_EDIT, 1282, 100, 90, 20, 13, 0, ""},  // dei06
+  {211, QTDLG_EDIT, 1283, 100, 105, 20, 13, 0, ""},  // dei07
+  {211, QTDLG_EDIT, 1284, 100, 120, 20, 13, 0, ""},  // dei08
+  {211, QTDLG_EDIT, 1285, 100, 135, 20, 13, 0, ""},  // dei09
+  {211, QTDLG_EDIT, 1286, 100, 150, 20, 13, 0, ""},  // dei10
+  {211, QTDLG_EDIT, 1287, 100, 165, 20, 13, 0, ""},  // dei11
+  {211, QTDLG_EDIT, 1288, 100, 180, 20, 13, 0, ""},  // dei12
+  {211, QTDLG_EDIT, 1289, 261, 15, 20, 13, 0, ""},  // dei13
+  {211, QTDLG_EDIT, 1290, 261, 30, 20, 13, 0, ""},  // dei14
+  {211, QTDLG_EDIT, 1291, 261, 45, 20, 13, 0, ""},  // dei15
+  {211, QTDLG_EDIT, 1292, 261, 60, 20, 13, 0, ""},  // dei16
+  {211, QTDLG_EDIT, 1293, 261, 75, 20, 13, 0, ""},  // dei17
+  {211, QTDLG_EDIT, 1294, 261, 90, 20, 13, 0, ""},  // dei18
+  {211, QTDLG_EDIT, 1295, 261, 105, 20, 13, 0, ""},  // dei19
+  {211, QTDLG_EDIT, 1296, 261, 120, 20, 13, 0, ""},  // dei20
+  {211, QTDLG_EDIT, 1297, 261, 135, 20, 13, 0, ""},  // dei21
+  {211, QTDLG_EDIT, 1298, 426, 15, 20, 13, 0, ""},  // dei22
+  {211, QTDLG_EDIT, 1299, 426, 30, 20, 13, 0, ""},  // dei23
+  {211, QTDLG_EDIT, 1300, 426, 45, 20, 13, 0, ""},  // dei24
+  {211, QTDLG_EDIT, 1301, 426, 60, 20, 13, 0, ""},  // dei25
+  {211, QTDLG_EDIT, 1302, 426, 75, 20, 13, 0, ""},  // dei26
+  {211, QTDLG_EDIT, 1303, 426, 90, 20, 13, 0, ""},  // dei27
+  {211, QTDLG_EDIT, 1304, 426, 105, 20, 13, 0, ""},  // dei28
+  {211, QTDLG_EDIT, 1305, 426, 120, 20, 13, 0, ""},  // dei29
+  {211, QTDLG_EDIT, 1306, 426, 135, 20, 13, 0, ""},  // dei30
+  {211, QTDLG_EDIT, 1307, 426, 150, 20, 13, 0, ""},  // dei31
+  {211, QTDLG_COMBO, 1107, 125, 15, 45, 160, 2, ""},  // dck00
+  {211, QTDLG_COMBO, 1108, 125, 30, 45, 160, 2, ""},  // dck01
+  {211, QTDLG_COMBO, 1109, 125, 45, 45, 160, 2, ""},  // dck02
+  {211, QTDLG_COMBO, 1110, 125, 60, 45, 160, 2, ""},  // dck03
+  {211, QTDLG_COMBO, 1111, 125, 75, 45, 160, 2, ""},  // dck04
+  {211, QTDLG_COMBO, 1112, 125, 90, 45, 160, 2, ""},  // dck05
+  {211, QTDLG_COMBO, 1113, 125, 105, 45, 160, 2, ""},  // dck06
+  {211, QTDLG_COMBO, 1114, 125, 120, 45, 160, 2, ""},  // dck07
+  {211, QTDLG_COMBO, 1115, 125, 135, 45, 160, 2, ""},  // dck08
+  {211, QTDLG_COMBO, 1116, 125, 150, 45, 160, 2, ""},  // dck09
+  {211, QTDLG_COMBO, 1117, 125, 165, 45, 160, 2, ""},  // dck10
+  {211, QTDLG_COMBO, 1118, 125, 180, 45, 160, 2, ""},  // dck11
+  {211, QTDLG_COMBO, 1119, 285, 15, 45, 160, 2, ""},  // dck12
+  {211, QTDLG_COMBO, 1120, 285, 30, 45, 160, 2, ""},  // dck13
+  {211, QTDLG_COMBO, 1121, 285, 45, 45, 160, 2, ""},  // dck14
+  {211, QTDLG_COMBO, 1122, 285, 60, 45, 160, 2, ""},  // dck15
+  {211, QTDLG_COMBO, 1123, 285, 75, 45, 160, 2, ""},  // dck16
+  {211, QTDLG_COMBO, 1124, 285, 90, 45, 160, 2, ""},  // dck17
+  {211, QTDLG_COMBO, 1125, 285, 105, 45, 160, 2, ""},  // dck18
+  {211, QTDLG_COMBO, 1126, 285, 120, 45, 160, 2, ""},  // dck19
+  {211, QTDLG_COMBO, 1127, 285, 135, 45, 160, 2, ""},  // dck20
+  {211, QTDLG_COMBO, 1128, 451, 15, 45, 160, 2, ""},  // dck21
+  {211, QTDLG_COMBO, 1129, 451, 30, 45, 160, 2, ""},  // dck22
+  {211, QTDLG_COMBO, 1130, 451, 45, 45, 160, 2, ""},  // dck23
+  {211, QTDLG_COMBO, 1131, 451, 60, 45, 160, 2, ""},  // dck24
+  {211, QTDLG_COMBO, 1132, 451, 75, 45, 160, 2, ""},  // dck25
+  {211, QTDLG_COMBO, 1133, 451, 90, 45, 160, 2, ""},  // dck26
+  {211, QTDLG_COMBO, 1134, 451, 105, 45, 160, 2, ""},  // dck27
+  {211, QTDLG_COMBO, 1135, 451, 120, 45, 160, 2, ""},  // dck28
+  {211, QTDLG_COMBO, 1136, 451, 135, 45, 160, 2, ""},  // dck29
+  {211, QTDLG_COMBO, 1137, 451, 150, 45, 160, 2, ""},  // dck30
+  {211, QTDLG_LTEXT, -1, 5, 15, 40, 8, 1, "Ascendant"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 30, 40, 8, 1, "2nd Cusp"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 45, 40, 8, 1, "3rd Cusp"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 60, 40, 8, 1, "Nadir"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 75, 40, 8, 1, "5th Cusp"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 90, 40, 8, 1, "6th Cusp"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 105, 40, 8, 1, "Descendant"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 120, 40, 8, 1, "8th Cusp"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 135, 40, 8, 1, "9th Cusp"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 150, 40, 8, 1, "Midheaven"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 165, 40, 8, 1, "11th Cusp"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 5, 180, 40, 8, 1, "12th Cusp"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 175, 15, 30, 8, 1, "Vulcan"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 175, 30, 30, 8, 1, "Cupido"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 175, 45, 30, 8, 1, "Hades"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 175, 60, 30, 8, 1, "Zeus"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 175, 75, 30, 8, 1, "Kronos"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 175, 90, 30, 8, 1, "Apollon"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 175, 105, 30, 8, 1, "Admetos"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 175, 120, 30, 8, 1, "Vulkanus"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 175, 135, 30, 8, 1, "Poseidon"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 15, 35, 8, 1, "Hygiea"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 30, 35, 8, 1, "Pholus"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 45, 35, 8, 1, "Eris"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 60, 35, 8, 1, "Haumea"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 75, 35, 8, 1, "Makemake"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 90, 35, 8, 1, "Gonggong"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 105, 35, 8, 1, "Quaoar"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 120, 35, 8, 1, "Sedna"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 135, 35, 8, 1, "Orcus"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 335, 150, 35, 8, 1, "All Stars"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 50, 5, 20, 8, 1, "Max"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 75, 5, 20, 8, 1, "Add"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 100, 5, 16, 8, 1, "Influ."},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 125, 5, 30, 8, 1, "Color"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 211, 5, 19, 8, 1, "Max"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 235, 5, 20, 8, 1, "Add"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 261, 5, 30, 8, 1, "Influ."},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 285, 5, 30, 8, 1, "Color"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 375, 5, 20, 8, 1, "Max"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 400, 5, 20, 8, 1, "Add"},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 426, 5, 30, 8, 1, "Influ."},  // IDC_STATIC
+  {211, QTDLG_LTEXT, -1, 451, 5, 30, 8, 1, "Color"},  // IDC_STATIC
+  {211, QTDLG_ICON, -1, 245, 160, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgObjectM
+  {215, QTDLG_DIALOG, 0, 0, 0, 505, 197, 0, "Planetary Moon Object Settings"},
+  {215, QTDLG_DEFBUTTON, 1, 451, 175, 45, 14, 0, "OK"},  // IDOK
+  {215, QTDLG_BUTTON, 2, 401, 175, 45, 14, 0, "Cancel"},  // IDCANCEL
+  {215, QTDLG_EDIT, 1363, 45, 15, 20, 13, 0, ""},  // deo01
+  {215, QTDLG_EDIT, 1364, 45, 30, 20, 13, 0, ""},  // deo02
+  {215, QTDLG_EDIT, 1365, 45, 45, 20, 13, 0, ""},  // deo03
+  {215, QTDLG_EDIT, 1366, 45, 60, 20, 13, 0, ""},  // deo04
+  {215, QTDLG_EDIT, 1367, 45, 75, 20, 13, 0, ""},  // deo05
+  {215, QTDLG_EDIT, 1368, 45, 90, 20, 13, 0, ""},  // deo06
+  {215, QTDLG_EDIT, 1369, 45, 105, 20, 13, 0, ""},  // deo07
+  {215, QTDLG_EDIT, 1370, 45, 120, 20, 13, 0, ""},  // deo08
+  {215, QTDLG_EDIT, 1371, 45, 135, 20, 13, 0, ""},  // deo09
+  {215, QTDLG_EDIT, 1372, 45, 150, 20, 13, 0, ""},  // deo10
+  {215, QTDLG_EDIT, 1373, 45, 165, 20, 13, 0, ""},  // deo11
+  {215, QTDLG_EDIT, 1374, 45, 180, 20, 13, 0, ""},  // deo12
+  {215, QTDLG_EDIT, 1375, 205, 15, 19, 13, 0, ""},  // deo13
+  {215, QTDLG_EDIT, 1376, 205, 30, 19, 13, 0, ""},  // deo14
+  {215, QTDLG_EDIT, 1377, 205, 45, 19, 13, 0, ""},  // deo15
+  {215, QTDLG_EDIT, 1378, 205, 60, 19, 13, 0, ""},  // deo16
+  {215, QTDLG_EDIT, 1379, 205, 75, 19, 13, 0, ""},  // deo17
+  {215, QTDLG_EDIT, 1380, 205, 90, 19, 13, 0, ""},  // deo18
+  {215, QTDLG_EDIT, 1381, 205, 105, 19, 13, 0, ""},  // deo19
+  {215, QTDLG_EDIT, 1382, 205, 120, 19, 13, 0, ""},  // deo20
+  {215, QTDLG_EDIT, 1383, 205, 135, 19, 13, 0, ""},  // deo21
+  {215, QTDLG_EDIT, 1384, 205, 150, 19, 13, 0, ""},  // deo22
+  {215, QTDLG_EDIT, 1385, 205, 165, 19, 13, 0, ""},  // deo23
+  {215, QTDLG_EDIT, 1386, 205, 180, 19, 13, 0, ""},  // deo24
+  {215, QTDLG_EDIT, 1387, 380, 15, 19, 13, 0, ""},  // deo25
+  {215, QTDLG_EDIT, 1388, 380, 30, 19, 13, 0, ""},  // deo26
+  {215, QTDLG_EDIT, 1389, 380, 45, 19, 13, 0, ""},  // deo27
+  {215, QTDLG_EDIT, 1390, 380, 60, 19, 13, 0, ""},  // deo28
+  {215, QTDLG_EDIT, 1391, 380, 75, 19, 13, 0, ""},  // deo29
+  {215, QTDLG_EDIT, 1392, 380, 90, 19, 13, 0, ""},  // deo30
+  {215, QTDLG_EDIT, 1393, 380, 105, 19, 13, 0, ""},  // deo31
+  {215, QTDLG_EDIT, 1394, 380, 120, 19, 13, 0, ""},  // deo32
+  {215, QTDLG_EDIT, 1163, 71, 15, 20, 13, 0, ""},  // dea01
+  {215, QTDLG_EDIT, 1164, 71, 30, 20, 13, 0, ""},  // dea02
+  {215, QTDLG_EDIT, 1165, 71, 45, 20, 13, 0, ""},  // dea03
+  {215, QTDLG_EDIT, 1166, 71, 60, 20, 13, 0, ""},  // dea04
+  {215, QTDLG_EDIT, 1167, 71, 75, 20, 13, 0, ""},  // dea05
+  {215, QTDLG_EDIT, 1168, 71, 90, 20, 13, 0, ""},  // dea06
+  {215, QTDLG_EDIT, 1169, 71, 105, 20, 13, 0, ""},  // dea07
+  {215, QTDLG_EDIT, 1170, 71, 120, 20, 13, 0, ""},  // dea08
+  {215, QTDLG_EDIT, 1171, 71, 135, 20, 13, 0, ""},  // dea09
+  {215, QTDLG_EDIT, 1172, 71, 150, 20, 13, 0, ""},  // dea10
+  {215, QTDLG_EDIT, 1173, 71, 165, 20, 13, 0, ""},  // dea11
+  {215, QTDLG_EDIT, 1174, 71, 180, 20, 13, 0, ""},  // dea12
+  {215, QTDLG_EDIT, 1175, 231, 15, 20, 13, 0, ""},  // dea13
+  {215, QTDLG_EDIT, 1176, 231, 30, 20, 13, 0, ""},  // dea14
+  {215, QTDLG_EDIT, 1177, 231, 45, 20, 13, 0, ""},  // dea15
+  {215, QTDLG_EDIT, 1178, 231, 60, 20, 13, 0, ""},  // dea16
+  {215, QTDLG_EDIT, 1179, 231, 75, 20, 13, 0, ""},  // dea17
+  {215, QTDLG_EDIT, 1180, 231, 90, 20, 13, 0, ""},  // dea18
+  {215, QTDLG_EDIT, 1181, 231, 105, 20, 13, 0, ""},  // dea19
+  {215, QTDLG_EDIT, 1182, 231, 120, 20, 13, 0, ""},  // dea20
+  {215, QTDLG_EDIT, 1183, 231, 135, 20, 13, 0, ""},  // dea21
+  {215, QTDLG_EDIT, 1184, 231, 150, 20, 13, 0, ""},  // dea22
+  {215, QTDLG_EDIT, 1185, 231, 165, 20, 13, 0, ""},  // dea23
+  {215, QTDLG_EDIT, 1186, 231, 180, 20, 13, 0, ""},  // dea24
+  {215, QTDLG_EDIT, 1187, 405, 15, 20, 13, 0, ""},  // dea25
+  {215, QTDLG_EDIT, 1188, 405, 30, 20, 13, 0, ""},  // dea26
+  {215, QTDLG_EDIT, 1189, 405, 44, 20, 13, 0, ""},  // dea27
+  {215, QTDLG_EDIT, 1190, 405, 60, 20, 13, 0, ""},  // dea28
+  {215, QTDLG_EDIT, 1191, 405, 74, 20, 13, 0, ""},  // dea29
+  {215, QTDLG_EDIT, 1192, 405, 89, 20, 13, 0, ""},  // dea30
+  {215, QTDLG_EDIT, 1193, 405, 105, 20, 13, 0, ""},  // dea31
+  {215, QTDLG_EDIT, 1194, 405, 120, 20, 13, 0, ""},  // dea32
+  {215, QTDLG_EDIT, 1277, 95, 15, 20, 13, 0, ""},  // dei01
+  {215, QTDLG_EDIT, 1278, 95, 30, 20, 13, 0, ""},  // dei02
+  {215, QTDLG_EDIT, 1279, 95, 45, 20, 13, 0, ""},  // dei03
+  {215, QTDLG_EDIT, 1280, 95, 60, 20, 13, 0, ""},  // dei04
+  {215, QTDLG_EDIT, 1281, 95, 75, 20, 13, 0, ""},  // dei05
+  {215, QTDLG_EDIT, 1282, 95, 90, 20, 13, 0, ""},  // dei06
+  {215, QTDLG_EDIT, 1283, 95, 105, 20, 13, 0, ""},  // dei07
+  {215, QTDLG_EDIT, 1284, 95, 120, 20, 13, 0, ""},  // dei08
+  {215, QTDLG_EDIT, 1285, 95, 135, 20, 13, 0, ""},  // dei09
+  {215, QTDLG_EDIT, 1286, 95, 150, 20, 13, 0, ""},  // dei10
+  {215, QTDLG_EDIT, 1287, 95, 165, 20, 13, 0, ""},  // dei11
+  {215, QTDLG_EDIT, 1288, 95, 180, 20, 13, 0, ""},  // dei12
+  {215, QTDLG_EDIT, 1289, 255, 15, 20, 13, 0, ""},  // dei13
+  {215, QTDLG_EDIT, 1290, 255, 30, 20, 13, 0, ""},  // dei14
+  {215, QTDLG_EDIT, 1291, 255, 45, 20, 13, 0, ""},  // dei15
+  {215, QTDLG_EDIT, 1292, 255, 60, 20, 13, 0, ""},  // dei16
+  {215, QTDLG_EDIT, 1293, 255, 75, 20, 13, 0, ""},  // dei17
+  {215, QTDLG_EDIT, 1294, 255, 90, 20, 13, 0, ""},  // dei18
+  {215, QTDLG_EDIT, 1295, 255, 105, 20, 13, 0, ""},  // dei19
+  {215, QTDLG_EDIT, 1296, 255, 120, 20, 13, 0, ""},  // dei20
+  {215, QTDLG_EDIT, 1297, 255, 135, 20, 13, 0, ""},  // dei21
+  {215, QTDLG_EDIT, 1298, 255, 150, 20, 13, 0, ""},  // dei22
+  {215, QTDLG_EDIT, 1299, 255, 165, 20, 13, 0, ""},  // dei23
+  {215, QTDLG_EDIT, 1300, 255, 180, 20, 13, 0, ""},  // dei24
+  {215, QTDLG_EDIT, 1301, 430, 15, 20, 13, 0, ""},  // dei25
+  {215, QTDLG_EDIT, 1302, 430, 30, 20, 13, 0, ""},  // dei26
+  {215, QTDLG_EDIT, 1303, 430, 45, 20, 13, 0, ""},  // dei27
+  {215, QTDLG_EDIT, 1304, 430, 60, 20, 13, 0, ""},  // dei28
+  {215, QTDLG_EDIT, 1305, 430, 75, 20, 13, 0, ""},  // dei29
+  {215, QTDLG_EDIT, 1306, 430, 90, 20, 13, 0, ""},  // dei30
+  {215, QTDLG_EDIT, 1307, 430, 105, 20, 13, 0, ""},  // dei31
+  {215, QTDLG_EDIT, 1308, 430, 120, 20, 13, 0, ""},  // dei32
+  {215, QTDLG_COMBO, 1107, 121, 15, 45, 160, 2, ""},  // dck00
+  {215, QTDLG_COMBO, 1108, 121, 30, 45, 160, 2, ""},  // dck01
+  {215, QTDLG_COMBO, 1109, 121, 45, 45, 160, 2, ""},  // dck02
+  {215, QTDLG_COMBO, 1110, 121, 60, 45, 160, 2, ""},  // dck03
+  {215, QTDLG_COMBO, 1111, 121, 75, 45, 160, 2, ""},  // dck04
+  {215, QTDLG_COMBO, 1112, 121, 90, 45, 160, 2, ""},  // dck05
+  {215, QTDLG_COMBO, 1113, 121, 105, 45, 160, 2, ""},  // dck06
+  {215, QTDLG_COMBO, 1114, 121, 120, 45, 160, 2, ""},  // dck07
+  {215, QTDLG_COMBO, 1115, 121, 135, 45, 160, 2, ""},  // dck08
+  {215, QTDLG_COMBO, 1116, 121, 150, 45, 160, 2, ""},  // dck09
+  {215, QTDLG_COMBO, 1117, 121, 165, 45, 160, 2, ""},  // dck10
+  {215, QTDLG_COMBO, 1118, 121, 180, 45, 160, 2, ""},  // dck11
+  {215, QTDLG_COMBO, 1119, 280, 15, 45, 160, 2, ""},  // dck12
+  {215, QTDLG_COMBO, 1120, 280, 30, 45, 160, 2, ""},  // dck13
+  {215, QTDLG_COMBO, 1121, 280, 45, 45, 160, 2, ""},  // dck14
+  {215, QTDLG_COMBO, 1122, 280, 60, 45, 160, 2, ""},  // dck15
+  {215, QTDLG_COMBO, 1123, 280, 75, 45, 160, 2, ""},  // dck16
+  {215, QTDLG_COMBO, 1124, 280, 90, 45, 160, 2, ""},  // dck17
+  {215, QTDLG_COMBO, 1125, 280, 105, 45, 160, 2, ""},  // dck18
+  {215, QTDLG_COMBO, 1126, 280, 120, 45, 160, 2, ""},  // dck19
+  {215, QTDLG_COMBO, 1127, 280, 135, 45, 160, 2, ""},  // dck20
+  {215, QTDLG_COMBO, 1128, 280, 150, 45, 160, 2, ""},  // dck21
+  {215, QTDLG_COMBO, 1129, 280, 165, 45, 160, 2, ""},  // dck22
+  {215, QTDLG_COMBO, 1130, 280, 180, 45, 160, 2, ""},  // dck23
+  {215, QTDLG_COMBO, 1131, 455, 15, 45, 160, 2, ""},  // dck24
+  {215, QTDLG_COMBO, 1132, 455, 30, 45, 160, 2, ""},  // dck25
+  {215, QTDLG_COMBO, 1133, 455, 45, 45, 160, 2, ""},  // dck26
+  {215, QTDLG_COMBO, 1134, 455, 60, 45, 160, 2, ""},  // dck27
+  {215, QTDLG_COMBO, 1135, 455, 75, 45, 160, 2, ""},  // dck28
+  {215, QTDLG_COMBO, 1136, 455, 90, 45, 160, 2, ""},  // dck29
+  {215, QTDLG_COMBO, 1137, 455, 105, 45, 160, 2, ""},  // dck30
+  {215, QTDLG_COMBO, 1138, 455, 120, 45, 160, 2, ""},  // dck31
+  {215, QTDLG_CHECK, 1582, 340, 139, 155, 10, 2, "Make &Moons Orbit Current Central Object"},  // dxMo_Ym
+  {215, QTDLG_CHECK, 1580, 340, 149, 155, 10, 2, "&True Planetcentric Positions in Moons Charts"},  // dxMo_80
+  {215, QTDLG_CHECK, 1581, 340, 159, 155, 10, 2, "&Wheel Charts Show Moons Orbiting Planet"},  // dxMo_X8
+  {215, QTDLG_LTEXT, -1, 5, 15, 35, 8, 1, "Phobos"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 30, 35, 8, 1, "Deimos"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 45, 35, 8, 1, "Ganymede"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 60, 35, 8, 1, "Callisto"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 75, 35, 8, 1, "Io"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 90, 35, 8, 1, "Europa"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 105, 35, 8, 1, "Titan"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 120, 35, 8, 1, "Rhea"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 135, 35, 8, 1, "Iapetus"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 150, 35, 8, 1, "Dione"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 165, 35, 8, 1, "Tethys"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 5, 180, 35, 8, 1, "Enceladus"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 15, 34, 8, 1, "Mimas"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 30, 30, 8, 1, "Hyperion"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 45, 30, 8, 1, "Titania"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 60, 30, 8, 1, "Oberon"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 75, 30, 8, 1, "Umbriel"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 90, 30, 8, 1, "Ariel"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 105, 30, 8, 1, "Miranda"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 120, 30, 8, 1, "Triton"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 135, 30, 8, 1, "Proteus"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 150, 30, 8, 1, "Nereid"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 165, 30, 8, 1, "Charon"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 171, 180, 30, 8, 1, "Hydra"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 330, 15, 45, 8, 1, "Nix"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 330, 30, 45, 8, 1, "Kerberos"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 330, 45, 45, 8, 1, "Styx"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 330, 60, 45, 8, 1, "Jupiter COB"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 330, 75, 45, 8, 1, "Saturn COB"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 330, 90, 45, 8, 1, "Uranus COB"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 330, 105, 45, 8, 1, "Neptune COB"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 330, 120, 45, 8, 1, "Pluto COB"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 45, 5, 20, 8, 1, "Max"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 71, 5, 20, 8, 1, "Add"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 95, 5, 16, 8, 1, "Influ."},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 121, 5, 30, 8, 1, "Color"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 207, 5, 19, 8, 1, "Max"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 231, 5, 20, 8, 1, "Add"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 257, 5, 30, 8, 1, "Influ."},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 281, 5, 30, 8, 1, "Color"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 380, 5, 20, 8, 1, "Max"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 405, 5, 20, 8, 1, "Add"},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 431, 5, 30, 8, 1, "Influ."},  // IDC_STATIC
+  {215, QTDLG_LTEXT, -1, 456, 5, 30, 8, 1, "Color"},  // IDC_STATIC
+  {215, QTDLG_ICON, -1, 355, 173, 20, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgCustom
+  {216, QTDLG_DIALOG, 0, 0, 0, 505, 217, 0, "Object Customization"},
+  {216, QTDLG_DEFBUTTON, 1, 460, 197, 40, 14, 0, "OK"},  // IDOK
+  {216, QTDLG_BUTTON, 2, 415, 197, 40, 14, 0, "Cancel"},  // IDCANCEL
+  {216, QTDLG_EDIT, 1313, 40, 15, 40, 13, 0, ""},  // den01
+  {216, QTDLG_EDIT, 1314, 40, 30, 40, 13, 0, ""},  // den02
+  {216, QTDLG_EDIT, 1315, 40, 45, 40, 13, 0, ""},  // den03
+  {216, QTDLG_EDIT, 1316, 40, 60, 40, 13, 0, ""},  // den04
+  {216, QTDLG_EDIT, 1317, 40, 75, 40, 13, 0, ""},  // den05
+  {216, QTDLG_EDIT, 1318, 40, 90, 40, 13, 0, ""},  // den06
+  {216, QTDLG_EDIT, 1319, 40, 105, 40, 13, 0, ""},  // den07
+  {216, QTDLG_EDIT, 1320, 40, 120, 40, 13, 0, ""},  // den08
+  {216, QTDLG_EDIT, 1321, 40, 135, 40, 13, 0, ""},  // den09
+  {216, QTDLG_EDIT, 1322, 40, 150, 40, 13, 0, ""},  // den10
+  {216, QTDLG_EDIT, 1323, 40, 165, 40, 13, 0, ""},  // den11
+  {216, QTDLG_EDIT, 1324, 40, 180, 40, 13, 0, ""},  // den12
+  {216, QTDLG_EDIT, 1325, 40, 195, 40, 13, 0, ""},  // den13
+  {216, QTDLG_EDIT, 1326, 170, 15, 40, 13, 0, ""},  // den14
+  {216, QTDLG_EDIT, 1327, 170, 30, 40, 13, 0, ""},  // den15
+  {216, QTDLG_EDIT, 1328, 170, 45, 40, 13, 0, ""},  // den16
+  {216, QTDLG_EDIT, 1329, 170, 60, 40, 13, 0, ""},  // den17
+  {216, QTDLG_EDIT, 1330, 170, 75, 40, 13, 0, ""},  // den18
+  {216, QTDLG_EDIT, 1331, 170, 90, 40, 13, 0, ""},  // den19
+  {216, QTDLG_EDIT, 1332, 170, 105, 40, 13, 0, ""},  // den20
+  {216, QTDLG_EDIT, 1333, 170, 120, 40, 13, 0, ""},  // den21
+  {216, QTDLG_EDIT, 1334, 170, 135, 40, 13, 0, ""},  // den22
+  {216, QTDLG_EDIT, 1335, 170, 150, 40, 13, 0, ""},  // den23
+  {216, QTDLG_EDIT, 1336, 170, 165, 40, 13, 0, ""},  // den24
+  {216, QTDLG_EDIT, 1337, 170, 180, 40, 13, 0, ""},  // den25
+  {216, QTDLG_EDIT, 1338, 170, 195, 40, 13, 0, ""},  // den26
+  {216, QTDLG_EDIT, 1339, 295, 15, 40, 13, 0, ""},  // den27
+  {216, QTDLG_EDIT, 1340, 295, 30, 40, 13, 0, ""},  // den28
+  {216, QTDLG_EDIT, 1341, 295, 45, 40, 13, 0, ""},  // den29
+  {216, QTDLG_EDIT, 1342, 295, 60, 40, 13, 0, ""},  // den30
+  {216, QTDLG_EDIT, 1343, 295, 75, 40, 13, 0, ""},  // den31
+  {216, QTDLG_EDIT, 1344, 295, 90, 40, 13, 0, ""},  // den32
+  {216, QTDLG_EDIT, 1345, 295, 105, 40, 13, 0, ""},  // den33
+  {216, QTDLG_EDIT, 1346, 295, 120, 40, 13, 0, ""},  // den34
+  {216, QTDLG_EDIT, 1347, 295, 135, 40, 13, 0, ""},  // den35
+  {216, QTDLG_EDIT, 1348, 295, 150, 40, 13, 0, ""},  // den36
+  {216, QTDLG_EDIT, 1349, 295, 165, 40, 13, 0, ""},  // den37
+  {216, QTDLG_EDIT, 1350, 295, 180, 40, 13, 0, ""},  // den38
+  {216, QTDLG_EDIT, 1351, 295, 195, 40, 13, 0, ""},  // den39
+  {216, QTDLG_EDIT, 1352, 415, 15, 40, 13, 0, ""},  // den40
+  {216, QTDLG_EDIT, 1353, 415, 30, 40, 13, 0, ""},  // den41
+  {216, QTDLG_EDIT, 1354, 415, 45, 40, 13, 0, ""},  // den42
+  {216, QTDLG_EDIT, 1355, 415, 60, 40, 13, 0, ""},  // den43
+  {216, QTDLG_EDIT, 1356, 415, 75, 40, 13, 0, ""},  // den44
+  {216, QTDLG_EDIT, 1357, 415, 90, 40, 13, 0, ""},  // den45
+  {216, QTDLG_EDIT, 1358, 415, 105, 40, 13, 0, ""},  // den46
+  {216, QTDLG_EDIT, 1359, 415, 120, 40, 13, 0, ""},  // den47
+  {216, QTDLG_EDIT, 1360, 415, 135, 40, 13, 0, ""},  // den48
+  {216, QTDLG_EDIT, 1361, 415, 150, 40, 13, 0, ""},  // den49
+  {216, QTDLG_EDIT, 1362, 415, 165, 40, 13, 0, ""},  // den50
+  {216, QTDLG_EDIT, 1205, 85, 15, 40, 13, 0, ""},  // ded01
+  {216, QTDLG_EDIT, 1206, 85, 30, 40, 13, 0, ""},  // ded02
+  {216, QTDLG_EDIT, 1207, 85, 45, 40, 13, 0, ""},  // ded03
+  {216, QTDLG_EDIT, 1208, 85, 60, 40, 13, 0, ""},  // ded04
+  {216, QTDLG_EDIT, 1209, 85, 75, 40, 13, 0, ""},  // ded05
+  {216, QTDLG_EDIT, 1210, 85, 90, 40, 13, 0, ""},  // ded06
+  {216, QTDLG_EDIT, 1211, 85, 105, 40, 13, 0, ""},  // ded07
+  {216, QTDLG_EDIT, 1212, 85, 120, 40, 13, 0, ""},  // ded08
+  {216, QTDLG_EDIT, 1213, 85, 135, 40, 13, 0, ""},  // ded09
+  {216, QTDLG_EDIT, 1214, 85, 150, 40, 13, 0, ""},  // ded10
+  {216, QTDLG_EDIT, 1215, 85, 165, 40, 13, 0, ""},  // ded11
+  {216, QTDLG_EDIT, 1216, 85, 180, 40, 13, 0, ""},  // ded12
+  {216, QTDLG_EDIT, 1217, 85, 195, 40, 13, 0, ""},  // ded13
+  {216, QTDLG_EDIT, 1218, 215, 15, 40, 13, 0, ""},  // ded14
+  {216, QTDLG_EDIT, 1219, 215, 30, 40, 13, 0, ""},  // ded15
+  {216, QTDLG_EDIT, 1220, 215, 45, 40, 13, 0, ""},  // ded16
+  {216, QTDLG_EDIT, 1221, 215, 60, 40, 13, 0, ""},  // ded17
+  {216, QTDLG_EDIT, 1222, 215, 75, 40, 13, 0, ""},  // ded18
+  {216, QTDLG_EDIT, 1223, 215, 90, 40, 13, 0, ""},  // ded19
+  {216, QTDLG_EDIT, 1224, 215, 105, 40, 13, 0, ""},  // ded20
+  {216, QTDLG_EDIT, 1225, 215, 120, 40, 13, 0, ""},  // ded21
+  {216, QTDLG_EDIT, 1226, 215, 135, 40, 13, 0, ""},  // ded22
+  {216, QTDLG_EDIT, 1227, 215, 150, 40, 13, 0, ""},  // ded23
+  {216, QTDLG_EDIT, 1228, 215, 165, 40, 13, 0, ""},  // ded24
+  {216, QTDLG_EDIT, 1229, 215, 180, 40, 13, 0, ""},  // ded25
+  {216, QTDLG_EDIT, 1230, 215, 195, 40, 13, 0, ""},  // ded26
+  {216, QTDLG_EDIT, 1231, 340, 15, 40, 13, 0, ""},  // ded27
+  {216, QTDLG_EDIT, 1232, 340, 30, 40, 13, 0, ""},  // ded28
+  {216, QTDLG_EDIT, 1233, 340, 45, 40, 13, 0, ""},  // ded29
+  {216, QTDLG_EDIT, 1234, 340, 60, 40, 13, 0, ""},  // ded30
+  {216, QTDLG_EDIT, 1235, 340, 75, 40, 13, 0, ""},  // ded31
+  {216, QTDLG_EDIT, 1236, 340, 90, 40, 13, 0, ""},  // ded32
+  {216, QTDLG_EDIT, 1237, 340, 105, 40, 13, 0, ""},  // ded33
+  {216, QTDLG_EDIT, 1238, 340, 120, 40, 13, 0, ""},  // ded34
+  {216, QTDLG_EDIT, 1239, 340, 135, 40, 13, 0, ""},  // ded35
+  {216, QTDLG_EDIT, 1240, 340, 150, 40, 13, 0, ""},  // ded36
+  {216, QTDLG_EDIT, 1241, 340, 165, 40, 13, 0, ""},  // ded37
+  {216, QTDLG_EDIT, 1242, 340, 180, 40, 13, 0, ""},  // ded38
+  {216, QTDLG_EDIT, 1243, 340, 195, 40, 13, 0, ""},  // ded39
+  {216, QTDLG_EDIT, 1244, 460, 15, 40, 13, 0, ""},  // ded40
+  {216, QTDLG_EDIT, 1245, 460, 30, 40, 13, 0, ""},  // ded41
+  {216, QTDLG_EDIT, 1246, 460, 45, 40, 13, 0, ""},  // ded42
+  {216, QTDLG_EDIT, 1247, 460, 60, 40, 13, 0, ""},  // ded43
+  {216, QTDLG_EDIT, 1248, 460, 75, 40, 13, 0, ""},  // ded44
+  {216, QTDLG_EDIT, 1249, 460, 90, 40, 13, 0, ""},  // ded45
+  {216, QTDLG_EDIT, 1250, 460, 105, 40, 13, 0, ""},  // ded46
+  {216, QTDLG_EDIT, 1251, 460, 120, 40, 13, 0, ""},  // ded47
+  {216, QTDLG_EDIT, 1252, 460, 135, 40, 13, 0, ""},  // ded48
+  {216, QTDLG_EDIT, 1253, 460, 150, 40, 13, 0, ""},  // ded49
+  {216, QTDLG_EDIT, 1254, 460, 165, 40, 13, 0, ""},  // ded50
+  {216, QTDLG_DEFBUTTON, 1004, 430, 180, 55, 14, 0, "&Lookup Names"},  // dbCu_l
+  {216, QTDLG_LTEXT, -1, 5, 15, 30, 8, 1, "Vulcan"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 30, 30, 8, 1, "Cupido"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 45, 30, 8, 1, "Hades"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 60, 30, 8, 1, "Zeus"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 75, 30, 8, 1, "Kronos"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 90, 30, 8, 1, "Apollon"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 105, 30, 8, 1, "Admetos"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 120, 30, 8, 1, "Vulkanus"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 135, 30, 8, 1, "Poseidon"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 150, 30, 8, 1, "Hygiea"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 165, 30, 8, 1, "Pholus"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 180, 30, 8, 1, "Eris"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 5, 195, 30, 8, 1, "Haumea"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 15, 35, 8, 1, "Makemake"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 30, 35, 8, 1, "Gonggong"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 45, 35, 8, 1, "Quaoar"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 60, 35, 8, 1, "Sedna"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 75, 35, 8, 1, "Orcus"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 90, 35, 8, 1, "Phobos"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 105, 35, 8, 1, "Deimos"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 120, 35, 8, 1, "Ganymede"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 135, 35, 8, 1, "Callisto"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 150, 35, 8, 1, "Io"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 165, 35, 8, 1, "Europa"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 180, 35, 8, 1, "Titan"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 130, 195, 35, 8, 1, "Rhea"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 15, 30, 8, 1, "Iapetus"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 30, 30, 8, 1, "Dione"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 45, 30, 8, 1, "Tethys"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 60, 34, 8, 1, "Enceladus"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 75, 30, 8, 1, "Mimas"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 90, 30, 8, 1, "Hyperion"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 105, 30, 8, 1, "Titania"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 120, 30, 8, 1, "Oberon"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 135, 30, 8, 1, "Umbriel"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 150, 30, 8, 1, "Ariel"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 165, 30, 8, 1, "Miranda"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 180, 30, 8, 1, "Triton"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 260, 195, 30, 8, 1, "Proteus"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 15, 30, 8, 1, "Nereid"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 30, 30, 8, 1, "Charon"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 45, 30, 8, 1, "Hydra"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 60, 30, 8, 1, "Nix"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 75, 30, 8, 1, "Kerberos"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 90, 30, 8, 1, "Styx"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 105, 30, 8, 1, "JupCOB"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 120, 30, 8, 1, "SatCOB"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 135, 30, 8, 1, "UraCOB"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 150, 30, 8, 1, "NepCOB"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 385, 165, 30, 8, 1, "PluCOB"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 40, 5, 20, 8, 1, "Name"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 85, 5, 40, 8, 1, "Definition"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 170, 5, 20, 8, 1, "Name"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 215, 5, 40, 8, 1, "Definition"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 295, 5, 20, 8, 1, "Name"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 340, 5, 40, 8, 1, "Definition"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 415, 5, 20, 8, 1, "Name"},  // IDC_STATIC
+  {216, QTDLG_LTEXT, -1, 460, 5, 40, 8, 1, "Definition"},  // IDC_STATIC
+  {216, QTDLG_ICON, -1, 386, 189, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgCustomS
+  {217, QTDLG_DIALOG, 0, 0, 0, 521, 217, 0, "Fixed Star Customization"},
+  {217, QTDLG_DEFBUTTON, 1, 475, 197, 40, 14, 0, "OK"},  // IDOK
+  {217, QTDLG_BUTTON, 2, 430, 197, 40, 14, 0, "Cancel"},  // IDCANCEL
+  {217, QTDLG_EDIT, 1313, 45, 15, 40, 13, 0, ""},  // den01
+  {217, QTDLG_EDIT, 1314, 45, 30, 40, 13, 0, ""},  // den02
+  {217, QTDLG_EDIT, 1315, 45, 45, 40, 13, 0, ""},  // den03
+  {217, QTDLG_EDIT, 1316, 45, 60, 40, 13, 0, ""},  // den04
+  {217, QTDLG_EDIT, 1317, 45, 75, 40, 13, 0, ""},  // den05
+  {217, QTDLG_EDIT, 1318, 45, 90, 40, 13, 0, ""},  // den06
+  {217, QTDLG_EDIT, 1319, 45, 105, 40, 13, 0, ""},  // den07
+  {217, QTDLG_EDIT, 1320, 45, 120, 40, 13, 0, ""},  // den08
+  {217, QTDLG_EDIT, 1321, 45, 135, 40, 13, 0, ""},  // den09
+  {217, QTDLG_EDIT, 1322, 45, 150, 40, 13, 0, ""},  // den10
+  {217, QTDLG_EDIT, 1323, 45, 165, 40, 13, 0, ""},  // den11
+  {217, QTDLG_EDIT, 1324, 45, 180, 40, 13, 0, ""},  // den12
+  {217, QTDLG_EDIT, 1325, 45, 195, 40, 13, 0, ""},  // den13
+  {217, QTDLG_EDIT, 1326, 170, 15, 40, 13, 0, ""},  // den14
+  {217, QTDLG_EDIT, 1327, 170, 30, 40, 13, 0, ""},  // den15
+  {217, QTDLG_EDIT, 1328, 170, 45, 40, 13, 0, ""},  // den16
+  {217, QTDLG_EDIT, 1329, 170, 60, 40, 13, 0, ""},  // den17
+  {217, QTDLG_EDIT, 1330, 170, 75, 40, 13, 0, ""},  // den18
+  {217, QTDLG_EDIT, 1331, 170, 90, 40, 13, 0, ""},  // den19
+  {217, QTDLG_EDIT, 1332, 170, 105, 40, 13, 0, ""},  // den20
+  {217, QTDLG_EDIT, 1333, 170, 120, 40, 13, 0, ""},  // den21
+  {217, QTDLG_EDIT, 1334, 170, 135, 40, 13, 0, ""},  // den22
+  {217, QTDLG_EDIT, 1335, 170, 150, 40, 13, 0, ""},  // den23
+  {217, QTDLG_EDIT, 1336, 170, 165, 40, 13, 0, ""},  // den24
+  {217, QTDLG_EDIT, 1337, 170, 180, 40, 13, 0, ""},  // den25
+  {217, QTDLG_EDIT, 1338, 170, 195, 40, 13, 0, ""},  // den26
+  {217, QTDLG_EDIT, 1339, 300, 15, 40, 13, 0, ""},  // den27
+  {217, QTDLG_EDIT, 1340, 300, 30, 40, 13, 0, ""},  // den28
+  {217, QTDLG_EDIT, 1341, 300, 45, 40, 13, 0, ""},  // den29
+  {217, QTDLG_EDIT, 1342, 300, 60, 40, 13, 0, ""},  // den30
+  {217, QTDLG_EDIT, 1343, 300, 75, 40, 13, 0, ""},  // den31
+  {217, QTDLG_EDIT, 1344, 300, 90, 40, 13, 0, ""},  // den32
+  {217, QTDLG_EDIT, 1345, 300, 105, 40, 13, 0, ""},  // den33
+  {217, QTDLG_EDIT, 1346, 300, 120, 40, 13, 0, ""},  // den34
+  {217, QTDLG_EDIT, 1347, 300, 135, 40, 13, 0, ""},  // den35
+  {217, QTDLG_EDIT, 1348, 300, 150, 40, 13, 0, ""},  // den36
+  {217, QTDLG_EDIT, 1349, 300, 165, 40, 13, 0, ""},  // den37
+  {217, QTDLG_EDIT, 1350, 300, 180, 40, 13, 0, ""},  // den38
+  {217, QTDLG_EDIT, 1351, 300, 195, 40, 13, 0, ""},  // den39
+  {217, QTDLG_EDIT, 1352, 430, 15, 40, 13, 0, ""},  // den40
+  {217, QTDLG_EDIT, 1353, 430, 30, 40, 13, 0, ""},  // den41
+  {217, QTDLG_EDIT, 1354, 430, 45, 40, 13, 0, ""},  // den42
+  {217, QTDLG_EDIT, 1355, 430, 60, 40, 13, 0, ""},  // den43
+  {217, QTDLG_EDIT, 1356, 430, 75, 40, 13, 0, ""},  // den44
+  {217, QTDLG_EDIT, 1357, 430, 90, 40, 13, 0, ""},  // den45
+  {217, QTDLG_EDIT, 1358, 430, 105, 40, 13, 0, ""},  // den46
+  {217, QTDLG_EDIT, 1359, 430, 120, 40, 13, 0, ""},  // den47
+  {217, QTDLG_EDIT, 1360, 430, 135, 40, 13, 0, ""},  // den48
+  {217, QTDLG_EDIT, 1361, 430, 150, 40, 13, 0, ""},  // den49
+  {217, QTDLG_EDIT, 1362, 430, 165, 40, 13, 0, ""},  // den50
+  {217, QTDLG_EDIT, 1205, 91, 15, 40, 13, 0, ""},  // ded01
+  {217, QTDLG_EDIT, 1206, 91, 30, 40, 13, 0, ""},  // ded02
+  {217, QTDLG_EDIT, 1207, 91, 45, 40, 13, 0, ""},  // ded03
+  {217, QTDLG_EDIT, 1208, 91, 60, 40, 13, 0, ""},  // ded04
+  {217, QTDLG_EDIT, 1209, 91, 75, 40, 13, 0, ""},  // ded05
+  {217, QTDLG_EDIT, 1210, 91, 90, 40, 13, 0, ""},  // ded06
+  {217, QTDLG_EDIT, 1211, 91, 105, 40, 13, 0, ""},  // ded07
+  {217, QTDLG_EDIT, 1212, 91, 120, 40, 13, 0, ""},  // ded08
+  {217, QTDLG_EDIT, 1213, 91, 135, 40, 13, 0, ""},  // ded09
+  {217, QTDLG_EDIT, 1214, 91, 150, 40, 13, 0, ""},  // ded10
+  {217, QTDLG_EDIT, 1215, 91, 165, 40, 13, 0, ""},  // ded11
+  {217, QTDLG_EDIT, 1216, 91, 180, 40, 13, 0, ""},  // ded12
+  {217, QTDLG_EDIT, 1217, 91, 195, 40, 13, 0, ""},  // ded13
+  {217, QTDLG_EDIT, 1218, 215, 15, 40, 13, 0, ""},  // ded14
+  {217, QTDLG_EDIT, 1219, 215, 30, 40, 13, 0, ""},  // ded15
+  {217, QTDLG_EDIT, 1220, 215, 45, 40, 13, 0, ""},  // ded16
+  {217, QTDLG_EDIT, 1221, 215, 60, 40, 13, 0, ""},  // ded17
+  {217, QTDLG_EDIT, 1222, 215, 75, 40, 13, 0, ""},  // ded18
+  {217, QTDLG_EDIT, 1223, 215, 90, 40, 13, 0, ""},  // ded19
+  {217, QTDLG_EDIT, 1224, 215, 105, 40, 13, 0, ""},  // ded20
+  {217, QTDLG_EDIT, 1225, 215, 120, 40, 13, 0, ""},  // ded21
+  {217, QTDLG_EDIT, 1226, 215, 135, 40, 13, 0, ""},  // ded22
+  {217, QTDLG_EDIT, 1227, 215, 150, 40, 13, 0, ""},  // ded23
+  {217, QTDLG_EDIT, 1228, 215, 165, 40, 13, 0, ""},  // ded24
+  {217, QTDLG_EDIT, 1229, 215, 180, 40, 13, 0, ""},  // ded25
+  {217, QTDLG_EDIT, 1230, 215, 195, 40, 13, 0, ""},  // ded26
+  {217, QTDLG_EDIT, 1231, 345, 15, 40, 13, 0, ""},  // ded27
+  {217, QTDLG_EDIT, 1232, 345, 30, 40, 13, 0, ""},  // ded28
+  {217, QTDLG_EDIT, 1233, 345, 45, 40, 13, 0, ""},  // ded29
+  {217, QTDLG_EDIT, 1234, 345, 60, 40, 13, 0, ""},  // ded30
+  {217, QTDLG_EDIT, 1235, 345, 75, 40, 13, 0, ""},  // ded31
+  {217, QTDLG_EDIT, 1236, 345, 90, 40, 13, 0, ""},  // ded32
+  {217, QTDLG_EDIT, 1237, 345, 105, 40, 13, 0, ""},  // ded33
+  {217, QTDLG_EDIT, 1238, 345, 120, 40, 13, 0, ""},  // ded34
+  {217, QTDLG_EDIT, 1239, 345, 135, 40, 13, 0, ""},  // ded35
+  {217, QTDLG_EDIT, 1240, 345, 150, 40, 13, 0, ""},  // ded36
+  {217, QTDLG_EDIT, 1241, 345, 165, 40, 13, 0, ""},  // ded37
+  {217, QTDLG_EDIT, 1242, 345, 180, 40, 13, 0, ""},  // ded38
+  {217, QTDLG_EDIT, 1243, 345, 195, 40, 13, 0, ""},  // ded39
+  {217, QTDLG_EDIT, 1244, 475, 15, 40, 13, 0, ""},  // ded40
+  {217, QTDLG_EDIT, 1245, 475, 30, 40, 13, 0, ""},  // ded41
+  {217, QTDLG_EDIT, 1246, 475, 45, 40, 13, 0, ""},  // ded42
+  {217, QTDLG_EDIT, 1247, 475, 60, 40, 13, 0, ""},  // ded43
+  {217, QTDLG_EDIT, 1248, 475, 75, 40, 13, 0, ""},  // ded44
+  {217, QTDLG_EDIT, 1249, 475, 90, 40, 13, 0, ""},  // ded45
+  {217, QTDLG_EDIT, 1250, 475, 105, 40, 13, 0, ""},  // ded46
+  {217, QTDLG_EDIT, 1251, 475, 120, 40, 13, 0, ""},  // ded47
+  {217, QTDLG_EDIT, 1252, 475, 135, 40, 13, 0, ""},  // ded48
+  {217, QTDLG_EDIT, 1253, 475, 150, 40, 13, 0, ""},  // ded49
+  {217, QTDLG_EDIT, 1254, 475, 165, 40, 13, 0, ""},  // ded50
+  {217, QTDLG_DEFBUTTON, 1004, 445, 180, 55, 14, 0, "&Lookup Names"},  // dbCu_l
+  {217, QTDLG_LTEXT, -1, 5, 15, 35, 8, 1, "Sirius"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 30, 35, 8, 1, "Canopus"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 45, 35, 8, 1, "Rigil Kent."},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 60, 35, 8, 1, "Arcturus"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 75, 35, 8, 1, "Vega"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 90, 35, 8, 1, "Capella"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 105, 35, 8, 1, "Rigel"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 120, 35, 8, 1, "Procyon"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 135, 35, 8, 1, "Betelgeuse"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 150, 35, 8, 1, "Achernar"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 165, 35, 8, 1, "Agena"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 180, 35, 8, 1, "Altair"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 5, 195, 35, 8, 1, "Acrux"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 15, 34, 8, 1, "Aldebaran"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 30, 30, 8, 1, "Antares"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 45, 30, 8, 1, "Spica"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 60, 30, 8, 1, "Pollux"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 75, 34, 8, 1, "Fomalhaut"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 90, 30, 8, 1, "Deneb"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 105, 30, 8, 1, "Becrux"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 120, 30, 8, 1, "Regulus"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 135, 30, 8, 1, "Adara"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 150, 30, 8, 1, "Castor"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 165, 30, 8, 1, "Shaula"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 180, 30, 8, 1, "Bellatrix"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 135, 195, 30, 8, 1, "Gacrux"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 15, 35, 8, 1, "Alnath"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 30, 35, 8, 1, "Alnilam"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 45, 35, 8, 1, "Miaplacidus"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 60, 35, 8, 1, "Alnair"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 75, 35, 8, 1, "Alioth"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 90, 35, 8, 1, "Dubhe"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 105, 35, 8, 1, "Wezen"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 120, 40, 8, 1, "Kaus Austr."},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 135, 35, 8, 1, "Alkaid"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 150, 35, 8, 1, "Sargas"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 165, 35, 8, 1, "Menkalinan"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 180, 35, 8, 1, "Peacock"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 260, 195, 35, 8, 1, "Alhena"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 15, 35, 8, 1, "Avior"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 30, 35, 8, 1, "Murzim"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 45, 35, 8, 1, "Alphard"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 60, 35, 8, 1, "Polaris"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 75, 35, 8, 1, "Algol"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 90, 35, 8, 1, "Suhail"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 105, 35, 8, 1, "Alcyone"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 120, 37, 8, 1, "Andromeda"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 135, 35, 8, 1, "Zeta Retic."},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 150, 35, 8, 1, "Galactic C."},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 390, 165, 35, 8, 1, "Great Attr."},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 45, 5, 20, 8, 1, "Name"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 91, 5, 40, 8, 1, "Definition"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 170, 5, 20, 8, 1, "Name"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 215, 5, 40, 8, 1, "Definition"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 300, 5, 20, 8, 1, "Name"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 345, 5, 40, 8, 1, "Definition"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 430, 5, 20, 8, 1, "Name"},  // IDC_STATIC
+  {217, QTDLG_LTEXT, -1, 475, 5, 40, 8, 1, "Definition"},  // IDC_STATIC
+  {217, QTDLG_ICON, -1, 396, 190, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgAbort
+  {201, QTDLG_DIALOG, 0, 0, 0, 125, 38, 0, "Print Progress"},
+  {201, QTDLG_BUTTON, 2, 40, 20, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {201, QTDLG_LTEXT, -1, 5, 5, 115, 8, 1, "The Astrolog chart is being printed."},  // IDC_STATIC
+  {201, QTDLG_ICON, -1, 5, 15, 20, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgInfoAll
+  {207, QTDLG_DIALOG, 0, 0, 0, 345, 167, 0, "Charts #3 through #6"},
+  {207, QTDLG_DEFBUTTON, 1, 290, 145, 50, 14, 0, "OK"},  // IDOK
+  {207, QTDLG_BUTTON, 2, 290, 128, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {207, QTDLG_BUTTON, 1011, 5, 5, 60, 14, 0, "&Open Chart..."},  // dbIa_o1
+  {207, QTDLG_BUTTON, 1005, 70, 5, 70, 14, 0, "Set Chart &Info..."},  // dbIa_i1
+  {207, QTDLG_BUTTON, 1012, 5, 25, 60, 14, 0, "O&pen Chart #2..."},  // dbIa_o2
+  {207, QTDLG_BUTTON, 1006, 70, 25, 70, 14, 0, "Set Chart #&2 Info..."},  // dbIa_i2
+  {207, QTDLG_BUTTON, 1013, 5, 45, 60, 14, 0, "Op&en Chart #3..."},  // dbIa_o3
+  {207, QTDLG_BUTTON, 1007, 70, 45, 70, 14, 0, "Set Chart #&3 Info..."},  // dbIa_i3
+  {207, QTDLG_BUTTON, 1014, 5, 65, 60, 14, 0, "Ope&n Chart #4..."},  // dbIa_o4
+  {207, QTDLG_BUTTON, 1008, 70, 65, 70, 14, 0, "Set Chart #&4 Info..."},  // dbIa_i4
+  {207, QTDLG_BUTTON, 1015, 5, 85, 60, 14, 0, "Open &Chart #5..."},  // dbIa_o5
+  {207, QTDLG_BUTTON, 1009, 70, 85, 70, 14, 0, "Set Chart #&5 Info..."},  // dbIa_i5
+  {207, QTDLG_BUTTON, 1016, 5, 105, 60, 14, 0, "Open Ch&art #6..."},  // dbIa_o6
+  {207, QTDLG_BUTTON, 1010, 70, 105, 70, 14, 0, "Set Chart #&6 Info..."},  // dbIa_i6
+  {207, QTDLG_RADIO, 1404, 10, 135, 61, 10, 0, "1: &Single Wheel"},  // dr01
+  {207, QTDLG_RADIO, 1405, 10, 145, 61, 10, 0, "2: &Dual Wheel"},  // dr02
+  {207, QTDLG_RADIO, 1406, 75, 135, 60, 10, 0, "3: &Tri-Wheel"},  // dr03
+  {207, QTDLG_RADIO, 1407, 75, 145, 60, 10, 0, "4: &Quad-Wheel"},  // dr04
+  {207, QTDLG_RADIO, 1408, 140, 135, 63, 10, 0, "5: Q&uin-Wheel"},  // dr05
+  {207, QTDLG_RADIO, 1409, 140, 145, 63, 10, 0, "6: &Hexa-Wheel"},  // dr06
+  {207, QTDLG_CHECK, 1444, 215, 135, 16, 10, 2, "2"},  // dx02
+  {207, QTDLG_CHECK, 1445, 215, 145, 16, 10, 2, "3"},  // dx03
+  {207, QTDLG_CHECK, 1446, 235, 135, 16, 10, 2, "4"},  // dx04
+  {207, QTDLG_CHECK, 1447, 235, 145, 16, 10, 2, "5"},  // dx05
+  {207, QTDLG_GROUPBOX, -1, 5, 125, 200, 35, 0, "Wheel Chart Is"},  // IDC_STATIC
+  {207, QTDLG_GROUPBOX, -1, 210, 125, 45, 35, 0, "Progress"},  // IDC_STATIC
+  {207, QTDLG_ICON, -1, 262, 135, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  {207, QTDLG_LTEXT, 1431, 145, 5, 195, 8, 1, "Static"},  // ds01
+  {207, QTDLG_LTEXT, 1432, 145, 13, 195, 8, 1, "Static"},  // ds02
+  {207, QTDLG_LTEXT, 1433, 145, 25, 195, 8, 1, "Static"},  // ds03
+  {207, QTDLG_LTEXT, 1434, 145, 33, 195, 8, 1, "Static"},  // ds04
+  {207, QTDLG_LTEXT, 1435, 145, 45, 195, 8, 1, "Static"},  // ds05
+  {207, QTDLG_LTEXT, 1436, 145, 53, 195, 8, 1, "Static"},  // ds06
+  {207, QTDLG_LTEXT, 1437, 145, 65, 195, 8, 1, "Static"},  // ds07
+  {207, QTDLG_LTEXT, 1438, 145, 73, 195, 8, 1, "Static"},  // ds08
+  {207, QTDLG_LTEXT, 1439, 145, 85, 195, 8, 1, "Static"},  // ds09
+  {207, QTDLG_LTEXT, 1440, 145, 93, 195, 8, 1, "Static"},  // ds10
+  {207, QTDLG_LTEXT, 1441, 145, 105, 195, 8, 1, "Static"},  // ds11
+  {207, QTDLG_LTEXT, 1442, 145, 113, 195, 8, 1, "Static"},  // ds12
+  // dlgList
+  {208, QTDLG_DIALOG, 0, 0, 0, 445, 267, 0, "Chart List"},
+  {208, QTDLG_DEFBUTTON, 1, 385, 246, 50, 14, 0, "OK"},  // IDOK
+  {208, QTDLG_BUTTON, 2, 385, 230, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {208, QTDLG_BUTTON, 1029, 385, 75, 50, 14, 0, "&Sort List"},  // dbLi_sl
+  {208, QTDLG_BUTTON, 1030, 385, 135, 50, 14, 0, "Set &To Slot"},  // dbLi_st
+  {208, QTDLG_BUTTON, 1023, 385, 151, 50, 14, 0, "Copy &From"},  // dbLi_cf
+  {208, QTDLG_BUTTON, 1026, 385, 175, 50, 14, 0, "&Edit Chart..."},  // dbLi_ec
+  {208, QTDLG_BUTTON, 1025, 385, 191, 50, 14, 0, "&Delete Chart"},  // dbLi_dc
+  {208, QTDLG_BUTTON, 1024, 385, 207, 50, 14, 0, "Delete &All"},  // dbLi_da
+  {208, QTDLG_BUTTON, 1027, 235, 240, 50, 14, 0, "&Filter"},  // dbLi_f
+  {208, QTDLG_BUTTON, 1028, 290, 240, 50, 14, 0, "&Remove Filter"},  // dbLi_fr
+  {208, QTDLG_RADIO, 1409, 385, 105, 24, 10, 1, "&1st"},  // dr06
+  {208, QTDLG_RADIO, 1410, 385, 115, 24, 10, 0, "&2nd"},  // dr07
+  {208, QTDLG_RADIO, 1411, 385, 125, 24, 10, 0, "&3rd"},  // dr08
+  {208, QTDLG_RADIO, 1412, 411, 105, 24, 10, 0, "&4th"},  // dr09
+  {208, QTDLG_RADIO, 1413, 411, 115, 24, 10, 0, "&5th"},  // dr10
+  {208, QTDLG_RADIO, 1414, 411, 125, 24, 10, 0, "&6th"},  // dr11
+  {208, QTDLG_RADIO, 1404, 385, 25, 31, 10, 1, "&Date"},  // dr01
+  {208, QTDLG_RADIO, 1405, 385, 35, 47, 10, 0, "L&ongitude"},  // dr02
+  {208, QTDLG_RADIO, 1406, 385, 45, 42, 10, 0, "L&atitude"},  // dr03
+  {208, QTDLG_RADIO, 1407, 385, 55, 34, 10, 0, "&Name"},  // dr04
+  {208, QTDLG_RADIO, 1408, 385, 65, 43, 10, 0, "&Location"},  // dr05
+  {208, QTDLG_EDIT, 1312, 33, 241, 80, 14, 0, ""},  // deLi_n
+  {208, QTDLG_EDIT, 1311, 150, 240, 80, 14, 0, ""},  // deLi_l
+  {208, QTDLG_LIST, 1403, 5, 5, 370, 221, 2, ""},  // dlLi
+  {208, QTDLG_LTEXT, 1431, 380, 5, 60, 8, 1, ""},  // ds01
+  {208, QTDLG_LTEXT, -1, 10, 240, 19, 8, 1, "Name:"},  // IDC_STATIC
+  {208, QTDLG_LTEXT, -1, 119, 240, 28, 8, 1, "Location:"},  // IDC_STATIC
+  {208, QTDLG_GROUPBOX, -1, 380, 15, 60, 80, 0, "Sort By"},  // IDC_STATIC
+  {208, QTDLG_GROUPBOX, -1, 380, 95, 60, 76, 0, "Chart Slot"},  // IDC_STATIC
+  {208, QTDLG_GROUPBOX, -1, 5, 230, 340, 30, 0, "Filtering"},  // IDC_STATIC
+  {208, QTDLG_ICON, -1, 354, 235, 21, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  // dlgFile
+  {202, QTDLG_DIALOG, 0, 0, 0, 341, 127, 0, "File Settings"},
+  {202, QTDLG_DEFBUTTON, 1, 285, 106, 50, 14, 0, "OK"},  // IDOK
+  {202, QTDLG_BUTTON, 2, 285, 86, 50, 14, 0, "Cancel"},  // IDCANCEL
+  {202, QTDLG_CHECK, 1569, 5, 5, 155, 10, 2, "Export Text and Print in &Intuitive Manner"},  // dxFi_YOO
+  {202, QTDLG_CHECK, 1562, 5, 15, 155, 10, 2, "Export Text Files in &HTML Format"},  // dxFi_kh
+  {202, QTDLG_CHECK, 1563, 5, 25, 155, 10, 2, "Export Bitmaps from &Window Content"},  // dxFi_Wb
+  {202, QTDLG_CHECK, 1565, 5, 35, 155, 10, 2, "Export Bitmaps in PN&G Format"},  // dxFi_Xbp
+  {202, QTDLG_CHECK, 1567, 5, 45, 155, 10, 2, "Export &Encapsulated PostScript Files"},  // dxFi_Xp0
+  {202, QTDLG_CHECK, 1564, 5, 55, 155, 10, 2, "Don't Show Popup &Messages"},  // dxFi_Wt
+  {202, QTDLG_CHECK, 1568, 5, 65, 155, 10, 2, "Save Chart Info Files in &Old Style Format"},  // dxFi_Yo
+  {202, QTDLG_CHECK, 1570, 5, 75, 155, 10, 2, "Use Real System &Fonts in Graphic Charts"},  // dxFi_YXf
+  {202, QTDLG_EDIT, 1261, 95, 90, 35, 13, 0, ""},  // deFi_Wx
+  {202, QTDLG_EDIT, 1265, 95, 105, 35, 13, 0, ""},  // deFi_YXx
+  {202, QTDLG_CHECK, 1566, 170, 5, 130, 10, 2, "Don't Show &Background Bitmap"},  // dxFi_XI0
+  {202, QTDLG_COMBO, 1084, 290, 15, 45, 90, 2, ""},  // dcFi_XI1
+  {202, QTDLG_EDIT, 1262, 270, 30, 65, 13, 0, ""},  // deFi_Y5i
+  {202, QTDLG_EDIT, 1263, 285, 46, 35, 13, 0, ""},  // deFi_YXp0_x
+  {202, QTDLG_EDIT, 1264, 285, 62, 35, 13, 0, ""},  // deFi_YXp0_y
+  {202, QTDLG_RADIO, 1404, 175, 86, 100, 10, 1, "&Portrait"},  // dr01
+  {202, QTDLG_RADIO, 1405, 175, 96, 100, 10, 0, "&Landscape"},  // dr02
+  {202, QTDLG_RADIO, 1406, 175, 106, 100, 10, 0, "Based on Chart &Dimensions"},  // dr03
+  {202, QTDLG_LTEXT, -1, 5, 90, 85, 8, 1, "Antialias Line Detail Level:"},  // IDC_STATIC
+  {202, QTDLG_LTEXT, -1, 5, 105, 88, 8, 1, "Line Thickness Adjustment:"},  // IDC_STATIC
+  {202, QTDLG_LTEXT, -1, 170, 15, 115, 8, 1, "Background Transparency Percent:"},  // IDC_STATIC
+  {202, QTDLG_LTEXT, -1, 170, 30, 100, 8, 1, "Astrodatabank File Load Filter:"},  // IDC_STATIC
+  {202, QTDLG_LTEXT, -1, 170, 46, 105, 8, 1, "Horizontal PostScript Paper Size:"},  // IDC_STATIC
+  {202, QTDLG_LTEXT, -1, 170, 62, 100, 8, 1, "Vertical PostScript Paper Size:"},  // IDC_STATIC
+  {202, QTDLG_GROUPBOX, -1, 170, 75, 110, 45, 0, "PostScript Paper Orientation"},  // IDC_STATIC
+  {202, QTDLG_ICON, -1, 140, 95, 20, 20, 0, "astrlog3.ico"},  // IDC_STATIC
+  {0, 0, 0, 0, 0, 0, 0, 0, NULL}};
