@@ -63,6 +63,7 @@
 #include <QUrl>
 #include <QWheelEvent>
 #include <QWidget>
+#include <clocale>
 #include <map>
 #include <tuple>
 #include <vector>
@@ -3014,6 +3015,10 @@ int main(int argc, char **argv)
 #endif
 
   QApplication app(argc, argv);
+  // Qt applies the user's locale to the C library, but Astrolog and the
+  // Swiss Ephemeris read and write numbers with "." decimals (atof, printf),
+  // e.g. in seorbel.txt and chart files, so keep numbers in the C locale.
+  setlocale(LC_NUMERIC, "C");
   g_app = &app;
   QApplication::setApplicationName(QString(szAppName));
   QApplication::setApplicationVersion(QString(szVersionCore));
