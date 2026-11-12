@@ -3014,15 +3014,18 @@ int main(int argc, char **argv)
   char sz[cchSzMax];
 #endif
 
+  // Set the names before creating the application object, since Qt 6
+  // already registers the app ID (desktop file name) with the desktop
+  // portal while constructing it.
+  QCoreApplication::setApplicationName(QString(szAppName));
+  QCoreApplication::setApplicationVersion(QString(szVersionCore));
+  QGuiApplication::setDesktopFileName(QString("astrolog"));
   QApplication app(argc, argv);
   // Qt applies the user's locale to the C library, but Astrolog and the
   // Swiss Ephemeris read and write numbers with "." decimals (atof, printf),
   // e.g. in seorbel.txt and chart files, so keep numbers in the C locale.
   setlocale(LC_NUMERIC, "C");
   g_app = &app;
-  QApplication::setApplicationName(QString(szAppName));
-  QApplication::setApplicationVersion(QString(szVersionCore));
-  QGuiApplication::setDesktopFileName(QString("astrolog"));
 
   // Create the window and the globals that refer to it.
 
