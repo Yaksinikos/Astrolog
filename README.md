@@ -153,6 +153,12 @@ sed -e "s|^Exec=.*|Exec=env ASTROLOG=$PWD $PWD/astrolog-qt|" \
     astrolog.desktop > ~/.local/share/applications/astrolog.desktop
 ```
 
+On Wayland, the desktop entry is also what gives the window its name and
+icon in the Plasma task bar. Without it installed, Qt may print a harmless
+warning at startup like `qt.qpa.services: Failed to register with host
+portal ... App info not found for 'astrolog'`. Installing the desktop entry
+as above makes it go away.
+
 ### Regenerate the menus and dialogs
 
 `rcqt.inc` is generated from `astrolog.rc` and `resource.h`, and is included
