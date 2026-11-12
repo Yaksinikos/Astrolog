@@ -1104,26 +1104,21 @@ void WinClearScreen(KI ki)
 }
 
 
-// Change the size of the window so its client area is the dimensions of the
-// current graphics chart. This is the Qt version of the routine in xscreen.
+// Resize the main window so the chart view inside it gets the given size.
+// The space taken by the menu bar and scrollbars comes from their size
+// hints, so this works before the window has been shown and laid out.
 
-void ResizeWindowToChart()
+static void SizeWindowForClient(int cx, int cy)
 {
-  QSize sizeWin, sizeView;
   QRect rcScr;
   int x, y;
 
-  if (!us.fGraphics || g_win == NULL || g_view == NULL)
+  if (g_win == NULL || g_view == NULL)
     return;
-  if (gs.xWin == 0)
-    gs.xWin = DEFAULTX;
-  if (gs.yWin == 0)
-    gs.yWin = DEFAULTY;
-  sizeWin = g_win->size();
-  sizeView = g_view->size();
-  x = gs.xWin + (gi.nMode == 0 ? (SIDESIZE * gi.nScaleText) >> 1 : 0) +
-    (sizeWin.width() - sizeView.width());
-  y = gs.yWin + (sizeWin.height() - sizeView.height());
+  x = cx + g_sbVert->sizeHint().width();
+  y = cy + g_sbHorz->sizeHint().height();
+  if (!g_win->menuBar()->isNativeMenuBar())
+    y += g_win->menuBar()->sizeHint().height();
   if (g_win->screen() != NULL) {
     rcScr = g_win->screen()->availableGeometry();
     if (x > rcScr.width())
@@ -1131,9 +1126,25 @@ void ResizeWindowToChart()
     if (y > rcScr.height())
       y = rcScr.height();
   }
-  wi.fNotManual = fTrue;
+  wi.fNotManual = fTrue;   // So WM_SIZE doesn't change the restore size.
   g_win->resize(x, y);
   wi.fNotManual = fFalse;
+}
+
+
+// Change the size of the window so its client area is the dimensions of the
+// current graphics chart. This is the Qt version of the routine in xscreen.
+
+void ResizeWindowToChart()
+{
+  if (!us.fGraphics || g_win == NULL || g_view == NULL)
+    return;
+  if (gs.xWin == 0)
+    gs.xWin = DEFAULTX;
+  if (gs.yWin == 0)
+    gs.yWin = DEFAULTY;
+  SizeWindowForClient(gs.xWin +
+    (gi.nMode == 0 ? (SIDESIZE * gi.nScaleText) >> 1 : 0), gs.yWin);
 }
 
 
@@ -3009,7 +3020,7 @@ static void SzFromArgv(int argc, char **argv, char *sz, int cchMax)
 int main(int argc, char **argv)
 {
   char szCmdLine[cchSzMax];
-  int nRet;
+  int nRet, xWin0, yWin0;
 #ifdef BETA
   char sz[cchSzMax];
 #endif
@@ -3056,16 +3067,23 @@ int main(int argc, char **argv)
 
   // Actually bring up and display the window for the first time.
 
+  // Start with the chart area at the size from the settings (-Xw), for both
+  // text and graphics charts. Showing the window sends resize events, which
+  // shouldn't replace that size, so it's set again afterward.
   if (gs.xWin <= 0)
     gs.xWin = DEFAULTX;
   if (gs.yWin <= 0)
     gs.yWin = DEFAULTY;
-  g_win->resize(gs.xWin + g_sbVert->sizeHint().width(),
-    gs.yWin + g_sbHorz->sizeHint().height());
+  xWin0 = gs.xWin; yWin0 = gs.yWin;
+  gi.xWinResize = xWin0; gi.yWinResize = yWin0;
+  SizeWindowForClient(xWin0 + (us.fGraphics && gi.nMode == 0 ?
+    (SIDESIZE * (gs.nScaleText/50)) >> 1 : 0), yWin0);
   g_win->setWindowIcon(QIcon(QsFindProgramFile("astrlog1.ico")));
+  wi.fNotManual = fTrue;
   g_win->show();
+  wi.fNotManual = fFalse;
   g_view->setFocus();
-  ResizeWindowToChart();
+  gs.xWin = xWin0; gs.yWin = yWin0;
   RedoMenu();
   wi.lTimer = SetTimer(wi.hwnd, 1, wi.nTimerDelay, NULL);
 #ifdef BETA
