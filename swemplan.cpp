@@ -784,7 +784,7 @@ static int read_elements_file(int32 ipl, double tjd,
 	}
         goto return_err;
       } else
-        *tjd0 = atof(sp);
+        *tjd0 = swi_atof(sp);
       tt = tjd - *tjd0;
     }
     /* equinox */
@@ -808,7 +808,7 @@ static int read_elements_file(int32 ipl, double tjd,
 	}
         goto return_err;
       } else
-        *tequ = atof(sp);
+        *tequ = swi_atof(sp);
     }
     /* mean anomaly t0 */
     if (mano != NULL) {
@@ -958,8 +958,8 @@ static int check_t_terms(double t, char *sinp, double *doutp)
           fac *= tt[i];
 	  } else {
         /* a number */
-        if (atof(sp) != 0 || *sp == '0')
-          fac *= atof(sp);
+        if (swi_atof(sp) != 0 || *sp == '0')
+          fac *= swi_atof(sp);
 	  }
       while (*sp != '\0' && strchr("0123456789.", *sp))
 	    sp++;

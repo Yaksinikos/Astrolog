@@ -1416,8 +1416,8 @@ void load_dpsi_deps(void)
     }
     if (n == 0)
       swed.eop_tjd_beg = mjd + TJDOFS;
-    swed.dpsi[n] = atof(cpos[8]);
-    swed.deps[n] = atof(cpos[9]);
+    swed.dpsi[n] = swi_atof(cpos[8]);
+    swed.deps[n] = swi_atof(cpos[9]);
 /*    fprintf(stderr, "n=%d, tjd=%f, dpsi=%f, deps=%f\n", n, mjd + 2400000.5, swed.dpsi[n] * 1000, swed.deps[n] * 1000);exit(0);*/
     n++;
     mjdsv = mjd;
@@ -1445,12 +1445,12 @@ void load_dpsi_deps(void)
       return;
     }
     /* dpsi, deps Bulletin B */
-    dpsi = atof(s + 168);
-    deps = atof(s + 178);
+    dpsi = swi_atof(s + 168);
+    deps = swi_atof(s + 178);
     if (dpsi == 0) {
       /* try dpsi, deps Bulletin A */
-      dpsi = atof(s + 99);
-      deps = atof(s + 118);
+      dpsi = swi_atof(s + 99);
+      deps = swi_atof(s + 118);
     }
     if (dpsi == 0) {
       swed.eop_dpsi_loaded = 2;
@@ -4610,13 +4610,13 @@ static int read_const(int ifno, char *serr)
     /* save elements, they are required for swe_plan_pheno() */
     strcpy(swed.astelem, s);
     /* required for magnitude */
-    swed.ast_H = atof(s + 35 + i);
-    swed.ast_G = atof(s + 42 + i);
+    swed.ast_H = swi_atof(s + 35 + i);
+    swed.ast_G = swi_atof(s + 42 + i);
     if (swed.ast_G == 0) swed.ast_G = 0.15;
     /* diameter in kilometers, not always given: */
     strncpy(s2, s+51+i, 7);
     *(s2 + 7) = '\0';
-    swed.ast_diam = atof(s2);
+    swed.ast_diam = swi_atof(s2);
     if (swed.ast_diam == 0) {
       /* estimate the diameter from magnitude; assume albedo = 0.15 */
       swed.ast_diam = 1329/sqrt(0.15) * pow(10, -0.2 * swed.ast_H);
@@ -6247,19 +6247,19 @@ int32 fixstar_cut_string(char *srecord, char *star, struct fixed_star *stardata,
   strcpy(stardata->starname, cpos[0]);
   strcpy(stardata->starbayer, cpos[1]);
   // star data
-  epoch = atof(cpos[2]);
-  ra_h = atof(cpos[3]);
-  ra_m = atof(cpos[4]);
-  ra_s = atof(cpos[5]);
-  de_d = atof(cpos[6]);
+  epoch = swi_atof(cpos[2]);
+  ra_h = swi_atof(cpos[3]);
+  ra_m = swi_atof(cpos[4]);
+  ra_s = swi_atof(cpos[5]);
+  de_d = swi_atof(cpos[6]);
   sde_d = cpos[6];
-  de_m = atof(cpos[7]);
-  de_s = atof(cpos[8]);
-  ra_pm = atof(cpos[9]);
-  de_pm = atof(cpos[10]);
-  radv = atof(cpos[11]);
-  parall = atof(cpos[12]);
-  mag = atof(cpos[13]);
+  de_m = swi_atof(cpos[7]);
+  de_s = swi_atof(cpos[8]);
+  ra_pm = swi_atof(cpos[9]);
+  de_pm = swi_atof(cpos[10]);
+  radv = swi_atof(cpos[11]);
+  parall = swi_atof(cpos[12]);
+  mag = swi_atof(cpos[13]);
   /****************************************
    * position and speed (equinox)
    ****************************************/

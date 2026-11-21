@@ -3121,7 +3121,7 @@ if (!swed.init_dt_done) {
     while (strchr(" \t", *sp) != NULL && *sp != '\0')
       sp++;	/* was *sp++  fixed by Alois 2-jul-2003 */
     /*dt[tab_index] = (short) (atof(sp) * 100 + 0.5);*/
-    dt[tab_index] = atof(sp);
+    dt[tab_index] = swi_atof(sp);
   }
   fclose(fp);
 }
@@ -3735,6 +3735,72 @@ char *swi_right_trim(char *s)
   return s;
 }
 
+/**************************************************************
+ * Locale-independent replacement for atof()/strtod().
+ *
+ * Swiss Ephemeris data files (seorbel.txt, sefixstars.txt,
+ * swe_deltat.txt, asteroid orbital elements, EOP/nutation files)
+ * always use '.' as the decimal separator. The C library atof()
+ * honors LC_NUMERIC, which a GUI toolkit (e.g. Qt) may set to the
+ * user's locale. In locales such as de_AT.UTF-8 the decimal
+ * separator is ',', so atof("0.13744") returns 0 and orbital
+ * elements are rejected ("semi-axis value invalid").
+ *
+ * This parser ignores the locale entirely and reads an ASCII
+ * decimal number: optional leading whitespace and sign, digits
+ * with an optional '.', and an optional exponent. Like atof() it
+ * stops at the first character that cannot be part of the number.
+ **************************************************************/
+double swi_atof(const char *s)
+{
+  double val = 0.0;
+  int sign = 1, esign = 1, exp = 0, dexp = 0;
+  int seen_digit = 0, seen_dot = 0;
+  if (s == NULL)
+    return 0.0;
+  while (*s == ' ' || *s == '\t' || *s == '\n' || *s == '\r'
+      || *s == '\f' || *s == '\v')
+    s++;
+  if (*s == '-') {
+    sign = -1;
+    s++;
+  } else if (*s == '+') {
+    s++;
+  }
+  while ((*s >= '0' && *s <= '9') || *s == '.') {
+    if (*s == '.') {
+      if (seen_dot)
+        break;		/* a second '.' ends the number */
+      seen_dot = 1;
+    } else {
+      val = val * 10.0 + (*s - '0');
+      if (seen_dot)
+        dexp--;
+      seen_digit = 1;
+    }
+    s++;
+  }
+  if (!seen_digit)
+    return 0.0;
+  if (*s == 'e' || *s == 'E') {
+    s++;
+    if (*s == '-') {
+      esign = -1;
+      s++;
+    } else if (*s == '+') {
+      s++;
+    }
+    while (*s >= '0' && *s <= '9') {
+      exp = exp * 10 + (*s - '0');
+      s++;
+    }
+  }
+  exp = esign * exp + dexp;
+  if (exp != 0)
+    val *= pow(10.0, (double) exp);
+  return sign * val;
+}
+
 /*
  * The following C code (by Rob Warnock rpw3@sgi.com) does CRC-32 in
  * BigEndian/BigEndian byte/bit order. That is, the data is sent most
@@ -4199,9 +4265,9 @@ void CALL_CONV swe_set_astro_models(char *samod, int32 iflag)
       swi_strcpy(sp, sp+1);
     if ((sp = strchr(s + 5, 'b')) != NULL)  // remove 'b' in "SE2.05.02b04"
       swi_strcpy(sp, sp+1);
-    dversion = atof(s + 2);
+    dversion = swi_atof(s + 2);
     if (dversion == 0)
-      dversion = atof(SE_VERSION);
+      dversion = swi_atof(SE_VERSION);
     if (dversion >= 2.06) {
       set_astro_models(AMODELS_SE_2_06);
     } else if (dversion >= 2.01) {
